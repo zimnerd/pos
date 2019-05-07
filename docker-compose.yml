@@ -1,0 +1,55 @@
+version: '3'
+services:
+  apache:
+    build: .docker/apache
+    container_name: fashion_apache
+    ports:
+      - 8080:80
+    volumes:
+      - .docker/config/vhosts:/etc/apache2/sites-enabled
+      - .:/home/wwwroot/fashion
+    depends_on:
+      - php
+
+  mysql:
+    image: mysql
+    build: .docker/mysql
+    container_name: fashion_mysql
+    command: ["--default-authentication-plugin=mysql_native_password"]
+    ports:
+      - 3306:3306
+    volumes:
+      - .docker/data/database:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  php:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fashion_php
+    volumes:
+      - .:/home/wwwroot/fashion
+    environment:
+      - maildev_host=fashion_maildev
+    depends_on:
+      - maildev
+    links:
+      - mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: fashion_phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+    ports:
+      - 8081:80
+    links:
+      - mysql
+
+  maildev:
+    image: djfarrelly/maildev
+    container_name: fashion_maildev
+    ports:
+      - 8001:80
