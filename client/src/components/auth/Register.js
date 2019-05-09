@@ -3,6 +3,7 @@ import axios from "axios";
 
 import './Register.scss';
 import {Link} from "react-router-dom";
+import toastr from "toastr";
 
 export default class Register extends React.Component {
 
@@ -24,15 +25,17 @@ export default class Register extends React.Component {
 
     onSubmit(event) {
         event.preventDefault();
+        this.setState({ errors: [] });
         axios.post("/api/user/register", this.state)
             .then(response => {
                 console.log(response);
+                toastr.success("You have been registered successfully!");
                 this.props.history.push("/");
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 500) {
-                    console.log("Add toaster here. An error has occurred!")
+                    toastr.success("There was an error when trying to register your account!");
                 } else {
                     this.setState({
                         errors: error.response.data.errors

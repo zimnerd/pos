@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from "react-router-dom";
 import axios from "axios";
+import toastr from 'toastr';
 
 import './Login.scss';
 
@@ -21,15 +22,17 @@ export default class Login extends React.Component {
 
     onSubmit(event) {
         event.preventDefault();
+        this.setState({ errors: [] });
         axios.post("/api/user/login", this.state)
             .then(response => {
                 console.log(response);
+                toastr.success("Login Successful!");
                 this.props.history.push("/app/dashboard");
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 401) {
-                    console.log("Add toaster here. An error has occurred!")
+                    toastr.error("The username and password combination is invalid!");
                 } else {
                     this.setState({
                         errors: error.response.data.errors

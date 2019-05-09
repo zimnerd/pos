@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import 'bootstrap/dist/css/bootstrap.css';
+import 'toastr/build/toastr.min.css'
+
 import './index.scss';
 import App from './App';
 
