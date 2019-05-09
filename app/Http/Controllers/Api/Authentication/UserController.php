@@ -43,8 +43,9 @@ class UserController extends Controller
             'name' => 'required',
             'username' => 'required',
             'email' => 'required|email',
+            'username' => 'required',
             'password' => 'required',
-            'c_password' => 'required|same:password',
+            'confirm' => 'required|same:password',
         ]);
 
         $input = $request->all();
