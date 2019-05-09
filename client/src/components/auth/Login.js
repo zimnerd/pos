@@ -1,10 +1,10 @@
 import React from 'react';
+import { Link } from "react-router-dom";
 // import axios from "axios";
 
-import './Register.scss';
-import {Link} from "react-router-dom";
+import './Login.scss';
 
-export default class Register extends React.Component {
+export default class Login extends React.Component {
 
     constructor(props) {
         super(props);
@@ -13,11 +13,8 @@ export default class Register extends React.Component {
         this.onSubmit = this.onSubmit.bind(this);
 
         this.state = {
-            name: '',
-            email: '',
             username: '',
-            password: '',
-            confirm: ''
+            password: ''
         };
     }
 
@@ -44,22 +41,12 @@ export default class Register extends React.Component {
         return (
             <section>
                 <header>
-                    <h1>Register User</h1>
+                    <h1>Login User</h1>
                     <hr/>
                 </header>
                 <main>
-                    <form id="register-form">
+                    <form id="login-form">
                         <main>
-                            <section className="form-group">
-                                <label>Name:</label>
-                                <input id="name" name="name" className="form-control" type="text" value={this.state.name}
-                                       onChange={this.handleChange} placeholder="Name" required/>
-                            </section>
-                            <section className="form-group">
-                                <label>Email Address:</label>
-                                <input id="email" name="email" className="form-control" type="email" value={this.state.email}
-                                       onChange={this.handleChange} placeholder="Email Address" required/>
-                            </section>
                             <section className="form-group">
                                 <label>Username:</label>
                                 <input id="username" name="username" className="form-control" type="text" value={this.state.username}
@@ -70,15 +57,10 @@ export default class Register extends React.Component {
                                 <input id="password" name="password" className="form-control" type="password" value={this.state.password}
                                        onChange={this.handleChange} placeholder="Password" required/>
                             </section>
-                            <section className="form-group">
-                                <label>Confirm Password:</label>
-                                <input id="confirm" name="confirm" placeholder="Confirm Password" value={this.state.confirm}
-                                       onChange={this.handleChange} className="form-control" type="password" required/>
-                            </section>
                         </main>
                         <footer>
-                            <button className="btn btn-primary float-right" onClick={this.onSubmit}>Register</button>
-                            <Link to="/" className="btn btn-secondary float-left">Back</Link>
+                            <button className="btn btn-primary float-right" onClick={this.onSubmit}>Login</button>
+                            <Link to="/register" className="btn btn-secondary float-left">Register</Link>
                         </footer>
                     </form>
                 </main>
