@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from "react-router-dom";
-// import axios from "axios";
+import axios from "axios";
 
 import './Login.scss';
 
@@ -14,17 +14,28 @@ export default class Login extends React.Component {
 
         this.state = {
             username: '',
-            password: ''
+            password: '',
+            errors: []
         };
     }
 
     onSubmit(event) {
         event.preventDefault();
-        // axios.post("/api/user/register", this.state)
-        //     .then(response => {
-        //         console.log(response);
-        //     })
-        //     .catch(error => console.log(error));
+        axios.post("/api/user/login", this.state)
+            .then(response => {
+                console.log(response);
+                this.props.history.push("/app/dashboard");
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    console.log("Add toaster here. An error has occurred!")
+                } else {
+                    this.setState({
+                        errors: error.response.data.errors
+                    });
+                }
+            });
     }
 
     handleChange(event) {
@@ -51,11 +62,13 @@ export default class Login extends React.Component {
                                 <label>Username:</label>
                                 <input id="username" name="username" className="form-control" type="text" value={this.state.username}
                                        onChange={this.handleChange} placeholder="Username" required/>
+                                {this.state.errors['username'] && <p>{this.state.errors['username']}</p>}
                             </section>
                             <section className="form-group">
                                 <label>Password:</label>
                                 <input id="password" name="password" className="form-control" type="password" value={this.state.password}
                                        onChange={this.handleChange} placeholder="Password" required/>
+                                {this.state.errors['password'] && <p>{this.state.errors['password']}</p>}
                             </section>
                         </main>
                         <footer>

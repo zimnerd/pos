@@ -21,5 +21,4 @@ Route::group(["prefix" => "api/user"], function () {
 });
 
 Route::group(['middleware' => 'auth:api'], function () {
-    Route::post('details', 'Api\Authentication\UserController@details');
 });

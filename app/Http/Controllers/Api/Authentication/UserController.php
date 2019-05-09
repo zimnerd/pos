@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\Authentication;
 
 use App\Http\Controllers\Controller;
 use App\User;
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -14,13 +13,22 @@ class UserController extends Controller
     public $createStatus = 201;
 
     /**
-     * login api
+     * Login to the application.
      *
      * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
      */
     public function login()
     {
         $credentials = ['username' => request('username'), 'password' => request('password')];
+        $request = new Request($credentials);
+
+        /** @var Request $request */
+        $this->validate($request, [
+            'username' => 'required',
+            'password' => 'required'
+        ]);
+
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
             $success['token'] = $user->createToken($credentials['username'])->accessToken;
@@ -31,7 +39,7 @@ class UserController extends Controller
     }
 
     /**
-     * Register api
+     * Register for the application.
      *
      * @param Request $request
      * @return \Illuminate\Http\Response
@@ -43,9 +51,8 @@ class UserController extends Controller
             'name' => 'required',
             'username' => 'required',
             'email' => 'required|email',
-            'username' => 'required',
             'password' => 'required',
-            'confirm' => 'required|same:password',
+            'confirm' => 'required|same:password'
         ]);
 
         $input = $request->all();
@@ -59,14 +66,4 @@ class UserController extends Controller
         return response()->json(['success' => $success], $this->createStatus);
     }
 
-    /**
-     * details api
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function details()
-    {
-        $user = Auth::user();
-        return response()->json(['success' => $user], $this->successStatus);
-    }
 }
