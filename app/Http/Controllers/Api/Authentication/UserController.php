@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public $successStatus = 200;
+    public $createStatus = 201;
 
     /**
      * login api
@@ -52,7 +53,7 @@ class UserController extends Controller
         $success['token'] = $user->createToken($user->email)->accessToken;
         $success['name'] = $user->name;
 
-        return response()->json(['success' => $success], $this->successStatus);
+        return response()->json(['success' => $success], $this->createStatus);
     }
 
     /**
