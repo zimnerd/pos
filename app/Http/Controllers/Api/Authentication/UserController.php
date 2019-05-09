@@ -20,9 +20,10 @@ class UserController extends Controller
      */
     public function login()
     {
-        if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
+        $credentials = ['username' => request('username'), 'password' => request('password')];
+        if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $success['token'] = $user->createToken('MyApp')->accessToken;
+            $success['token'] = $user->createToken($credentials['username'])->accessToken;
             return response()->json(['success' => $success], $this->successStatus);
         } else {
             return response()->json(['error' => 'Unauthorised'], 401);
@@ -40,6 +41,7 @@ class UserController extends Controller
     {
         $this->validate($request, [
             'name' => 'required',
+            'username' => 'required',
             'email' => 'required|email',
             'password' => 'required',
             'c_password' => 'required|same:password',
@@ -50,7 +52,7 @@ class UserController extends Controller
 
         $user = User::create($input);
 
-        $success['token'] = $user->createToken($user->email)->accessToken;
+        $success['token'] = $user->createToken($user->username)->accessToken;
         $success['name'] = $user->name;
 
         return response()->json(['success' => $success], $this->createStatus);
