@@ -1,6 +1,8 @@
 import React from 'react';
 
 import './Dashboard.scss';
+import axios from "axios";
+import toastr from "toastr";
 
 export default class Dashboard extends React.Component {
 
@@ -10,6 +12,26 @@ export default class Dashboard extends React.Component {
         this.state = {
             user: {}
         };
+    }
+
+    componentDidMount() {
+        const headers = {
+            'Authorization': 'Bearer '
+        };
+        axios.get("/api/user/details",{ headers: headers })
+            .then(response => {
+                console.log(response);
+                toastr.success("User Details Retrieved!", "User Details");
+                this.setState({ user: response.data.user })
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     }
 
     render() {

@@ -26,14 +26,15 @@ export default class Login extends React.Component {
         axios.post("/api/user/login", this.state)
             .then(response => {
                 console.log(response);
-                toastr.success("Login Successful!");
+                toastr.success("Login Successful!", "Login User");
                 this.props.history.push("/app/dashboard");
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 401) {
-                    toastr.error("The username and password combination is invalid!");
+                    toastr.error("The username and password combination is invalid!", "Unauthorized");
                 } else {
+                    toastr.error("The information you have supplied is invalid!", "Validation");
                     this.setState({
                         errors: error.response.data.errors
                     });

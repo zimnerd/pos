@@ -29,14 +29,15 @@ export default class Register extends React.Component {
         axios.post("/api/user/register", this.state)
             .then(response => {
                 console.log(response);
-                toastr.success("You have been registered successfully!");
+                toastr.success("You have been registered successfully!", "Register User");
                 this.props.history.push("/");
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 500) {
-                    toastr.success("There was an error when trying to register your account!");
+                    toastr.success("There was an error when trying to register your account!", "Register User");
                 } else {
+                    toastr.error("The information you have supplied is invalid!", "Validation");
                     this.setState({
                         errors: error.response.data.errors
                     });
