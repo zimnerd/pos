@@ -18,7 +18,9 @@ Route::group(["prefix" => "api/user"], function () {
     Route::post('login', 'Api\Authentication\UserController@login');
     Route::post('register', 'Api\Authentication\UserController@register');
 
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('details', 'Api\Authentication\UserController@details');
+    });
+
 });
 
-Route::group(['middleware' => 'auth:api'], function () {
-});
