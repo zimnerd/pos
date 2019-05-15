@@ -1,28 +1,25 @@
 import React from 'react';
-
-import './Dashboard.scss';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
 import axios from "axios";
 import toastr from "toastr";
 
-export default class Dashboard extends React.Component {
+import * as userActions from "../../redux/actions/user.action";
 
-    constructor(props) {
-        super(props);
+import './Dashboard.scss';
 
-        this.state = {
-            user: {}
-        };
-    }
+class Dashboard extends React.Component {
 
     componentDidMount() {
         const headers = {
-            'Authorization': 'Bearer '
+            'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get("/api/user/details",{ headers: headers })
+        axios.get("/api/user/details", { headers: headers })
             .then(response => {
                 console.log(response);
                 toastr.success("User Details Retrieved!", "User Details");
-                this.setState({ user: response.data.user })
+
+                this.props.actions.retrieveDetails(response.data.user);
             })
             .catch(error => {
                 console.log(error);
@@ -38,9 +35,9 @@ export default class Dashboard extends React.Component {
         return (
             <main className="container">
                 <header className="text-center">
-                    <h1>Welcome, {this.state.user.name}</h1>
-                    <h4>@{this.state.user.username}</h4>
-                    <h5 className="text-uppercase">{this.state.user.group}</h5>
+                    <h1>Welcome, {this.props.user.name}</h1>
+                    <h4>@{this.props.user.username}</h4>
+                    <h5 className="text-uppercase">{this.props.user.group}</h5>
                 </header>
                 <main className="d-flex">
                     <section className="col-6 card">
@@ -69,3 +66,18 @@ export default class Dashboard extends React.Component {
     }
 
 }
+
+function mapStateToProps(state) {
+    return {
+        auth: state.auth,
+        user: state.user
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(userActions, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);
