@@ -13,12 +13,14 @@ class Users extends Migration
      */
     public function up()
     {
+        Schema::dropIfExists('users');
         Schema::create('users', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('username')->unique();
             $table->string('email');
             $table->string('name');
             $table->string('password');
+            $table->longText('api_token')->nullable();
             $table->timestamps();
         });
     }

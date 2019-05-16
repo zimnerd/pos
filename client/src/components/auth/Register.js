@@ -33,7 +33,7 @@ class Register extends React.Component {
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 500) {
-                    toastr.success('There was an error when trying to register your account!', 'Register User');
+                    toastr.error('There was an error when trying to register your account!', 'Register User');
                 } else {
                     toastr.error('The information you have supplied is invalid!', 'Validation');
                     this.props.actions.validationError(error.response.data.errors);

@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class UsersMigration20190509052538 extends Migration
+class Users extends Migration
 {
     /**
      * Run the migrations.
@@ -20,6 +20,7 @@ class UsersMigration20190509052538 extends Migration
             $table->string('email');
             $table->string('name');
             $table->string('password');
+            $table->string('api_token')->nullable();
             $table->timestamps();
         });
     }
