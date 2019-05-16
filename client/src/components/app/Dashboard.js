@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 import toastr from "toastr";
@@ -57,7 +58,7 @@ class Dashboard extends React.Component {
                         <main className="card-body">
                             <h5 className="card-title">Record Transactions</h5>
                             <p className="card-text">Record transactions for a customer!</p>
-                            <button className="btn btn-primary">Go now!</button>
+                            <Link to="/app/till" className="btn btn-primary">Go now!</Link>
                         </main>
                     </section>
                 </main>
