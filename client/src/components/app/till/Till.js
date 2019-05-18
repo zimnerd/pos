@@ -19,6 +19,11 @@ import { Badge } from "react-bootstrap";
 
 class Till extends React.Component {
 
+    state = {
+        code: "",
+        lineItems: []
+    };
+
     componentDidMount = () => {
         document.addEventListener("keydown", this.keydownFunction, false);
     };
@@ -28,28 +33,33 @@ class Till extends React.Component {
     };
 
     keydownFunction = event => {
-        event.preventDefault();
-        this.openModal(event.keyCode);
+        this.openModal(event);
     };
 
-    openModal = (value) => {
-        switch (value) {
+    openModal = (event) => {
+        switch (event.keyCode) {
             case 114:
+                event.preventDefault();
                 this.props.actions.modal.openCompleteSale();
                 break;
             case 115:
+                event.preventDefault();
                 this.props.actions.modal.openCredit();
                 break;
             case 119:
+                event.preventDefault();
                 this.props.actions.modal.openPayments();
                 break;
             case 120:
+                event.preventDefault();
                 this.props.actions.modal.openSales();
                 break;
             case 122:
+                event.preventDefault();
                 this.props.actions.modal.openReturns();
                 break;
             case 123:
+                event.preventDefault();
                 this.props.actions.modal.openOthers();
                 break;
             default:
@@ -59,6 +69,40 @@ class Till extends React.Component {
 
     removeLaybye = () => {
         this.props.actions.till.deactivateLayBye();
+    };
+
+    enterProduct = () => {
+        switch (this.state.code) {
+            case "FE112 XL 110":
+                let transaction = {
+                    description: "Orange Juice",
+                    model: "Extra Large, White",
+                    price: 119,
+                    qty: 1,
+                    disc: 0
+                };
+                let items = this.state.lineItems;
+                items.push(transaction);
+
+                this.setState({ lineItems: items });
+                break;
+            default:
+                this.setState({
+                    code: "Invalid Product Code"
+                });
+        }
+    };
+
+    handleChange = event => {
+        this.setState({
+            code: event.target.value
+        });
+    };
+
+    reset = () => {
+        this.setState({
+            code: ""
+        });
     };
 
     logout = () => {
@@ -80,6 +124,11 @@ class Till extends React.Component {
                         }
                     </section>
                     <section>
+                        <header className="d-flex">
+                            <input onChange={this.handleChange} type="text" onFocus={this.reset}
+                                   placeholder="Enter product code" className="form-control" value={this.state.code}/>
+                            <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
+                        </header>
                         <table className="table table-striped">
                             <thead>
                             <tr>
@@ -92,39 +141,21 @@ class Till extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <td>
-                                    <span>Orange Juice</span>
-                                    <small>Medium</small>
-                                </td>
-                                <td><input type="number" name="quantity" className="form-control" min="1"/></td>
-                                <td>10.25</td>
-                                <td>10.25</td>
-                                <td><input type="number" name="discount" className="form-control" min="0"/></td>
-                                <td>10.25</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span>Orange Juice</span>
-                                    <small>Medium</small>
-                                </td>
-                                <td><input type="number" name="quantity" className="form-control"/></td>
-                                <td>10.25</td>
-                                <td>10.25</td>
-                                <td><input type="number" name="discount" className="form-control"/></td>
-                                <td>10.25</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span>Orange Juice</span>
-                                    <small>Medium</small>
-                                </td>
-                                <td><input type="number" name="quantity" className="form-control"/></td>
-                                <td>10.25</td>
-                                <td>10.25</td>
-                                <td><input type="number" name="discount" className="form-control"/></td>
-                                <td>10.25</td>
-                            </tr>
+                            {
+                                this.state.lineItems.map((item, index) =>
+                                    <tr>
+                                        <td>
+                                            <span>{item.description}</span>
+                                            <small>{item.model}</small>
+                                        </td>
+                                        <td><input type="number" name="quantity" className="form-control" min="1" value={item.qty}/></td>
+                                        <td>{item.price}</td>
+                                        <td>{item.price * item.qty}</td>
+                                        <td><input type="number" name="discount" className="form-control" min="0" value={item.disc}/></td>
+                                        <td>{item.price * item.qty - item.disc}</td>
+                                    </tr>
+                                )
+                            }
                             </tbody>
                         </table>
                     </section>
