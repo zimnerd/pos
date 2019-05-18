@@ -7,11 +7,11 @@ import * as authActions from "../../../redux/actions/auth.action";
 
 import './Till.scss';
 import ActionBar from "./ActionBar";
+import ReturnsModal from "./modals/ReturnsModal";
 
 class Till extends React.Component {
 
-    logout = event => {
-        // event.preventDefault();
+    logout = () => {
         this.props.actions.logout();
     };
 
@@ -92,6 +92,8 @@ class Till extends React.Component {
                 <footer>
                     <ActionBar/>
                 </footer>
+
+                <ReturnsModal/>
             </article>
         )
     }

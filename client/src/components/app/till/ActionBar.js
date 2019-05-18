@@ -1,9 +1,31 @@
 import React from 'react';
+import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+
+import * as modalActions from "../../../redux/actions/modal.action";
 
 import './ActionBar.scss';
 
 class ActionBar extends React.Component {
+
+    componentDidMount = () => {
+        document.addEventListener("keydown", this.keydownFunction, false);
+    };
+
+    componentWillUnmount = () => {
+        document.removeEventListener("keydown", this.keydownFunction, false);
+    };
+
+    keydownFunction = event => {
+        event.preventDefault();
+        if (event.keyCode === 122) {
+            this.openModal();
+        }
+    };
+
+    openModal = () => {
+        this.props.actions.openReturns();
+    };
 
     render() {
         return (
@@ -31,8 +53,8 @@ class ActionBar extends React.Component {
                         <section className="card card-body m-2">
                             <span className="card-text text-center">Product Enquiry</span>
                         </section>
-                        <section className="card card-body m-2">
-                            <span className="card-text text-center">Returns</span>
+                        <section className="card card-body m-2" onClick={this.openModal}>
+                            <span className="card-text text-center">Returns (F11)</span>
                         </section>
                     </section>
                 </main>
@@ -47,8 +69,15 @@ class ActionBar extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        user: state.user
+        user: state.user,
+        modal: state.modal
     };
 }
 
-export default connect(mapStateToProps)(ActionBar);
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(modalActions, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActionBar);
