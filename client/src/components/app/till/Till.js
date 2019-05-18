@@ -12,6 +12,7 @@ import ReturnsModal from "./modals/ReturnsModal";
 import OtherModal from "./modals/OtherModal";
 import SalesOptionsModal from "./modals/SalesOptionsModal";
 import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
+import PaymentOptionsModal from "./modals/PaymentOptionsModal";
 
 class Till extends React.Component {
 
@@ -33,6 +34,9 @@ class Till extends React.Component {
             case 115:
                 this.props.actions.modal.openCredit();
                 break;
+            case 119:
+                this.props.actions.modal.openPayments();
+                break;
             case 120:
                 this.props.actions.modal.openSales();
                 break;
@@ -42,7 +46,8 @@ class Till extends React.Component {
             case 123:
                 this.props.actions.modal.openOthers();
                 break;
-            default: return;
+            default:
+                return;
         }
     };
 
@@ -62,14 +67,14 @@ class Till extends React.Component {
                     <section>
                         <table className="table table-striped">
                             <thead>
-                                <tr>
-                                    <th>Description</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                    <th>Subtotal</th>
-                                    <th>Disc. %</th>
-                                    <th>Total</th>
-                                </tr>
+                            <tr>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Subtotal</th>
+                                <th>Disc. %</th>
+                                <th>Total</th>
+                            </tr>
                             </thead>
                             <tbody>
                             <tr>
@@ -77,21 +82,10 @@ class Till extends React.Component {
                                     <span>Orange Juice</span>
                                     <small>Medium</small>
                                 </td>
-                                <td><input type="number" name="quantity" className="form-control" min="1" /></td>
+                                <td><input type="number" name="quantity" className="form-control" min="1"/></td>
                                 <td>10.25</td>
                                 <td>10.25</td>
-                                <td><input type="number" name="discount" className="form-control" min="0" /></td>
-                                <td>10.25</td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <span>Orange Juice</span>
-                                    <small>Medium</small>
-                                </td>
-                                <td><input type="number" name="quantity" className="form-control" /></td>
-                                <td>10.25</td>
-                                <td>10.25</td>
-                                <td><input type="number" name="discount" className="form-control" /></td>
+                                <td><input type="number" name="discount" className="form-control" min="0"/></td>
                                 <td>10.25</td>
                             </tr>
                             <tr>
@@ -99,10 +93,21 @@ class Till extends React.Component {
                                     <span>Orange Juice</span>
                                     <small>Medium</small>
                                 </td>
-                                <td><input type="number" name="quantity" className="form-control" /></td>
+                                <td><input type="number" name="quantity" className="form-control"/></td>
                                 <td>10.25</td>
                                 <td>10.25</td>
-                                <td><input type="number" name="discount" className="form-control" /></td>
+                                <td><input type="number" name="discount" className="form-control"/></td>
+                                <td>10.25</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span>Orange Juice</span>
+                                    <small>Medium</small>
+                                </td>
+                                <td><input type="number" name="quantity" className="form-control"/></td>
+                                <td>10.25</td>
+                                <td>10.25</td>
+                                <td><input type="number" name="discount" className="form-control"/></td>
                                 <td>10.25</td>
                             </tr>
                             </tbody>
@@ -120,18 +125,20 @@ class Till extends React.Component {
                             <button className="btn btn-primary">Cash</button>
                             <button className="btn btn-primary">Credit</button>
 
-                            <button className="btn btn-secondary" onClick={() => this.openModal(123)}>Other</button>
+                            <button className="btn btn-secondary" onClick={() => this.openModal(123)}>Other (F12)
+                            </button>
                         </footer>
                     </aside>
                 </main>
                 <footer>
-                    <ActionBar openModal={this.openModal} />
+                    <ActionBar openModal={this.openModal}/>
                 </footer>
 
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>
                 <ReturnsModal/>
                 <OtherModal/>
+                <PaymentOptionsModal/>
             </article>
         )
     }
