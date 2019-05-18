@@ -37,6 +37,39 @@ class Till extends React.Component {
                                 </tr>
                             </thead>
                             <tbody>
+                            <tr>
+                                <td>
+                                    <span>Orange Juice</span>
+                                    <small>Medium</small>
+                                </td>
+                                <td><input type="number" name="quantity" className="form-control" min="1" /></td>
+                                <td>10.25</td>
+                                <td>10.25</td>
+                                <td><input type="number" name="discount" className="form-control" min="0" /></td>
+                                <td>10.25</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span>Orange Juice</span>
+                                    <small>Medium</small>
+                                </td>
+                                <td><input type="number" name="quantity" className="form-control" /></td>
+                                <td>10.25</td>
+                                <td>10.25</td>
+                                <td><input type="number" name="discount" className="form-control" /></td>
+                                <td>10.25</td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span>Orange Juice</span>
+                                    <small>Medium</small>
+                                </td>
+                                <td><input type="number" name="quantity" className="form-control" /></td>
+                                <td>10.25</td>
+                                <td>10.25</td>
+                                <td><input type="number" name="discount" className="form-control" /></td>
+                                <td>10.25</td>
+                            </tr>
                             </tbody>
                         </table>
                     </section>
