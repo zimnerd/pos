@@ -2,52 +2,34 @@ import React from 'react';
 import { connect } from "react-redux";
 
 import './Till.scss';
+import ActionBar from "./ActionBar";
 
 class Till extends React.Component {
 
     render() {
         return (
-            <main>
-                <section>
-                    <main className="d-flex">
-                        <section className="col-3 d-flex">
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Complete Sale</span>
-                            </section>
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Credit Notes</span>
-                            </section>
-                        </section>
+            <article>
+                <main>
+                    <aside className="float-right">
+                        <main>
+                            <label>Subtotal: <span>15.75</span></label>
+                            <label>Discount: <span>15.75</span></label>
+                            <label>Tax Total: <span>15.75</span></label>
 
-                        <section className="col-3 d-flex">
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Payment Options</span>
-                            </section>
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Sales Options</span>
-                            </section>
-                        </section>
+                            <h3>13.75</h3>
+                        </main>
+                        <footer>
+                            <button className="btn btn-primary">Cash</button>
+                            <button className="btn btn-primary">Credit</button>
 
-                        <section className="col-3 d-flex">
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Product Enquiry</span>
-                            </section>
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Returns</span>
-                            </section>
-                        </section>
-
-                        <section className="col-2 d-flex">
-                            <section className="card card-body m-2">
-                                <span className="card-text text-center">Other</span>
-                            </section>
-                        </section>
-                    </main>
-                    <footer>
-                        <span>Till number 1 logged in as {this.props.user.username}</span>
-                    </footer>
-                </section>
-            </main>
+                            <button className="btn btn-secondary">Other</button>
+                        </footer>
+                    </aside>
+                </main>
+                <footer>
+                    <ActionBar/>
+                </footer>
+            </article>
         )
     }
 
