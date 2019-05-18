@@ -8,25 +8,6 @@ import './ActionBar.scss';
 
 class ActionBar extends React.Component {
 
-    componentDidMount = () => {
-        document.addEventListener("keydown", this.keydownFunction, false);
-    };
-
-    componentWillUnmount = () => {
-        document.removeEventListener("keydown", this.keydownFunction, false);
-    };
-
-    keydownFunction = event => {
-        event.preventDefault();
-        if (event.keyCode === 122) {
-            this.openModal();
-        }
-    };
-
-    openModal = () => {
-        this.props.actions.openReturns();
-    };
-
     render() {
         return (
             <article>
@@ -53,7 +34,7 @@ class ActionBar extends React.Component {
                         <section className="card card-body m-2">
                             <span className="card-text text-center">Product Enquiry</span>
                         </section>
-                        <section className="card card-body m-2" onClick={this.openModal}>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal(122)}>
                             <span className="card-text text-center">Returns (F11)</span>
                         </section>
                     </section>

@@ -4,15 +4,42 @@ import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 
 import * as authActions from "../../../redux/actions/auth.action";
+import * as modalActions from "../../../redux/actions/modal.action";
 
 import './Till.scss';
 import ActionBar from "./ActionBar";
 import ReturnsModal from "./modals/ReturnsModal";
+import OtherModal from "./modals/OtherModal";
 
 class Till extends React.Component {
 
+    componentDidMount = () => {
+        document.addEventListener("keydown", this.keydownFunction, false);
+    };
+
+    componentWillUnmount = () => {
+        document.removeEventListener("keydown", this.keydownFunction, false);
+    };
+
+    keydownFunction = event => {
+        event.preventDefault();
+        this.openModal(event.keyCode);
+    };
+
+    openModal = (value) => {
+        switch (value) {
+            case 122:
+                this.props.actions.modal.openReturns();
+                break;
+            case 123:
+                this.props.actions.modal.openOthers();
+                break;
+            default: return;
+        }
+    };
+
     logout = () => {
-        this.props.actions.logout();
+        this.props.actions.auth.logout();
     };
 
     render() {
@@ -85,15 +112,16 @@ class Till extends React.Component {
                             <button className="btn btn-primary">Cash</button>
                             <button className="btn btn-primary">Credit</button>
 
-                            <button className="btn btn-secondary">Other</button>
+                            <button className="btn btn-secondary" onClick={() => this.openModal(123)}>Other</button>
                         </footer>
                     </aside>
                 </main>
                 <footer>
-                    <ActionBar/>
+                    <ActionBar openModal={this.openModal} />
                 </footer>
 
                 <ReturnsModal/>
+                <OtherModal/>
             </article>
         )
     }
@@ -108,7 +136,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(authActions, dispatch)
+        actions: {
+            auth: bindActionCreators(authActions, dispatch),
+            modal: bindActionCreators(modalActions, dispatch)
+        }
     };
 }
 
