@@ -5,7 +5,7 @@ import { connect } from "react-redux";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 
-import './ReturnsModal.scss';
+import './OtherModal.scss';
 
 class OtherModal extends React.Component {
 

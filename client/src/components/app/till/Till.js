@@ -10,6 +10,7 @@ import './Till.scss';
 import ActionBar from "./ActionBar";
 import ReturnsModal from "./modals/ReturnsModal";
 import OtherModal from "./modals/OtherModal";
+import SalesOptionsModal from "./modals/SalesOptionsModal";
 
 class Till extends React.Component {
 
@@ -28,6 +29,9 @@ class Till extends React.Component {
 
     openModal = (value) => {
         switch (value) {
+            case 120:
+                this.props.actions.modal.openSales();
+                break;
             case 122:
                 this.props.actions.modal.openReturns();
                 break;
@@ -120,6 +124,7 @@ class Till extends React.Component {
                     <ActionBar openModal={this.openModal} />
                 </footer>
 
+                <SalesOptionsModal/>
                 <ReturnsModal/>
                 <OtherModal/>
             </article>

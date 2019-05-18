@@ -25,8 +25,8 @@ class ActionBar extends React.Component {
                         <section className="card card-body m-2">
                             <span className="card-text text-center">Payment Options</span>
                         </section>
-                        <section className="card card-body m-2">
-                            <span className="card-text text-center">Sales Options</span>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal(120)}>
+                            <span className="card-text text-center">Sales Options (F9)</span>
                         </section>
                     </section>
 
