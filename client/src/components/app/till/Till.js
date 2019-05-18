@@ -24,6 +24,22 @@ class Till extends React.Component {
                     <button className="btn float-right"><span><i className="fa fa-trash"/></span></button>
                 </header>
                 <main>
+                    <section>
+                        <table className="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Qty</th>
+                                    <th>Price</th>
+                                    <th>Subtotal</th>
+                                    <th>Disc. %</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </section>
                     <aside className="float-right">
                         <main>
                             <label>Subtotal: <span>15.75</span></label>
