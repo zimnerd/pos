@@ -1,7 +1,11 @@
-import { ERROR_RESET, LOGIN_USER, VALIDATION_ERROR } from "../constants/auth.contants";
+import { ERROR_RESET, LOGIN_USER, LOGOUT_USER, VALIDATION_ERROR } from "../constants/auth.contants";
 
 export function loginUser(token) {
     return { type: LOGIN_USER, token };
+}
+
+export function logout(token = undefined) {
+    return { type: LOGOUT_USER, token };
 }
 
 export function validationError(errors) {
