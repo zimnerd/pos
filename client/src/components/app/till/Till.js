@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 
 import * as authActions from "../../../redux/actions/auth.action";
 import * as modalActions from "../../../redux/actions/modal.action";
+import * as tillActions from "../../../redux/actions/till.action";
 
 import './Till.scss';
 import ActionBar from "./ActionBar";
@@ -14,6 +15,7 @@ import SalesOptionsModal from "./modals/SalesOptionsModal";
 import CompleteSaleModal from "./modals/CompleteSaleModal";
 import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
 import PaymentOptionsModal from "./modals/PaymentOptionsModal";
+import { Badge } from "react-bootstrap";
 
 class Till extends React.Component {
 
@@ -55,6 +57,10 @@ class Till extends React.Component {
         }
     };
 
+    removeLaybye = () => {
+        this.props.actions.till.deactivateLayBye();
+    };
+
     logout = () => {
         this.props.actions.auth.logout();
     };
@@ -68,6 +74,11 @@ class Till extends React.Component {
                     <button className="btn float-right"><span><i className="fa fa-trash"/></span></button>
                 </header>
                 <main>
+                    <section>
+                        {this.props.till.laybye &&
+                            <Badge variant="success">Lay-Bye Purchase <span onClick={this.removeLaybye}><i className="fa fa-times"/></span></Badge>
+                        }
+                    </section>
                     <section>
                         <table className="table table-striped">
                             <thead>
@@ -152,7 +163,8 @@ class Till extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        user: state.user
+        user: state.user,
+        till: state.till
     };
 }
 
@@ -160,7 +172,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             auth: bindActionCreators(authActions, dispatch),
-            modal: bindActionCreators(modalActions, dispatch)
+            modal: bindActionCreators(modalActions, dispatch),
+            till: bindActionCreators(tillActions, dispatch)
         }
     };
 }

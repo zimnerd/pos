@@ -4,13 +4,19 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
+import * as tillActions from "../../../../redux/actions/till.action";
 
 import './SalesOptionsModal.scss';
 
 class SalesOptionsModal extends React.Component {
 
     handleClose = () => {
-        this.props.actions.closeSales();
+        this.props.actions.modal.closeSales();
+    };
+
+    activateLayBye = () => {
+        this.props.actions.till.activateLayBye();
+        this.handleClose();
     };
 
     render() {
@@ -20,7 +26,7 @@ class SalesOptionsModal extends React.Component {
                     <Modal.Title>Sales Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Card>
+                    <Card onClick={this.activateLayBye}>
                         <Card.Header>
                             <span><i className="fa fa-hand-grab-o"/></span>
                         </Card.Header>
@@ -73,7 +79,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(modalActions, dispatch)
+        actions: {
+            modal: bindActionCreators(modalActions, dispatch),
+            till: bindActionCreators(tillActions, dispatch)
+        }
     };
 }
 

@@ -30,7 +30,6 @@ export function closeReturns(returns = false) {
 }
 
 export function openSales(sales = true) {
-    debugger
     return { type: OPEN_SALES_MODAL, sales }
 }
 
@@ -39,7 +38,6 @@ export function closeSales(sales = false) {
 }
 
 export function openCredit(credit = true) {
-    debugger
     return { type: OPEN_CREDIT_MODAL, credit }
 }
 
