@@ -11,6 +11,7 @@ import ActionBar from "./ActionBar";
 import ReturnsModal from "./modals/ReturnsModal";
 import OtherModal from "./modals/OtherModal";
 import SalesOptionsModal from "./modals/SalesOptionsModal";
+import CompleteSaleModal from "./modals/CompleteSaleModal";
 import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
 import PaymentOptionsModal from "./modals/PaymentOptionsModal";
 
@@ -31,6 +32,9 @@ class Till extends React.Component {
 
     openModal = (value) => {
         switch (value) {
+            case 114:
+                this.props.actions.modal.openCompleteSale();
+                break;
             case 115:
                 this.props.actions.modal.openCredit();
                 break;
@@ -134,6 +138,7 @@ class Till extends React.Component {
                     <ActionBar openModal={this.openModal}/>
                 </footer>
 
+                <CompleteSaleModal/>
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>
                 <ReturnsModal/>

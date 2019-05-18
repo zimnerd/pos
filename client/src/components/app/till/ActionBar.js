@@ -13,8 +13,8 @@ class ActionBar extends React.Component {
             <article>
                 <main className="d-flex">
                     <section className="col-4 d-flex">
-                        <section className="card card-body m-2">
-                            <span className="card-text text-center">Complete Sale</span>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal(114)}>
+                            <span className="card-text text-center">Complete Sale (F3)</span>
                         </section>
                         <section className="card card-body m-2" onClick={() => this.props.openModal(115)}>
                             <span className="card-text text-center">Credit Notes (F4)</span>
