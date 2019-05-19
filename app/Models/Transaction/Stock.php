@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class DailyControl extends Model
+class Stock extends Model
 {
 
     /**
@@ -12,7 +12,7 @@ class DailyControl extends Model
      *
      * @var string
      */
-    protected $table = "dlyposcnt";
+    protected $table = "dlyposcb";
 
 
     /**

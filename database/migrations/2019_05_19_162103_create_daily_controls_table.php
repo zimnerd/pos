@@ -13,32 +13,10 @@ class CreateDailyControlsTable extends Migration
      */
     public function up()
     {
-        Schema::dropIfExists('dlyposcb');
-        Schema::create('dlyposcb', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->date('BDATE');
-            $table->string('BRNO');
-            $table->string('BTYPE');
-            $table->integer('TRANNO');
-            $table->smallInteger('TAXCODE');
-            $table->decimal('VATAMT');
-            $table->decimal('AMT');
-            $table->integer('GLCODE');
-            $table->string('REMARKS');
-            $table->string('COB');
-            $table->string('STYPE');
-            $table->char('UPDFLAG');
-            $table->smallInteger('TILLNO');
-            $table->integer('DLNO');
-            $table->integer('UPDNO');
-            $table->string('OTTYPE');
-            $table->string('OTRANNO');
-            $table->date('ODATE');
-            $table->string('DEBTOR');
-            $table->string('BUSER');
-            $table->string('AUSER');
-            $table->integer('PERIOD');
-            $table->string('CCQNUM');
+        Schema::dropIfExists('dlyposcnt');
+        Schema::create('dlyposcnt', function (Blueprint $table) {
+            $table->string('docnum')->primary();
+            $table->string('transtype');
             $table->timestamps();
         });
     }
@@ -50,6 +28,6 @@ class CreateDailyControlsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dlyposcb');
+        Schema::dropIfExists('dlyposcnt');
     }
 }
