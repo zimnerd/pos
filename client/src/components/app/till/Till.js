@@ -39,27 +39,39 @@ class Till extends React.Component {
     openModal = (event) => {
         switch (event.keyCode) {
             case 114:
-                event.preventDefault();
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
                 this.props.actions.modal.openCompleteSale();
                 break;
             case 115:
-                event.preventDefault();
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
                 this.props.actions.modal.openCredit();
                 break;
             case 119:
-                event.preventDefault();
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
                 this.props.actions.modal.openPayments();
                 break;
             case 120:
-                event.preventDefault();
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
                 this.props.actions.modal.openSales();
                 break;
             case 122:
-                event.preventDefault();
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
                 this.props.actions.modal.openReturns();
                 break;
             case 123:
-                event.preventDefault();
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
                 this.props.actions.modal.openOthers();
                 break;
             default:
@@ -69,6 +81,10 @@ class Till extends React.Component {
 
     removeLaybye = () => {
         this.props.actions.till.deactivateLayBye();
+    };
+
+    removeReturns = () => {
+        this.props.actions.till.deactivateReturns();
     };
 
     enterProduct = () => {
@@ -129,6 +145,13 @@ class Till extends React.Component {
                     <section>
                         {this.props.till.laybye &&
                             <Badge variant="success">Lay-Bye Purchase <span onClick={this.removeLaybye}><i className="fa fa-times"/></span></Badge>
+                        }
+                        {this.props.till.returns &&
+                        <Badge variant="danger">
+                            Return for Customer:
+                            <span>{this.props.till.returns.customer.name}</span>
+                            <span onClick={this.removeReturns}><i className="fa fa-times"/></span>
+                        </Badge>
                         }
                     </section>
                     <section>

@@ -13,19 +13,19 @@ class ActionBar extends React.Component {
             <article>
                 <main className="d-flex">
                     <section className="col-4 d-flex">
-                        <section className="card card-body m-2" onClick={() => this.props.openModal(114)}>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 114 })}>
                             <span className="card-text text-center">Complete Sale (F3)</span>
                         </section>
-                        <section className="card card-body m-2" onClick={() => this.props.openModal(115)}>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 115 })}>
                             <span className="card-text text-center">Credit Notes (F4)</span>
                         </section>
                     </section>
 
                     <section className="col-4 d-flex">
-                        <section className="card card-body m-2" onClick={() => this.props.openModal(119)}>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 119 })}>
                             <span className="card-text text-center">Payment Options (F8)</span>
                         </section>
-                        <section className="card card-body m-2" onClick={() => this.props.openModal(120)}>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 120 })}>
                             <span className="card-text text-center">Sales Options (F9)</span>
                         </section>
                     </section>
@@ -34,7 +34,7 @@ class ActionBar extends React.Component {
                         <section className="card card-body m-2">
                             <span className="card-text text-center">Product Enquiry</span>
                         </section>
-                        <section className="card card-body m-2" onClick={() => this.props.openModal(122)}>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 122 })}>
                             <span className="card-text text-center">Returns (F11)</span>
                         </section>
                     </section>

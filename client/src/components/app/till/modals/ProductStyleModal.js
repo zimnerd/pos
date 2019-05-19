@@ -72,9 +72,9 @@ class ProductStyleModal extends React.Component {
                         </thead>
                         <tbody>
                         {
-                            this.state.products.map((item) => {
+                            this.state.products.map((item, index) => {
                                 return (
-                                    <tr onClick={() => this.selectProduct(item)}>
+                                    <tr onClick={() => this.selectProduct(item)} key={index}>
                                         <td>{item.code}</td>
                                         <td>{item.description}</td>
                                         <td>{item.colour}</td>
