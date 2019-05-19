@@ -6,13 +6,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class Stock extends Model
 {
-
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = "dlyposcb";
+    protected $table = "stkmast";
 
 
     /**

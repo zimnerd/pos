@@ -4,38 +4,30 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class DailySummary extends Model
 {
-    const CREATED_AT = 'created';
-    const UPDATED_AT = 'lstUpdate';
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = "product";
+    protected $table = "dlyposcb";
 
-    /**
-     * The "type" of the auto-incrementing ID.
-     *
-     * @var string
-     */
-    protected $keyType = 'string';
 
     /**
      * The primary key associated with the table.
      *
      * @var string
      */
-    protected $primaryKey = "code";
+    protected $primaryKey = "id";
 
     /**
      * Indicates if the IDs are auto-incrementing.
      *
      * @var bool
      */
-    public $incrementing = false;
+    public $incrementing = true;
 
     /**
      * Indicates if the model should be timestamped.
