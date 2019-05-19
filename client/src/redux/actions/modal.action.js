@@ -2,13 +2,13 @@ import {
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
-    CLOSE_PAYMENTS_MODAL,
+    CLOSE_PAYMENTS_MODAL, CLOSE_PRODUCT_STYLE_MODAL,
     CLOSE_RETURNS_MODAL,
     CLOSE_SALES_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
-    OPEN_PAYMENTS_MODAL,
+    OPEN_PAYMENTS_MODAL, OPEN_PRODUCT_STYLE_MODAL,
     OPEN_RETURNS_MODAL,
     OPEN_SALES_MODAL
 } from "../constants/modal.constants";
@@ -51,6 +51,14 @@ export function openPayments(payments = true) {
 
 export function closePayments(payments = false) {
     return { type: CLOSE_PAYMENTS_MODAL, payments }
+}
+
+export function openProductStyles(styles = true) {
+    return { type: OPEN_PRODUCT_STYLE_MODAL, styles }
+}
+
+export function closeProductStyles(styles = false) {
+    return { type: CLOSE_PRODUCT_STYLE_MODAL, styles }
 }
 
 export function openOthers(others = true) {

@@ -16,12 +16,12 @@ import CompleteSaleModal from "./modals/CompleteSaleModal";
 import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
 import PaymentOptionsModal from "./modals/PaymentOptionsModal";
 import { Badge } from "react-bootstrap";
+import ProductStyleModal from "./modals/ProductStyleModal";
 
 class Till extends React.Component {
 
     state = {
-        code: "",
-        lineItems: []
+        code: ""
     };
 
     componentDidMount = () => {
@@ -75,16 +75,24 @@ class Till extends React.Component {
         switch (this.state.code) {
             case "FE112 XL 110":
                 let transaction = {
+                    code: "FE112 XL 110",
                     description: "Orange Juice",
-                    model: "Extra Large, White",
+                    size: "Extra Large",
+                    colour: "White",
                     price: 119,
                     qty: 1,
                     disc: 0
                 };
-                let items = this.state.lineItems;
-                items.push(transaction);
+                let items = this.props.till.transactions;
+                if (typeof items === "undefined") {
+                    items = [];
+                }
 
-                this.setState({ lineItems: items });
+                items.push(transaction);
+                this.props.actions.till.addLineItem(items);
+                break;
+            case "FE112":
+                this.props.actions.modal.openProductStyles();
                 break;
             default:
                 this.setState({
@@ -132,6 +140,7 @@ class Till extends React.Component {
                         <table className="table table-striped">
                             <thead>
                             <tr>
+                                <th>Code</th>
                                 <th>Description</th>
                                 <th>Qty</th>
                                 <th>Price</th>
@@ -142,11 +151,12 @@ class Till extends React.Component {
                             </thead>
                             <tbody>
                             {
-                                this.state.lineItems.map((item, index) =>
+                                this.props.till.transactions && this.props.till.transactions.map(item =>
                                     <tr>
+                                        <td>{item.code}</td>
                                         <td>
                                             <span>{item.description}</span>
-                                            <small>{item.model}</small>
+                                            <small>{item.size + ", " + item.colour}</small>
                                         </td>
                                         <td><input type="number" name="quantity" className="form-control" min="1" value={item.qty}/></td>
                                         <td>{item.price}</td>
@@ -180,6 +190,7 @@ class Till extends React.Component {
                     <ActionBar openModal={this.openModal}/>
                 </footer>
 
+                <ProductStyleModal/>
                 <CompleteSaleModal/>
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>

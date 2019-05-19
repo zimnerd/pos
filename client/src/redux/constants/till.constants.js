@@ -1,2 +1,3 @@
 export const ACTIVATE_LAY_BYE = "ACTIVATE_LAY_BYE";
 export const DEACTIVATE_LAY_BYE = "DEACTIVATE_LAY_BYE";
+export const ADD_LINE_ITEM = "ADD_LINE_ITEM";
