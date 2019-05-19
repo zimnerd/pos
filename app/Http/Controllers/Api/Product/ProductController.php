@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use App\Size;
 use App\Stock;
+use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
@@ -17,14 +18,25 @@ class ProductController extends Controller
     /**
      * Retrieve the products in the application
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function retrieveStock()
+    public function retrieveStock(Request $request)
     {
-        $products = Product::paginate(30);
+        $search = $request->input('search');
+        $limit = $request->input('limit');
+        if (!$limit) {
+            $limit = 25;
+        }
 
-        $stock = array();
-        foreach ($products as $product) {
+        if (!$search) {
+            $search = '';
+        }
+
+        $products = Product::where('descr', '%'.$search)->paginate($limit);
+
+//        $stock = array();
+//        foreach ($products as $product) {
 //            $queryBuilder = Size::query();
 //            $queryBuilder->where('sizeCode', $product['sizes']);
 //            $queryBuilder->where('sizeCode', $product['sizes']);
@@ -49,13 +61,13 @@ class ProductController extends Controller
 //            $queryBuilder->where('style', $product['code']);
 //            $quantities = $queryBuilder->get();
 
-            $stock[] = array(
-                "code" => $product['code'],
-                "description" => $product['descr']
-            );
-        }
+//            $stock[] = array(
+//                "code" => $product['code'],
+//                "description" => $product['descr']
+//            );
+//        }
 
-        return response()->json(['products' => $stock], $this->successStatus);
+        return response()->json(['products' => $products], $this->successStatus);
     }
 
 }
