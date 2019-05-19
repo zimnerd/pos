@@ -7,6 +7,7 @@ import Dashboard from "./components/app/Dashboard";
 import Till from "./components/app/till/Till";
 
 import './App.scss';
+import StockInformation from "./components/app/stock/StockInformation";
 
 export default class App extends React.Component {
 
@@ -20,6 +21,7 @@ export default class App extends React.Component {
                     <Route path="/app/dashboard" component={Dashboard}/>
 
                     <Route path="/app/till" component={Till}/>
+                    <Route path="/app/stock" component={StockInformation}/>
                 </main>
             </Router>
         )

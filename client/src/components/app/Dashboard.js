@@ -48,7 +48,7 @@ class Dashboard extends React.Component {
                         <main className="card-body">
                             <h5 className="card-title">Stock Management</h5>
                             <p className="card-text">Manage the stock that is available within the shop!</p>
-                            <button className="btn btn-primary">Go now!</button>
+                            <Link to="/app/stock" className="btn btn-primary">Go now!</Link>
                         </main>
                     </section>
                     <section className="col-6 card">
