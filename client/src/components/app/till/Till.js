@@ -15,7 +15,7 @@ import SalesOptionsModal from "./modals/SalesOptionsModal";
 import CompleteSaleModal from "./modals/CompleteSaleModal";
 import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
 import PaymentOptionsModal from "./modals/PaymentOptionsModal";
-import { Badge } from "react-bootstrap";
+import { Badge, Tab, Tabs } from "react-bootstrap";
 import ProductStyleModal from "./modals/ProductStyleModal";
 import AuthenticationModal from "./modals/AuthenticationModal";
 
@@ -88,7 +88,8 @@ class Till extends React.Component {
         this.props.actions.till.deactivateReturns();
     };
 
-    enterProduct = () => {
+    enterProduct = event => {
+        event.preventDefault();
         switch (this.state.code) {
             case "FE112 XL 110":
                 let transaction = {
@@ -142,10 +143,43 @@ class Till extends React.Component {
                     <button className="btn"><span><i className="fa fa-cog"/></span></button>
                     <button className="btn float-right"><span><i className="fa fa-trash"/></span></button>
                 </header>
-                <main>
+                <main className="d-flex">
+                    <aside className="float-left">
+                        <main>
+                            <fieldset>
+                                <h3>Here</h3>
+                                <ol>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                    <li>One options</li>
+                                </ol>
+                            </fieldset>
+                        </main>
+                        <footer>
+                            <Tabs
+                                id="controlled-tab-example"
+                                activeKey={this.state.key}
+                                onSelect={key => this.setState({ key })}
+                            >
+                                <Tab eventKey="combos" title="Combos">
+                                    <ol>
+                                        <li>Orange Juice</li>
+                                        <li>Orange Juice</li>
+                                        <li>Orange Juice</li>
+                                    </ol>
+                                </Tab>
+                            </Tabs>
+                        </footer>
+                    </aside>
                     <section>
                         {this.props.till.laybye &&
-                            <Badge variant="success">Lay-Bye Purchase <span onClick={this.removeLaybye}><i className="fa fa-times"/></span></Badge>
+                        <Badge variant="success">Lay-Bye Purchase <span onClick={this.removeLaybye}><i
+                            className="fa fa-times"/></span></Badge>
                         }
                         {this.props.till.returns &&
                         <Badge variant="danger">
@@ -156,11 +190,11 @@ class Till extends React.Component {
                         }
                     </section>
                     <section>
-                        <header className="d-flex">
+                        <form className="d-flex">
                             <input onChange={this.handleChange} type="text" onFocus={this.reset}
                                    placeholder="Enter product code" className="form-control" value={this.state.code}/>
                             <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
-                        </header>
+                        </form>
                         <table className="table table-striped">
                             <thead>
                             <tr>
@@ -182,10 +216,12 @@ class Till extends React.Component {
                                             <span>{item.description}</span>
                                             <small>{item.size + ", " + item.colour}</small>
                                         </td>
-                                        <td><input type="number" name="quantity" className="form-control" min="1" value={item.qty}/></td>
+                                        <td><input type="number" name="quantity" className="form-control" min="1"
+                                                   value={item.qty}/></td>
                                         <td>{item.price}</td>
                                         <td>{item.price * item.qty}</td>
-                                        <td><input type="number" name="discount" className="form-control" min="0" value={item.disc}/></td>
+                                        <td><input type="number" name="discount" className="form-control" min="0"
+                                                   value={item.disc}/></td>
                                         <td>{item.price * item.qty - item.disc}</td>
                                     </tr>
                                 )

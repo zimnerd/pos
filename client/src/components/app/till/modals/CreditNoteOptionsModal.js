@@ -13,6 +13,11 @@ class CreditNoteOptionsModal extends React.Component {
         this.props.actions.closeCredit();
     };
 
+    activateExchange = () => {
+        this.handleClose();
+        this.props.actions.openAuthentication();
+    };
+
     render() {
         return (
             <Modal show={this.props.modal.credit} onHide={this.handleClose}>
@@ -20,7 +25,7 @@ class CreditNoteOptionsModal extends React.Component {
                     <Modal.Title>Credit Note Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Card>
+                    <Card onClick={this.activateExchange}>
                         <Card.Header>
                             <span><i className="fa fa-exchange"/></span>
                         </Card.Header>
