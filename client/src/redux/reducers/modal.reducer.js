@@ -1,10 +1,11 @@
 import {
+    CLOSE_AUTH_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL, CLOSE_PRODUCT_STYLE_MODAL,
     CLOSE_RETURNS_MODAL,
-    CLOSE_SALES_MODAL,
+    CLOSE_SALES_MODAL, OPEN_AUTH_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
@@ -39,6 +40,10 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, styles: action.styles };
         case CLOSE_PRODUCT_STYLE_MODAL:
             return { ...state, styles: action.styles };
+        case OPEN_AUTH_MODAL:
+            return { ...state, auth: action.auth };
+        case CLOSE_AUTH_MODAL:
+            return { ...state, auth: action.auth };
         case OPEN_OTHERS_MODAL:
             return { ...state, others: action.others };
         case CLOSE_OTHERS_MODAL:

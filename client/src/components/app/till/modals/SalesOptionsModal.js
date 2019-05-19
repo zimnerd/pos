@@ -19,6 +19,11 @@ class SalesOptionsModal extends React.Component {
         this.handleClose();
     };
 
+    activateStaffPrice = () => {
+        this.handleClose();
+        this.props.actions.modal.openAuthentication();
+    };
+
     render() {
         return (
             <Modal show={this.props.modal.sales} onHide={this.handleClose}>
@@ -34,7 +39,7 @@ class SalesOptionsModal extends React.Component {
                             <Card.Title>New Lay-Bye</Card.Title>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card onClick={this.activateStaffPrice}>
                         <Card.Header>
                             <span><i className="fa fa-money"/></span>
                         </Card.Header>

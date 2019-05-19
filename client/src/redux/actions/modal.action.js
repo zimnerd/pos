@@ -1,10 +1,11 @@
 import {
+    CLOSE_AUTH_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL, CLOSE_PRODUCT_STYLE_MODAL,
     CLOSE_RETURNS_MODAL,
-    CLOSE_SALES_MODAL,
+    CLOSE_SALES_MODAL, OPEN_AUTH_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
@@ -59,6 +60,14 @@ export function openProductStyles(styles = true) {
 
 export function closeProductStyles(styles = false) {
     return { type: CLOSE_PRODUCT_STYLE_MODAL, styles }
+}
+
+export function openAuthentication(auth = true) {
+    return { type: OPEN_AUTH_MODAL, auth }
+}
+
+export function closeAuthentication(auth = false) {
+    return { type: CLOSE_AUTH_MODAL, auth }
 }
 
 export function openOthers(others = true) {

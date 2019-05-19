@@ -17,6 +17,7 @@ import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
 import PaymentOptionsModal from "./modals/PaymentOptionsModal";
 import { Badge } from "react-bootstrap";
 import ProductStyleModal from "./modals/ProductStyleModal";
+import AuthenticationModal from "./modals/AuthenticationModal";
 
 class Till extends React.Component {
 
@@ -213,6 +214,7 @@ class Till extends React.Component {
                     <ActionBar openModal={this.openModal}/>
                 </footer>
 
+                <AuthenticationModal/>
                 <ProductStyleModal/>
                 <CompleteSaleModal/>
                 <SalesOptionsModal/>
