@@ -9,7 +9,6 @@ use App\Http\Controllers\Controller;
 use App\Product;
 use App\Size;
 use App\Stock;
-use PhpParser\Builder;
 
 class ProductController extends Controller
 {
@@ -22,35 +21,37 @@ class ProductController extends Controller
      */
     public function retrieveStock()
     {
-        $products = Product::all();
+        $products = Product::paginate(30);
 
         $stock = array();
         foreach ($products as $product) {
-            /**
-             * @var Builder $queryBuilder
-             */
-            $queryBuilder = Size::query();
-            $queryBuilder->where('sizeCode', $product['sizes']);
-            $sizes = $queryBuilder->get();
-
-            $queryBuilder = ColourCode::query();
-            $queryBuilder->where('productCode', $product['code']);
-            $code = $queryBuilder->get();
-
-            $queryBuilder = Colours::query();
-            $queryBuilder->where('code', $code['codeKey']);
-            $colours = $queryBuilder->get();
-
-            $queryBuilder = Stock::query();
-            $queryBuilder->where('style', $product['code']);
-            $quantities = $queryBuilder->get();
+//            $queryBuilder = Size::query();
+//            $queryBuilder->where('sizeCode', $product['sizes']);
+//            $queryBuilder->where('sizeCode', $product['sizes']);
+//            $sizes = $queryBuilder->get();
+//
+//            $queryBuilder = ColourCode::query();
+//            $queryBuilder->where('productCode', $product['code']);
+//            $codes = $queryBuilder->get();
+//
+//            $colours = array();
+//            foreach ($codes as $code) {
+//                $queryBuilder = Colours::query();
+//                $queryBuilder->where('code', $code['codeKey']);
+//                $colour = $queryBuilder->get();
+//
+//                if (isset($colour['colour'])) {
+//                    $colours[] = $colour['colour'];
+//                }
+//            }
+//
+//            $queryBuilder = Stock::query();
+//            $queryBuilder->where('style', $product['code']);
+//            $quantities = $queryBuilder->get();
 
             $stock[] = array(
                 "code" => $product['code'],
-                "description" => $product['description'],
-                "sizes" => $sizes,
-                "colours" => $colours,
-                "quantities" => $quantities
+                "description" => $product['descr']
             );
         }
 

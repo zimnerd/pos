@@ -17,7 +17,6 @@ export default function tillReducer(state = { errors: [] }, action) {
         case ACTIVATE_RETURNS:
             return { ...state, ...action.returns };
         case DEACTIVATE_RETURNS:
-            debugger
             return { ...state, returns: action.returns };
         default:
             return state;

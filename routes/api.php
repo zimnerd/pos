@@ -20,8 +20,14 @@ Route::group(["prefix" => "api/user"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('details', 'Api\Authentication\UserController@details');
-        Route::get('details', 'Api\Product\ProductController@retrieveStock');
     });
 
 });
 
+Route::group(["prefix" => "api/products"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('', 'Api\Product\ProductController@retrieveStock');
+    });
+
+});
