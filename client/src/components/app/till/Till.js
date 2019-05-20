@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
+import { Badge, Tab, Tabs } from "react-bootstrap";
 
-import * as authActions from "../../../redux/actions/auth.action";
 import * as modalActions from "../../../redux/actions/modal.action";
 import * as tillActions from "../../../redux/actions/till.action";
 
 import './Till.scss';
+
 import ActionBar from "./ActionBar";
 import ReturnsModal from "./modals/ReturnsModal";
 import OtherModal from "./modals/OtherModal";
@@ -15,9 +15,9 @@ import SalesOptionsModal from "./modals/SalesOptionsModal";
 import CompleteSaleModal from "./modals/CompleteSaleModal";
 import CreditNoteOptionsModal from "./modals/CreditNoteOptionsModal";
 import PaymentOptionsModal from "./modals/PaymentOptionsModal";
-import { Badge, Tab, Tabs } from "react-bootstrap";
 import ProductStyleModal from "./modals/ProductStyleModal";
 import AuthenticationModal from "./modals/AuthenticationModal";
+import Header from "../Header";
 
 class Till extends React.Component {
 
@@ -131,18 +131,10 @@ class Till extends React.Component {
         });
     };
 
-    logout = () => {
-        this.props.actions.auth.logout();
-    };
-
     render() {
         return (
             <article>
-                <header>
-                    <Link to="/" onClick={this.logout()} className="btn btn-danger">Sign Out</Link>
-                    <button className="btn"><span><i className="fa fa-cog"/></span></button>
-                    <button className="btn float-right"><span><i className="fa fa-trash"/></span></button>
-                </header>
+                <Header/>
                 <main className="d-flex">
                     <aside className="float-left">
                         <main>
@@ -274,7 +266,6 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: {
-            auth: bindActionCreators(authActions, dispatch),
             modal: bindActionCreators(modalActions, dispatch),
             till: bindActionCreators(tillActions, dispatch)
         }

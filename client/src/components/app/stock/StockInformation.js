@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { DropdownButton, DropdownItem, Form, FormControl, InputGroup, Table } from "react-bootstrap";
+import ReactPaginate from 'react-paginate';
 import axios from "axios";
 import toastr from "toastr";
 
@@ -8,12 +9,17 @@ import * as stockActions from "../../../redux/actions/stock.action";
 
 import './StockInformation.scss';
 import { bindActionCreators } from "redux";
+import { Link } from "react-router-dom";
+import Header from "../Header";
 
 class StockInformation extends React.Component {
 
     state = {
         limit: 25,
-        search: undefined
+        search: undefined,
+        page: undefined,
+        items: [],
+        toasted: false
     };
 
     componentDidMount() {
@@ -27,12 +33,17 @@ class StockInformation extends React.Component {
 
         const params = {
             limit: this.state.limit,
-            search: this.state.search
+            search: this.state.search,
+            page: this.state.page
         };
+
         axios.get("/api/products", { headers, params })
             .then(response => {
                 console.log(response.data);
-                toastr.success("Products Retrieved!", "Retrieve Products");
+                if (!this.state.toasted) {
+                    toastr.success("Products Retrieved!", "Retrieve Products");
+                    this.setState({ toasted: true })
+                }
 
                 this.props.actions.retrieveProducts(response.data.products);
             })
@@ -51,12 +62,17 @@ class StockInformation extends React.Component {
     };
 
     handleChange = event => {
-        this.setState({ search: event.target.value });
+        this.setState({ search: event.target.value }, this.retrieveProducts);
+    };
+
+    handlePageClick = data => {
+        this.setState({ page: data.selected }, this.retrieveProducts);
     };
 
     render() {
         return (
             <article className="container">
+                <Header/>
                 <header className="text-center">
                     <h1>Stock Information</h1>
                 </header>
@@ -95,7 +111,9 @@ class StockInformation extends React.Component {
                                             <td>{item.code}</td>
                                             <td>{item.descr}</td>
                                             <td>
-                                                <button className="btn btn-success">View</button>
+                                                <Link to={'stock/' + item.code} className="btn btn-success">
+                                                    View
+                                                </Link>
                                             </td>
                                         </tr>
                                     )
@@ -103,6 +121,22 @@ class StockInformation extends React.Component {
                             }
                             </tbody>
                         </Table>
+                        {
+                            this.props.stock.page &&
+                            <ReactPaginate
+                                previousLabel={'previous'}
+                                nextLabel={'next'}
+                                breakLabel={'...'}
+                                pageCount={this.props.stock.page.last_page}
+                                // marginPagesDisplayed={2}
+                                // pageRangeDisplayed={5}
+                                onPageChange={this.handlePageClick}
+                                // containerClassName={'pagination'}
+                                // subContainerClassName={'pages pagination'}
+                                // activeClassName={'active'}
+                            />
+                        }
+
                     </Form>
                 </main>
             </article>

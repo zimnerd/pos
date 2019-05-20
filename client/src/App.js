@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route } from "react-router-dom";
+import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
@@ -8,6 +8,7 @@ import Till from "./components/app/till/Till";
 
 import './App.scss';
 import StockInformation from "./components/app/stock/StockInformation";
+import ProductDetail from "./components/app/stock/ProductDetail";
 
 export default class App extends React.Component {
 
@@ -21,7 +22,11 @@ export default class App extends React.Component {
                     <Route path="/app/dashboard" component={Dashboard}/>
 
                     <Route path="/app/till" component={Till}/>
-                    <Route path="/app/stock" component={StockInformation}/>
+
+                    <Switch>
+                        <Route path="/app/stock" exact component={StockInformation}/>
+                        <Route path="/app/stock/:code" name="product-detail" component={ProductDetail}/>
+                    </Switch>
                 </main>
             </Router>
         )

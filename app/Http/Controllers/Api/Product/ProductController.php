@@ -32,7 +32,10 @@ class ProductController extends Controller
         if (!$search) {
             $products = Product::paginate($limit);
         } else {
-            $products = Product::where('descr', '%'.$search.'%')->paginate($limit);
+            $products = Product::query()
+                ->where('descr', 'LIKE', "%{$search}%")
+                ->orWhere('code', 'LIKE', "%{$search}%")
+                ->paginate($limit);
         }
 
 //        $stock = array();

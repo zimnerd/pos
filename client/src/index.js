@@ -13,7 +13,6 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './redux/configureStore';
 
 const store = configureStore();
-
 ReactDOM.render(
     <Provider store={store}>
         <App/>
