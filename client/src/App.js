@@ -30,6 +30,18 @@ class App extends React.Component {
                 console.log(error);
                 toastr.error("Unknown error.");
             });
+
+        axios.get('/api/settings/till/1')
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till Details Retrieved!", "Retrieve Till Details");
+                this.props.actions.retrieveTill(response.data.till);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
     }
 
     render() {

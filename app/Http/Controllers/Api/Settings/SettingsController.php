@@ -36,7 +36,7 @@ class SettingsController extends Controller
      */
     public function retrieveTillDetails($id)
     {
-        $tillInfo = Till::where('tillno', $id);
+        $tillInfo = Till::query()->where('tillno', $id)->get();
 
         $details = array();
         foreach ($tillInfo as $info) {
