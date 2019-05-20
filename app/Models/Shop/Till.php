@@ -35,4 +35,11 @@ class Till extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'tillno',
+        'ColName',
+        'ColValue'
+    ];
+
 }
