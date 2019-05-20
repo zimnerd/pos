@@ -1,12 +1,15 @@
 import React from 'react';
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { Collapse, Table } from "react-bootstrap";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as stockActions from "../../../redux/actions/stock.action";
 
-import './ProductDetail.scss';
-import { bindActionCreators } from "redux";
-import { Collapse } from "react-bootstrap";
 import Header from "../Header";
+
+import './ProductDetail.scss';
 
 class ProductDetail extends React.Component {
 
@@ -15,64 +18,72 @@ class ProductDetail extends React.Component {
         colours: false
     };
 
+    componentDidMount() {
+        const { match: { params } } = this.props;
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/products/${params.code}`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Product Retrieved!", "Retrieve Product");
+                this.props.actions.retrieveProduct(response.data.product);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    }
+
     render() {
         return (
             <article className="container">
                 <Header/>
+                {this.props.stock.product &&
                 <header className="text-center">
-                    <h1>Orange Juice</h1>
+                    <h1>{this.props.stock.product.description}</h1>
                 </header>
+                }
                 <main>
-                    <dl>
-                        <dt>Code</dt>
-                        <dd>FE 112</dd>
-                        <dt>Quantity On Hand</dt>
-                        <dd>5000</dd>
-                    </dl>
+                    <Table striped>
+                        <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Colour</th>
+                            <th>Size</th>
+                            <th>Quantity on Hand</th>
+                            <th>Unit Price</th>
+                            <th>Status</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {this.props.stock.product &&
+                        this.props.stock.product.info.map(item => {
+                            let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
+                            let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
 
-                    <div className="accordion" id="accordionExample">
-                        <div className="card">
-                            <div className="card-header" id="sizes">
-                                <h2 className="mb-0">
-                                    <button className="btn btn-link" type="button" data-toggle="collapse"
-                                            onClick={() => this.setState({ sizes: !this.state.sizes })}
-                                            data-target="#sizes" aria-expanded="true" aria-controls="sizes">
-                                        Sizes
-                                    </button>
-                                </h2>
-                            </div>
-
-                            <Collapse in={this.state.sizes}>
-                                <div id="sizes">
-                                    XL 2145
-                                    XL 2145
-                                    XL 2145
-                                    XL 2145
-                                </div>
-                            </Collapse>
-                        </div>
-
-                        <div className="card">
-                            <div className="card-header" id="colours">
-                                <h2 className="mb-0">
-                                    <button className="btn btn-link" type="button" data-toggle="collapse"
-                                            onClick={() => this.setState({ colours: !this.state.colours })}
-                                            data-target="#colours" aria-expanded="true" aria-controls="colours">
-                                        Colours
-                                    </button>
-                                </h2>
-                            </div>
-
-                            <Collapse in={this.state.colours}>
-                                <div id="colours">
-                                    XL 2145
-                                    XL 2145
-                                    XL 2145
-                                    XL 2145
-                                </div>
-                            </Collapse>
-                        </div>
-                    </div>
+                            let markdown = price.mdp > 0;
+                            let priceValue = markdown ? price.mdp : price.rp;
+                            return (
+                                <tr>
+                                    <td>{`${item.STYLE} ${item.SIZES} ${item.CLR}`}</td>
+                                    <td>{`${colour.colour}`}</td>
+                                    <td>{`${item.SIZES}`}</td>
+                                    <td>{`${item.QOH}`}</td>
+                                    <td>{`${priceValue}`}</td>
+                                    <td>{markdown && <span className="badge badge-danger">Markdown</span>}</td>
+                                </tr>
+                            )
+                        })
+                        }
+                        </tbody>
+                    </Table>
                 </main>
             </article>
         )

@@ -6,8 +6,8 @@ namespace App\Http\Controllers\Api\Product;
 use App\ColourCode;
 use App\Colours;
 use App\Http\Controllers\Controller;
+use App\Prices;
 use App\Product;
-use App\Size;
 use App\Stock;
 use Illuminate\Http\Request;
 
@@ -53,35 +53,36 @@ class ProductController extends Controller
         /**
          * @var Product $product
          */
-        $product = Product::findOne($code);
-
-        $queryBuilder = Size::query();
-        $queryBuilder->where('sizeCode', $product->sizes);
-        $sizes = $queryBuilder->get();
+        $product = Product::find($code);
 
         $queryBuilder = ColourCode::query();
         $queryBuilder->where('productCode', $product->code);
         $codes = $queryBuilder->get();
 
         $colours = array();
-        $qoh = array();
         foreach ($codes as $code) {
             $queryBuilder = Colours::query();
-            $queryBuilder->where('code', $code['codeKey']);
+            $queryBuilder->where('code', $code->codeKey);
             $colour = $queryBuilder->get();
-            $colours[] = $colour;
-
-            $queryBuilder = Stock::query();
-            $queryBuilder->where('style', $product['code']);
-            $quantities = $queryBuilder->get();
-            $qoh[] = $quantities;
+            if ($colour) {
+                $colours[] = $colour[0];
+            }
         }
 
+        $queryBuilder = Prices::query();
+        $queryBuilder->where('style', $product->code);
+        $prices = $queryBuilder->get();
+
+        $queryBuilder = Stock::query();
+        $queryBuilder->where('style', $product->code);
+        $quantities = $queryBuilder->get();
+
         $response = array(
-            "code" => $product['code'],
-            "description" => $product['descr'],
-            "sizes" => $sizes,
-            "qoh" => $qoh
+            "code" => $product->code,
+            "description" => $product->descr,
+            "colours" => $colours,
+            "prices" => $prices,
+            "info" => $quantities
         );
 
         return response()->json(['product' => $response], $this->successStatus);

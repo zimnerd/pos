@@ -15,6 +15,7 @@ class CreatePricesTable extends Migration
     {
         Schema::dropIfExists('pricefil');
         Schema::create('pricefil', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->decimal('cp');
             $table->decimal('sp');
             $table->decimal('rp');
