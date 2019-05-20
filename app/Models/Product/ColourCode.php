@@ -34,4 +34,13 @@ class ColourCode extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'id',
+        'productCode',
+        'sequence',
+        'codeKey',
+        'allocation'
+    ];
+
 }

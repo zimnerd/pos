@@ -34,4 +34,11 @@ class Colours extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'id',
+        'code',
+        'colour'
+    ];
+
 }

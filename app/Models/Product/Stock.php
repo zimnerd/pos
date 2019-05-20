@@ -34,4 +34,17 @@ class Stock extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'id',
+        'style',
+        'brno',
+        'sizes',
+        'clr',
+        'grvqty',
+        'qty',
+        'qoh',
+        'lbqoh',
+        'appqoh'
+    ];
 }

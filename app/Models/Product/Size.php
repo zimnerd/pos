@@ -35,4 +35,13 @@ class Size extends Model
      */
     public $timestamps = true;
 
+    public $fillable = [
+        'id',
+        'sizeCode',
+        'sequence',
+        'codeKey',
+        'allocation',
+        'sizeCodeDesc'
+    ];
+
 }

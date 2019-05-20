@@ -38,39 +38,52 @@ class ProductController extends Controller
                 ->paginate($limit);
         }
 
-//        $stock = array();
-//        foreach ($products as $product) {
-//            $queryBuilder = Size::query();
-//            $queryBuilder->where('sizeCode', $product['sizes']);
-//            $queryBuilder->where('sizeCode', $product['sizes']);
-//            $sizes = $queryBuilder->get();
-//
-//            $queryBuilder = ColourCode::query();
-//            $queryBuilder->where('productCode', $product['code']);
-//            $codes = $queryBuilder->get();
-//
-//            $colours = array();
-//            foreach ($codes as $code) {
-//                $queryBuilder = Colours::query();
-//                $queryBuilder->where('code', $code['codeKey']);
-//                $colour = $queryBuilder->get();
-//
-//                if (isset($colour['colour'])) {
-//                    $colours[] = $colour['colour'];
-//                }
-//            }
-//
-//            $queryBuilder = Stock::query();
-//            $queryBuilder->where('style', $product['code']);
-//            $quantities = $queryBuilder->get();
-
-//            $stock[] = array(
-//                "code" => $product['code'],
-//                "description" => $product['descr']
-//            );
-//        }
-
         return response()->json(['products' => $products], $this->successStatus);
     }
 
+
+    /**
+     * Retrieve a product
+     *
+     * @param string $code
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveProduct($code)
+    {
+        /**
+         * @var Product $product
+         */
+        $product = Product::findOne($code);
+
+        $queryBuilder = Size::query();
+        $queryBuilder->where('sizeCode', $product->sizes);
+        $sizes = $queryBuilder->get();
+
+        $queryBuilder = ColourCode::query();
+        $queryBuilder->where('productCode', $product->code);
+        $codes = $queryBuilder->get();
+
+        $colours = array();
+        $qoh = array();
+        foreach ($codes as $code) {
+            $queryBuilder = Colours::query();
+            $queryBuilder->where('code', $code['codeKey']);
+            $colour = $queryBuilder->get();
+            $colours[] = $colour;
+
+            $queryBuilder = Stock::query();
+            $queryBuilder->where('style', $product['code']);
+            $quantities = $queryBuilder->get();
+            $qoh[] = $quantities;
+        }
+
+        $response = array(
+            "code" => $product['code'],
+            "description" => $product['descr'],
+            "sizes" => $sizes,
+            "qoh" => $qoh
+        );
+
+        return response()->json(['product' => $response], $this->successStatus);
+    }
 }
