@@ -31,7 +31,13 @@ class UserController extends Controller
 
         if (Auth::attempt($credentials)) {
             $user = Auth::user();
-            $success['token'] = $user->createToken($credentials['username'])->accessToken;
+
+            $token = $user->createToken($credentials['username'])->accessToken;
+            $success['token'] = $token;
+            $user['api_token'] = $token;
+
+            $user->save();
+
             return response()->json(['success' => $success], $this->successStatus);
         } else {
             return response()->json(['error' => 'Unauthorised'], 401);
@@ -66,4 +72,13 @@ class UserController extends Controller
         return response()->json(['success' => $success], $this->createStatus);
     }
 
+    /**
+     * Retrieve the details of the supplied user.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function details() {
+        $user = Auth::user();
+        return response()->json(['user' => $user], $this->successStatus);
+    }
 }

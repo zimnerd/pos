@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -18,7 +16,24 @@ Route::group(["prefix" => "api/user"], function () {
     Route::post('login', 'Api\Authentication\UserController@login');
     Route::post('register', 'Api\Authentication\UserController@register');
 
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('details', 'Api\Authentication\UserController@details');
+    });
+
 });
 
-Route::group(['middleware' => 'auth:api'], function () {
+Route::group(["prefix" => "api/products"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('', 'Api\Product\ProductController@retrieveStock');
+        Route::get('{code}', 'Api\Product\ProductController@retrieveProduct');
+    });
+
+});
+
+Route::group(["prefix" => "api/settings"], function () {
+
+    Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
+    Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
+
 });

@@ -1,47 +1,45 @@
 import React from 'react';
-import { Link } from "react-router-dom";
-import axios from "axios";
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { bindActionCreators } from 'redux';
+import axios from 'axios';
 import toastr from 'toastr';
+
+import * as authActions from '../../redux/actions/auth.action';
 
 import './Login.scss';
 
-export default class Login extends React.Component {
+class Login extends React.Component {
 
-    constructor(props) {
-        super(props);
+    state = {
+        username: '',
+        password: ''
+    };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-
-        this.state = {
-            username: '',
-            password: '',
-            errors: []
-        };
-    }
-
-    onSubmit(event) {
+    onSubmit = event => {
         event.preventDefault();
-        this.setState({ errors: [] });
-        axios.post("/api/user/login", this.state)
+        this.props.actions.errorReset();
+
+        axios.post('/api/user/login', this.state)
             .then(response => {
                 console.log(response);
-                toastr.success("Login Successful!");
-                this.props.history.push("/app/dashboard");
+                toastr.success('Login Successful!', 'Login User');
+
+                this.props.actions.loginUser(response.data.success.token);
+                this.props.history.push('/app/dashboard');
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 401) {
-                    toastr.error("The username and password combination is invalid!");
+                    toastr.error('The username and password combination is invalid!', 'Unauthorized');
                 } else {
-                    this.setState({
-                        errors: error.response.data.errors
-                    });
+                    toastr.error('The information you have supplied is invalid!', 'Validation');
+                    this.props.actions.validationError(error.response.data.errors);
                 }
             });
-    }
+    };
 
-    handleChange(event) {
+    handleChange = event => {
         event.preventDefault();
         let formValues = this.state;
 
@@ -49,7 +47,7 @@ export default class Login extends React.Component {
         formValues[name] = event.target.value;
 
         this.setState(formValues);
-    }
+    };
 
     render() {
         return (
@@ -59,24 +57,26 @@ export default class Login extends React.Component {
                     <hr/>
                 </header>
                 <main>
-                    <form id="login-form">
+                    <form id='login-form'>
                         <main>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Username:</label>
-                                <input id="username" name="username" className="form-control" type="text" value={this.state.username}
-                                       onChange={this.handleChange} placeholder="Username" required/>
-                                {this.state.errors['username'] && <p>{this.state.errors['username']}</p>}
+                                <input id='username' name='username' className='form-control' type='text'
+                                       value={this.state.username}
+                                       onChange={this.handleChange} placeholder='Username' required/>
+                                {this.props.auth.errors['username'] && <p>{this.props.auth.errors['username']}</p>}
                             </section>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Password:</label>
-                                <input id="password" name="password" className="form-control" type="password" value={this.state.password}
-                                       onChange={this.handleChange} placeholder="Password" required/>
-                                {this.state.errors['password'] && <p>{this.state.errors['password']}</p>}
+                                <input id='password' name='password' className='form-control' type='password'
+                                       value={this.state.password}
+                                       onChange={this.handleChange} placeholder='Password' required/>
+                                {this.props.auth.errors['password'] && <p>{this.props.auth.errors['password']}</p>}
                             </section>
                         </main>
                         <footer>
-                            <button className="btn btn-primary float-right" onClick={this.onSubmit}>Login</button>
-                            <Link to="/register" className="btn btn-secondary float-left">Register</Link>
+                            <button className='btn btn-primary float-right' onClick={this.onSubmit}>Login</button>
+                            <Link to='/register' className='btn btn-secondary float-left'>Register</Link>
                         </footer>
                     </form>
                 </main>
@@ -85,3 +85,17 @@ export default class Login extends React.Component {
     }
 
 }
+
+function mapStateToProps(state) {
+    return {
+        auth: state.auth
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(authActions, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Login);

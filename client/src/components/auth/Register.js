@@ -1,50 +1,47 @@
 import React from 'react';
-import axios from "axios";
+import { Link } from 'react-router-dom';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import axios from 'axios';
+import toastr from 'toastr';
+
+import * as authActions from "../../redux/actions/auth.action";
 
 import './Register.scss';
-import {Link} from "react-router-dom";
-import toastr from "toastr";
 
-export default class Register extends React.Component {
+class Register extends React.Component {
 
-    constructor(props) {
-        super(props);
+    state = {
+        name: '',
+        email: '',
+        username: '',
+        password: '',
+        confirm: ''
+    };
 
-        this.handleChange = this.handleChange.bind(this);
-        this.onSubmit = this.onSubmit.bind(this);
-
-        this.state = {
-            name: '',
-            email: '',
-            username: '',
-            password: '',
-            confirm: '',
-            errors: []
-        };
-    }
-
-    onSubmit(event) {
+    onSubmit = event => {
         event.preventDefault();
-        this.setState({ errors: [] });
-        axios.post("/api/user/register", this.state)
+        this.props.actions.errorReset();
+
+        axios.post('/api/user/register', this.state)
             .then(response => {
                 console.log(response);
-                toastr.success("You have been registered successfully!");
-                this.props.history.push("/");
+                toastr.success('You have been registered successfully!', 'Register User');
+
+                this.props.history.push('/');
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 500) {
-                    toastr.success("There was an error when trying to register your account!");
+                    toastr.error('There was an error when trying to register your account!', 'Register User');
                 } else {
-                    this.setState({
-                        errors: error.response.data.errors
-                    });
+                    toastr.error('The information you have supplied is invalid!', 'Validation');
+                    this.props.actions.validationError(error.response.data.errors);
                 }
             });
-    }
+    };
 
-    handleChange(event) {
+    handleChange = event => {
         event.preventDefault();
         let formValues = this.state;
 
@@ -52,7 +49,7 @@ export default class Register extends React.Component {
         formValues[name] = event.target.value;
 
         this.setState(formValues);
-    }
+    };
 
     render() {
         return (
@@ -62,47 +59,47 @@ export default class Register extends React.Component {
                     <hr/>
                 </header>
                 <main>
-                    <form id="register-form">
+                    <form id='register-form'>
                         <main>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Name:</label>
-                                <input id="name" name="name" className="form-control" type="text"
+                                <input id='name' name='name' className='form-control' type='text'
                                        value={this.state.name}
-                                       onChange={this.handleChange} placeholder="Name" required/>
-                                {this.state.errors['name'] && <p>{this.state.errors['name']}</p>}
+                                       onChange={this.handleChange} placeholder='Name' required/>
+                                {this.props.auth.errors['name'] && <p>{this.props.auth.errors['name']}</p>}
                             </section>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Email Address:</label>
-                                <input id="email" name="email" className="form-control" type="email"
+                                <input id='email' name='email' className='form-control' type='email'
                                        value={this.state.email}
-                                       onChange={this.handleChange} placeholder="Email Address" required/>
-                                {this.state.errors['email'] && <p>{this.state.errors['email']}</p>}
+                                       onChange={this.handleChange} placeholder='Email Address' required/>
+                                {this.props.auth.errors['email'] && <p>{this.props.auth.errors['email']}</p>}
                             </section>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Username:</label>
-                                <input id="username" name="username" className="form-control" type="text"
+                                <input id='username' name='username' className='form-control' type='text'
                                        value={this.state.username}
-                                       onChange={this.handleChange} placeholder="Username" required/>
-                                {this.state.errors['username'] && <p>{this.state.errors['username']}</p>}
+                                       onChange={this.handleChange} placeholder='Username' required/>
+                                {this.props.auth.errors['username'] && <p>{this.props.auth.errors['username']}</p>}
                             </section>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Password:</label>
-                                <input id="password" name="password" className="form-control" type="password"
+                                <input id='password' name='password' className='form-control' type='password'
                                        value={this.state.password}
-                                       onChange={this.handleChange} placeholder="Password" required/>
-                                {this.state.errors['password'] && <p>{this.state.errors['password']}</p>}
+                                       onChange={this.handleChange} placeholder='Password' required/>
+                                {this.props.auth.errors['password'] && <p>{this.props.auth.errors['password']}</p>}
                             </section>
-                            <section className="form-group">
+                            <section className='form-group'>
                                 <label>Confirm Password:</label>
-                                <input id="confirm" name="confirm" placeholder="Confirm Password"
+                                <input id='confirm' name='confirm' placeholder='Confirm Password'
                                        value={this.state.confirm}
-                                       onChange={this.handleChange} className="form-control" type="password" required/>
-                                {this.state.errors['confirm'] && <p>{this.state.errors['confirm']}</p>}
+                                       onChange={this.handleChange} className='form-control' type='password' required/>
+                                {this.props.auth.errors['confirm'] && <p>{this.props.auth.errors['confirm']}</p>}
                             </section>
                         </main>
                         <footer>
-                            <button className="btn btn-primary float-right" onClick={this.onSubmit}>Register</button>
-                            <Link to="/" className="btn btn-secondary float-left">Back</Link>
+                            <button className='btn btn-primary float-right' onClick={this.onSubmit}>Register</button>
+                            <Link to='/' className='btn btn-secondary float-left'>Back</Link>
                         </footer>
                     </form>
                 </main>
@@ -111,3 +108,17 @@ export default class Register extends React.Component {
     }
 
 }
+
+function mapStateToProps(state) {
+    return {
+        auth: state.auth
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators(authActions, dispatch)
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Register);
