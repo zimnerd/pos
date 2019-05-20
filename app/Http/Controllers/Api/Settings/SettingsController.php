@@ -22,7 +22,7 @@ class SettingsController extends Controller
 
         $details = array();
         foreach ($shopInfo as $info) {
-            $details[$info->ColName][] = $info->ColValue;
+            $details[$info->ColName] = $info->ColValue;
         }
 
         return response()->json(['shop' => $details], $this->successStatus);
@@ -40,7 +40,7 @@ class SettingsController extends Controller
 
         $details = array();
         foreach ($tillInfo as $info) {
-            $details[$info->ColName][] = $info->ColValue;
+            $details[$info->ColName] = $info->ColValue;
         }
 
         return response()->json(['till' => $details], $this->successStatus);

@@ -33,9 +33,7 @@ Route::group(["prefix" => "api/products"], function () {
 
 Route::group(["prefix" => "api/settings"], function () {
 
-    Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('shop', 'Api\Product\SettingsController@retrieveShopDetails');
-        Route::get('till/{id}', 'Api\Product\SettingsController@retrieveTillDetails');
-    });
+    Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
+    Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
 
 });
