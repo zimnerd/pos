@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -29,6 +27,14 @@ Route::group(["prefix" => "api/products"], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('', 'Api\Product\ProductController@retrieveStock');
         Route::get('{code}', 'Api\Product\ProductController@retrieveProduct');
+    });
+
+});
+
+Route::group(["prefix" => "api/settings"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('shop', 'Api\Product\SettingsController@retrieveShopDetails');
     });
 
 });

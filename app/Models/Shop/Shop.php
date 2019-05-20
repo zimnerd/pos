@@ -36,4 +36,9 @@ class Shop extends Model
      */
     public $timestamps = true;
 
+    public $fillable = [
+        'ColName',
+        'ColValue'
+    ];
+
 }
