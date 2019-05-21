@@ -56,7 +56,7 @@ class ProductController extends Controller
          */
         $product = Product::find($code);
         if (!$product) {
-            return response()->json([], $this->notFoundStatus);
+            return response()->json(['error' => 'The product style code applied cannot be found.'], $this->notFoundStatus);
         }
 
         $queryBuilder = ColourCode::query();
@@ -91,4 +91,41 @@ class ProductController extends Controller
 
         return response()->json(['product' => $response], $this->successStatus);
     }
+
+    /**
+     * Retrieve a product with a style, size and colour code
+     *
+     * @param string $code
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveProductWithCode($code, $size, $colour) {
+        /**
+         * @var Product $product
+         */
+        $product = Product::query()
+            ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
+            ->join('colours', 'colours.code', '=', 'clrcode.codeKey')
+            ->join('sizecodes', 'sizecodes.sizeCode', '=', 'product.sizes')
+            ->where('product.code', $code)
+            ->where('product.sizes', $size)
+            ->where('colours.code', $colour);
+
+        if (!$product) {
+            return response()->json(['error' => 'The product style code applied cannot be found.'], $this->notFoundStatus);
+        }
+
+        $queryBuilder = Stock::query();
+        $queryBuilder->where('STYLE', $product->code);
+        $queryBuilder->where('SIZES', $size);
+        $queryBuilder->where('CLR', $colour);
+        $quantities = $queryBuilder->get();
+
+        if ($quantities->QOH < 1) {
+            return response()->json(['error' => 'The product style applied does not have any stock on hand.'],
+                $this->notFoundStatus);
+        }
+
+        return response()->json(['product' => $product], $this->successStatus);
+    }
+
 }
