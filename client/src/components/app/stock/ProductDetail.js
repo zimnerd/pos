@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { Collapse, Table } from "react-bootstrap";
+import { Table } from "react-bootstrap";
 import axios from "axios";
 import toastr from "toastr";
 
@@ -12,11 +12,6 @@ import Header from "../Header";
 import './ProductDetail.scss';
 
 class ProductDetail extends React.Component {
-
-    state = {
-        sizes: false,
-        colours: false
-    };
 
     componentDidMount() {
         const { match: { params } } = this.props;

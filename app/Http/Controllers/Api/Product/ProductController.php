@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     public $successStatus = 200;
+    public $notFoundStatus = 404;
 
     /**
      * Retrieve the products in the application
@@ -54,6 +55,9 @@ class ProductController extends Controller
          * @var Product $product
          */
         $product = Product::find($code);
+        if (!$product) {
+            return response()->json([], $this->notFoundStatus);
+        }
 
         $queryBuilder = ColourCode::query();
         $queryBuilder->where('productCode', $product->code);

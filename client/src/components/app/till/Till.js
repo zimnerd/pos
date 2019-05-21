@@ -2,9 +2,12 @@ import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { Badge, Tab, Tabs } from "react-bootstrap";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as modalActions from "../../../redux/actions/modal.action";
 import * as tillActions from "../../../redux/actions/till.action";
+import * as stockActions from "../../../redux/actions/stock.action";
 
 import './Till.scss';
 
@@ -88,34 +91,58 @@ class Till extends React.Component {
         this.props.actions.till.deactivateReturns();
     };
 
+    openStyles = code => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/products/${code}`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Product Retrieved!", "Retrieve Product");
+                this.props.actions.stock.retrieveProduct(response.data.product);
+                this.props.actions.modal.openProductStyles();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error("The product code supplied cannot be found.", "Retrieve Product");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
     enterProduct = event => {
         event.preventDefault();
-        switch (this.state.code) {
-            case "FE112 XL 110":
-                let transaction = {
-                    code: "FE112 XL 110",
-                    description: "Orange Juice",
-                    size: "Extra Large",
-                    colour: "White",
-                    price: 119,
-                    qty: 1,
-                    disc: 0
-                };
-                let items = this.props.till.transactions;
-                if (typeof items === "undefined") {
-                    items = [];
-                }
+        let codeParts = this.state.code.split(" ");
+        if (codeParts.length === 0 || codeParts.length > 3) {
+            this.setState({
+                code: "Invalid Product Code"
+            });
+        } else if (codeParts.length < 3) {
+            this.openStyles(codeParts[0]);
+        } else if (codeParts.length === 3) {
+            let transaction = {
+                code: "FE112 XL 110",
+                description: "Orange Juice",
+                size: "Extra Large",
+                colour: "White",
+                price: 119,
+                qty: 1,
+                disc: 0
+            };
+            let items = this.props.till.transactions;
+            if (typeof items === "undefined") {
+                items = [];
+            }
 
-                items.push(transaction);
-                this.props.actions.till.addLineItem(items);
-                break;
-            case "FE112":
-                this.props.actions.modal.openProductStyles();
-                break;
-            default:
-                this.setState({
-                    code: "Invalid Product Code"
-                });
+            items.push(transaction);
+            this.props.actions.till.addLineItem(items);
+            this.setState({ code: "" })
         }
     };
 
@@ -233,7 +260,7 @@ class Till extends React.Component {
                             <button className="btn btn-primary">Cash</button>
                             <button className="btn btn-primary">Credit</button>
 
-                            <button className="btn btn-secondary" onClick={() => this.openModal(123)}>Other (F12)
+                            <button className="btn btn-secondary" onClick={() => this.openModal({ keyCode: 123})}>Other (F12)
                             </button>
                         </footer>
                     </aside>
@@ -259,7 +286,8 @@ class Till extends React.Component {
 function mapStateToProps(state) {
     return {
         user: state.user,
-        till: state.till
+        till: state.till,
+        auth: state.auth
     };
 }
 
@@ -267,7 +295,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
-            till: bindActionCreators(tillActions, dispatch)
+            till: bindActionCreators(tillActions, dispatch),
+            stock: bindActionCreators(stockActions, dispatch)
         }
     };
 }
