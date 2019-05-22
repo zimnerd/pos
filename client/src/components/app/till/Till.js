@@ -116,6 +116,51 @@ class Till extends React.Component {
             });
     };
 
+    retrieveProductWithCode = codeParts => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/products/${codeParts[0]}/${codeParts[1]}/${codeParts[2]}`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Product Retrieved!", "Retrieve Product");
+
+                const product = response.data.product;
+                const price = product.mdp > 0 ? product.mdp : product.rp;
+
+                let transaction = {
+                    code: product.code,
+                    description: product.descr,
+                    size: product.codeKey,
+                    colour: product.colour,
+                    price: price,
+                    qty: 1,
+                    disc: 0
+                };
+
+                let items = this.props.till.transactions;
+                if (typeof items === "undefined") {
+                    items = [];
+                }
+
+                items.push(transaction);
+                this.props.actions.till.addLineItem(items);
+                this.setState({ code: "" })
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error(error.response.data.error, "Retrieve Product");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
     enterProduct = event => {
         event.preventDefault();
         let codeParts = this.state.code.split(" ");
@@ -126,23 +171,7 @@ class Till extends React.Component {
         } else if (codeParts.length < 3) {
             this.openStyles(codeParts[0]);
         } else if (codeParts.length === 3) {
-            let transaction = {
-                code: "FE112 XL 110",
-                description: "Orange Juice",
-                size: "Extra Large",
-                colour: "White",
-                price: 119,
-                qty: 1,
-                disc: 0
-            };
-            let items = this.props.till.transactions;
-            if (typeof items === "undefined") {
-                items = [];
-            }
-
-            items.push(transaction);
-            this.props.actions.till.addLineItem(items);
-            this.setState({ code: "" })
+            this.retrieveProductWithCode(codeParts);
         }
     };
 
@@ -238,10 +267,10 @@ class Till extends React.Component {
                                         <td><input type="number" name="quantity" className="form-control" min="1"
                                                    value={item.qty}/></td>
                                         <td>{item.price}</td>
-                                        <td>{item.price * item.qty}</td>
+                                        <td>{(item.price * item.qty).toFixed(2)}</td>
                                         <td><input type="number" name="discount" className="form-control" min="0"
                                                    value={item.disc}/></td>
-                                        <td>{item.price * item.qty - item.disc}</td>
+                                        <td>{(item.price * item.qty - item.disc).toFixed(2)}</td>
                                     </tr>
                                 )
                             }
