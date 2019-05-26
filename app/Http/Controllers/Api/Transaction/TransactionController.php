@@ -203,6 +203,7 @@ class TransactionController extends Controller
             $transaction = array();
             $transaction['code'] = $sale->code;
             $transaction['colour'] = $sale->colour;
+            $transaction['size'] = $sale->size;
             $transaction['cost'] = $sale->cost;
             $transaction['description'] = $sale->description;
             $transaction['disc'] = $sale->disc;

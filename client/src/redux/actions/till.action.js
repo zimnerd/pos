@@ -1,10 +1,10 @@
 import {
     ACTIVATE_LAY_BYE,
     ACTIVATE_RETURNS,
-    ADD_LINE_ITEM,
+    SET_TRANSACTIONS,
     DEACTIVATE_LAY_BYE,
     DEACTIVATE_RETURNS, RESET_TOTALS, RESET_TRANSACTIONS,
-    SET_TOTALS
+    SET_TOTALS, SET_TRANSACTION_ID
 } from "../constants/till.constants";
 
 export function activateLayBye(activate = true) {
@@ -15,8 +15,8 @@ export function deactivateLayBye(activate = false) {
     return { type: DEACTIVATE_LAY_BYE, activate }
 }
 
-export function addLineItem(transactions = []) {
-    return { type: ADD_LINE_ITEM, transactions }
+export function setTransactions(transactions = []) {
+    return { type: SET_TRANSACTIONS, transactions }
 }
 
 export function activateReturns(returns = {}) {
@@ -44,4 +44,8 @@ export function resetTotals() {
 export function resetTransactions() {
     let transactions = [];
     return { type: RESET_TRANSACTIONS, transactions }
+}
+
+export function setTransactionId(held = "") {
+    return { type: SET_TRANSACTION_ID, held }
 }

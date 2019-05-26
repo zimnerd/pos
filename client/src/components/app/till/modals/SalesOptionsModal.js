@@ -2,6 +2,8 @@ import React from 'react';
 import { Button, Card, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -22,6 +24,50 @@ class SalesOptionsModal extends React.Component {
     activateStaffPrice = () => {
         this.handleClose();
         this.props.actions.modal.openAuthentication();
+    };
+
+    holdSale = () => {
+        this.handleClose();
+        let heldSales = this.props.till.transactions.filter(item => item.hold);
+        if (heldSales.length === 0) {
+            return;
+        }
+
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        let request = {
+            till: this.props.settings.till,
+            type: "INV",
+            transactions: heldSales
+        };
+
+        this.props.actions.till.setTransactions();
+
+        axios.post(`/api/transactions/hold`, request, { headers })
+            .then(response => {
+                console.log(response.data);
+                this.props.actions.till.setTransactionId(response.data.sale);
+                this.props.actions.modal.openTransaction();
+
+                toastr.success("Transaction Held!", "Hold Transaction");
+
+                this.saveSettings();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
+    retrieveSale = () => {
+        this.handleClose();
+        this.props.actions.modal.openRetrieveHeld();
     };
 
     render() {
@@ -48,7 +94,7 @@ class SalesOptionsModal extends React.Component {
                         </Card.Body>
                     </Card>
                     <hr/>
-                    <Card>
+                    <Card onClick={this.holdSale}>
                         <Card.Header>
                             <span><i className="fa fa-hand-o-left"/></span>
                         </Card.Header>
@@ -56,7 +102,7 @@ class SalesOptionsModal extends React.Component {
                             <Card.Title>Hold Sale</Card.Title>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card onClick={this.retrieveSale}>
                         <Card.Header>
                             <span><i className="fa fa-hand-o-right"/></span>
                         </Card.Header>
@@ -78,7 +124,10 @@ class SalesOptionsModal extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        modal: state.modal
+        modal: state.modal,
+        till: state.till,
+        settings: state.settings,
+        auth: state.auth
     };
 }
 

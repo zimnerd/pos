@@ -9,6 +9,7 @@ import * as modalActions from "../../../redux/actions/modal.action";
 import * as stockActions from "../../../redux/actions/stock.action";
 
 import './LineItems.scss';
+import { Badge } from "react-bootstrap";
 
 class LineItems extends React.Component {
 
@@ -97,8 +98,8 @@ class LineItems extends React.Component {
                 }
 
                 items.push(transaction);
-                this.props.actions.till.addLineItem(items);
-                this.mapLineItem(transaction);
+                this.props.actions.till.setTransactions(items);
+                this.props.mapLineItem(transaction);
                 this.setState({ code: "" });
             })
             .catch(error => {
@@ -113,25 +114,24 @@ class LineItems extends React.Component {
             });
     };
 
-    mapLineItem = transaction => {
-        let totals = this.props.till.totals;
-
-        const discount = transaction.price - transaction.total;
-        const vat = transaction.total * 15 / 100;
-        const subtotal = transaction.total - vat;
-
-        totals.total += Number(transaction.total);
-        totals.discount += discount;
-        totals.vat += vat;
-        totals.subtotal += subtotal;
-
-        this.props.actions.till.setTotals(totals);
-    };
-
     reset = () => {
         this.setState({
             code: ""
         });
+    };
+
+    holdItem = (index) => {
+        let transactions = this.props.till.transactions;
+        let item = transactions[index];
+        item.hold = !item.hold;
+
+        this.props.actions.till.setTransactions(transactions);
+    };
+
+    removeItem = (index) => {
+        let transactions = this.props.till.transactions;
+        transactions.splice(index, 1);
+        this.props.actions.till.setTransactions(transactions);
     };
 
     render() {
@@ -152,12 +152,19 @@ class LineItems extends React.Component {
                         <th>Subtotal</th>
                         <th>Disc. %</th>
                         <th>Total</th>
+                        <th colSpan="2"/>
                     </tr>
                     </thead>
                     <tbody>
+                    {this.props.till.transactions &&
+                        this.props.till.transactions.length === 0 &&
+                        <tr>
+                            <td colSpan="9" className="text-center">No line items added!</td>
+                        </tr>
+                    }
                     {
-                        this.props.till.transactions && this.props.till.transactions.map(item =>
-                            <tr>
+                        this.props.till && this.props.till.transactions.map((item, index) =>
+                            <tr key={index}>
                                 <td>{item.code}</td>
                                 <td>
                                     <span>{item.description}</span>
@@ -166,13 +173,23 @@ class LineItems extends React.Component {
                                     <span className="badge badge-danger">Markdown</span>
                                     }
                                 </td>
-                                <td><input type="number" name="quantity" className="form-control" min="1"
-                                           value={item.qty}/></td>
+                                <td><span>{item.qty}</span></td>
                                 <td>{item.price}</td>
-                                <td>{item.subtotal.toFixed(2)}</td>
-                                <td><input type="number" name="discount" className="form-control" min="0"
-                                           value={item.disc}/></td>
-                                <td>{item.total.toFixed(2)}</td>
+                                <td>{Number(item.subtotal).toFixed(2)}</td>
+                                <td><span>{item.disc}</span></td>
+                                <td>{Number(item.total).toFixed(2)}</td>
+                                <td>
+                                    {!item.hold &&
+                                    <span onClick={() => this.holdItem(index)}><i className="fa fa-hand-stop-o"/></span>
+                                    }
+                                    {item.hold &&
+                                    <Badge variant="warning">
+                                        Hold
+                                        <span onClick={() => this.holdItem(index)}><i className="fa fa-times"/></span>
+                                    </Badge>
+                                    }
+                                </td>
+                                <td><span onClick={() => this.removeItem(index)}><i className="fa fa-trash"/></span></td>
                             </tr>
                         )
                     }

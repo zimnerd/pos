@@ -6,9 +6,10 @@ import {
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
-    CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL, CLOSE_RETRIEVE_HELD_MODAL,
     CLOSE_RETURNS_MODAL,
     CLOSE_SALES_MODAL,
+    CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
     OPEN_CASH_MODAL,
@@ -16,9 +17,10 @@ import {
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
-    OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL, OPEN_RETRIEVE_HELD_MODAL,
     OPEN_RETURNS_MODAL,
-    OPEN_SALES_MODAL
+    OPEN_SALES_MODAL,
+    OPEN_TRANSACTION_MODAL
 } from "../constants/modal.constants";
 
 export default function modalReducer(state = { errors: [] }, action) {
@@ -63,6 +65,14 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, card: action.card };
         case CLOSE_CARD_MODAL:
             return { ...state, card: action.card };
+        case OPEN_TRANSACTION_MODAL:
+            return { ...state, transaction: action.transaction };
+        case CLOSE_TRANSACTION_MODAL:
+            return { ...state, transaction: action.transaction };
+        case OPEN_RETRIEVE_HELD_MODAL:
+            return { ...state, retrieveHeld: action.retrieveHeld };
+        case CLOSE_RETRIEVE_HELD_MODAL:
+            return { ...state, retrieveHeld: action.retrieveHeld };
         default:
             return state;
     }

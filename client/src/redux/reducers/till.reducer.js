@@ -1,10 +1,10 @@
 import {
     ACTIVATE_LAY_BYE,
     ACTIVATE_RETURNS,
-    ADD_LINE_ITEM,
+    SET_TRANSACTIONS,
     DEACTIVATE_LAY_BYE,
     DEACTIVATE_RETURNS, RESET_TOTALS, RESET_TRANSACTIONS,
-    SET_TOTALS
+    SET_TOTALS, SET_TRANSACTION_ID
 } from "../constants/till.constants";
 
 export default function tillReducer(state = { errors: [] }, action) {
@@ -13,7 +13,8 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, laybye: action.activate };
         case DEACTIVATE_LAY_BYE:
             return { ...state, laybye: action.activate };
-        case ADD_LINE_ITEM:
+        case SET_TRANSACTIONS:
+            console.log(action, "jere");
             return { ...state, transactions: action.transactions };
         case ACTIVATE_RETURNS:
             return { ...state, ...action.returns };
@@ -25,6 +26,8 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, totals: action.totals };
         case RESET_TRANSACTIONS:
             return { ...state, transactions: action.transactions };
+        case SET_TRANSACTION_ID:
+            return { ...state, held: action.held };
         default:
             return state;
     }

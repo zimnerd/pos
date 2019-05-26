@@ -18,15 +18,21 @@ class CashModal extends React.Component {
     };
 
     completeSale = () => {
+        this.props.actions.till.resetTotals();
+        let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
         let transaction = {
             shop: this.props.settings.shop,
             till: this.props.settings.till,
-            transactions: this.props.till.transactions,
+            transactions: transactionsToComplete,
             totals: this.props.till.totals,
             type: "INV",
             method: "Cash",
             auth: ""
         };
+
+        let heldSales = this.props.till.transactions.filter(item => item.hold);
+        this.mapHeldSales(heldSales);
+        this.props.actions.till.setTransactions(heldSales);
 
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
@@ -38,8 +44,6 @@ class CashModal extends React.Component {
 
                 toastr.success("Transaction Completed!", "Create Transaction");
 
-                this.props.actions.till.resetTotals();
-                this.props.actions.till.resetTransactions();
                 this.saveSettings();
             })
             .catch(error => {
@@ -50,6 +54,20 @@ class CashModal extends React.Component {
                     toastr.error("Unknown error.");
                 }
             });
+    };
+
+    mapHeldSales = sales => {
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0
+        };
+        for(let x = 0, len = sales.length; x < len; x++) {
+            let sale = sales[x];
+            totals = this.props.mapLineItem(sale, totals);
+        }
+        this.props.actions.till.setTotals(totals);
     };
 
     saveSettings = () => {
@@ -83,15 +101,25 @@ class CashModal extends React.Component {
                     <Modal.Title>Cash Payment</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>Complete this transaction as a cash payment?</p>
+                    {this.props.till.transactions &&
+                        this.props.till.transactions.length === 0 &&
+                        <p>There are no transaction line items to pay for!</p>
+                    }
+                    {this.props.till.transactions &&
+                        this.props.till.transactions.length > 0 &&
+                        <p>Complete this transaction as a cash payment?</p>
+                    }
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="danger" onClick={this.handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={this.completeSale}>
-                        Complete
-                    </Button>
+                    {this.props.till.transactions &&
+                        this.props.till.transactions.length > 0 &&
+                        <Button variant="primary" onClick={this.completeSale}>
+                            Complete
+                        </Button>
+                    }
                 </Modal.Footer>
             </Modal>
         )

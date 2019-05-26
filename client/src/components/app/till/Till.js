@@ -24,8 +24,15 @@ import TransactionBadges from "./TransactionBadges";
 import InformationBar from "./InformationBar";
 import CashModal from "./modals/CashModal";
 import CardModal from "./modals/CardModal";
+import TransactionId from "./modals/TransactionId";
+import RetrieveHeldModal from "./modals/RetrieveHeldModal";
 
 class Till extends React.Component {
+
+    constructor(props) {
+        super(props);
+        this.props.actions.till.setTransactions();
+    }
 
     componentDidMount = () => {
         document.addEventListener("keydown", this.keydownFunction, false);
@@ -39,6 +46,34 @@ class Till extends React.Component {
 
     keydownFunction = event => {
         this.openModal(event);
+    };
+
+    mapLineItem = transaction => {
+        let totals = this.props.till.totals;
+
+        const discount = transaction.price - transaction.total;
+        const vat = transaction.total * 15 / 100;
+        const subtotal = transaction.total - vat;
+
+        totals.total += Number(transaction.total);
+        totals.discount += discount;
+        totals.vat += vat;
+        totals.subtotal += subtotal;
+
+        this.props.actions.till.setTotals(totals);
+    };
+
+    mapHeldItems = (transaction, totals) => {
+        const discount = transaction.price - transaction.total;
+        const vat = transaction.total * 15 / 100;
+        const subtotal = transaction.total - vat;
+
+        totals.total += Number(transaction.total);
+        totals.discount += discount;
+        totals.vat += vat;
+        totals.subtotal += subtotal;
+
+        return totals;
     };
 
     openModal = (event) => {
@@ -103,24 +138,26 @@ class Till extends React.Component {
                 <main className="d-flex">
                     <InformationBar/>
                     <TransactionBadges/>
-                    <LineItems/>
+                    <LineItems mapLineItem={this.mapLineItem} />
                     <Totals openModal={this.openModal}/>
                 </main>
                 <footer>
                     <ActionBar openModal={this.openModal}/>
                 </footer>
 
-                <CashModal/>
-                <CardModal/>
+                <CashModal mapLineItem={this.mapHeldItems} />
+                <CardModal mapLineItem={this.mapHeldItems} />
 
                 <AuthenticationModal/>
-                <ProductStyleModal/>
+                <ProductStyleModal mapLineItem={this.mapLineItem} />
                 <CompleteSaleModal/>
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>
                 <ReturnsModal/>
                 <OtherModal/>
                 <PaymentOptionsModal/>
+                <TransactionId/>
+                <RetrieveHeldModal/>
             </article>
         )
     }

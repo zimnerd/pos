@@ -24,7 +24,7 @@ class Totals extends React.Component {
                     <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 112 })}>Cash
                         (F1)
                     </button>
-                    <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 113 })}>Credit
+                    <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 113 })}>Card
                         (F2)
                     </button>
 

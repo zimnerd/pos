@@ -22,24 +22,9 @@ class ProductStyleModal extends React.Component {
         }
 
         transactions.push(product);
-        this.props.actions.till.addLineItem(transactions);
-        this.mapLineItem(product);
+        this.props.actions.till.setTransactions(transactions);
+        this.props.mapLineItem(product);
         this.handleClose();
-    };
-
-    mapLineItem = transaction => {
-        let totals = this.props.till.totals;
-
-        const discount = transaction.price - transaction.total;
-        const vat = transaction.total * 15 / 100;
-        const subtotal = transaction.total - vat;
-
-        totals.total += Number(transaction.total);
-        totals.discount += discount;
-        totals.vat += vat;
-        totals.subtotal += subtotal;
-
-        this.props.actions.till.setTotals(totals);
     };
 
     render() {
