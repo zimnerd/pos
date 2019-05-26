@@ -30,6 +30,14 @@ class Till extends React.Component {
 
     componentDidMount = () => {
         document.addEventListener("keydown", this.keydownFunction, false);
+
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0
+        };
+        this.props.actions.till.setTotals(totals);
     };
 
     componentWillUnmount = () => {
@@ -128,17 +136,22 @@ class Till extends React.Component {
                 toastr.success("Product Retrieved!", "Retrieve Product");
 
                 const product = response.data.product;
-                const price = product.mdp > 0 ? product.mdp : product.rp;
+                const markdown = product.mdp > 0;
+                const disc = markdown ? product.mdp / product.rp * 100 : 0;
 
                 let transaction = {
                     code: product.code,
                     description: product.descr,
                     size: product.codeKey,
                     colour: product.colour,
-                    price: price,
+                    price: Number(product.rp),
                     qty: 1,
-                    disc: 0
+                    disc: disc.toFixed(2),
+                    markdown: markdown
                 };
+
+                transaction.subtotal = transaction.price * transaction.qty;
+                transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
 
                 let items = this.props.till.transactions;
                 if (typeof items === "undefined") {
@@ -147,7 +160,8 @@ class Till extends React.Component {
 
                 items.push(transaction);
                 this.props.actions.till.addLineItem(items);
-                this.setState({ code: "" })
+                this.mapLineItem(transaction);
+                this.setState({ code: "" });
             })
             .catch(error => {
                 console.log(error);
@@ -159,6 +173,21 @@ class Till extends React.Component {
                     toastr.error("Unknown error.");
                 }
             });
+    };
+
+    mapLineItem = transaction => {
+        let totals = this.props.till.totals;
+
+        const discount = transaction.price - transaction.total;
+        const vat = transaction.total * 15 / 100;
+        const subtotal = transaction.total - vat;
+
+        totals.total += Number(transaction.total);
+        totals.discount += discount;
+        totals.vat += vat;
+        totals.subtotal += subtotal;
+
+        this.props.actions.till.setTotals(totals);
     };
 
     enterProduct = event => {
@@ -263,14 +292,17 @@ class Till extends React.Component {
                                         <td>
                                             <span>{item.description}</span>
                                             <small>{item.size + ", " + item.colour}</small>
+                                            {item.markdown &&
+                                            <span className="badge badge-danger">Markdown</span>
+                                            }
                                         </td>
                                         <td><input type="number" name="quantity" className="form-control" min="1"
                                                    value={item.qty}/></td>
                                         <td>{item.price}</td>
-                                        <td>{(item.price * item.qty).toFixed(2)}</td>
+                                        <td>{item.subtotal.toFixed(2)}</td>
                                         <td><input type="number" name="discount" className="form-control" min="0"
                                                    value={item.disc}/></td>
-                                        <td>{(item.price * item.qty - item.disc).toFixed(2)}</td>
+                                        <td>{item.total.toFixed(2)}</td>
                                     </tr>
                                 )
                             }
@@ -278,18 +310,21 @@ class Till extends React.Component {
                         </table>
                     </section>
                     <aside className="float-right">
+                        {this.props.till.totals &&
                         <main>
-                            <label>Subtotal: <span>15.75</span></label>
-                            <label>Discount: <span>15.75</span></label>
-                            <label>Tax Total: <span>15.75</span></label>
+                            <label>Subtotal: <span>{(this.props.till.totals.subtotal).toFixed(2)}</span></label>
+                            <label>Discount: <span>{(this.props.till.totals.discount).toFixed(2)}</span></label>
+                            <label>Tax Total: <span>{(this.props.till.totals.vat).toFixed(2)}</span></label>
 
-                            <h3>13.75</h3>
+                            <h3>{(this.props.till.totals.total).toFixed(2)}</h3>
                         </main>
+                        }
                         <footer>
                             <button className="btn btn-primary">Cash</button>
                             <button className="btn btn-primary">Credit</button>
 
-                            <button className="btn btn-secondary" onClick={() => this.openModal({ keyCode: 123})}>Other (F12)
+                            <button className="btn btn-secondary" onClick={() => this.openModal({ keyCode: 123 })}>Other
+                                (F12)
                             </button>
                         </footer>
                     </aside>

@@ -3,7 +3,8 @@ import {
     ACTIVATE_RETURNS,
     ADD_LINE_ITEM,
     DEACTIVATE_LAY_BYE,
-    DEACTIVATE_RETURNS
+    DEACTIVATE_RETURNS,
+    SET_TOTALS
 } from "../constants/till.constants";
 
 export function activateLayBye(activate = true) {
@@ -24,4 +25,8 @@ export function activateReturns(returns = {}) {
 
 export function deactivateReturns(returns = undefined) {
     return { type: DEACTIVATE_RETURNS, returns }
+}
+
+export function setTotals(totals = {}) {
+    return { type: SET_TOTALS, totals }
 }
