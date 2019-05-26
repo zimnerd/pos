@@ -7,6 +7,7 @@ import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
+import * as settingsActions from "../../../../redux/actions/settings.action";
 
 import './CashModal.scss';
 
@@ -39,6 +40,30 @@ class CashModal extends React.Component {
 
                 this.props.actions.till.resetTotals();
                 this.props.actions.till.resetTransactions();
+                this.saveSettings();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
+    saveSettings = () => {
+        let till = this.props.settings.till;
+        till.InvNo = Number(till.InvNo) + 1;
+        till.DepNo = Number(till.DepNo) + 1;
+
+        axios.post(`/api/settings/till/1`, till)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till Details updated!", "Update Settings");
+
+                this.props.actions.settings.saveTill(response.data.till);
                 this.handleClose();
             })
             .catch(error => {
@@ -87,7 +112,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
-            till: bindActionCreators(tillActions, dispatch)
+            till: bindActionCreators(tillActions, dispatch),
+            settings: bindActionCreators(settingsActions, dispatch)
         }
     };
 }

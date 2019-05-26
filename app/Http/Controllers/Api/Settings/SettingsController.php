@@ -50,13 +50,14 @@ class SettingsController extends Controller
     }
 
     /**
-     * Register for the application.
+     * Save the till settings.
      *
+     * @param string $id
      * @param Request $request
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function saveTill(Request $request)
+    public function saveTill($id, Request $request)
     {
         $this->validate($request, [
             'InvNo' => 'required',
@@ -68,8 +69,7 @@ class SettingsController extends Controller
         $till = $request->all();
 
         $tillInfo = Till::query()
-            ->where('tillno', $till['tillno'])
-            ->where('tillno', $till['tillno'])
+            ->where('tillno', $id)
             ->get();
 
         /**
