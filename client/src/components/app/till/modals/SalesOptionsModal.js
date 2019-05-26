@@ -22,8 +22,9 @@ class SalesOptionsModal extends React.Component {
     };
 
     activateStaffPrice = () => {
-        this.handleClose();
+        this.props.actions.till.setAuthCommand("staff");
         this.props.actions.modal.openAuthentication();
+        this.handleClose();
     };
 
     holdSale = () => {

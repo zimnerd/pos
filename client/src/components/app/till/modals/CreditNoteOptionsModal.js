@@ -4,18 +4,20 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
+import * as tillActions from "../../../../redux/actions/till.action";
 
 import './CreditNoteOptionsModal.scss';
 
 class CreditNoteOptionsModal extends React.Component {
 
     handleClose = () => {
-        this.props.actions.closeCredit();
+        this.props.actions.modal.closeCredit();
     };
 
     activateExchange = () => {
+        this.props.actions.till.setAuthCommand("exchange");
+        this.props.actions.modal.openAuthentication();
         this.handleClose();
-        this.props.actions.openAuthentication();
     };
 
     render() {
@@ -77,7 +79,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(modalActions, dispatch)
+        actions: {
+            modal: bindActionCreators(modalActions, dispatch),
+            till: bindActionCreators(tillActions, dispatch)
+        }
     };
 }
 

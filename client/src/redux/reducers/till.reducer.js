@@ -1,10 +1,18 @@
 import {
+    ACTIVATE_EXCHANGE,
     ACTIVATE_LAY_BYE,
     ACTIVATE_RETURNS,
-    SET_TRANSACTIONS,
+    ACTIVATE_STAFF,
+    DEACTIVATE_EXCHANGE,
     DEACTIVATE_LAY_BYE,
-    DEACTIVATE_RETURNS, RESET_TOTALS, RESET_TRANSACTIONS,
-    SET_TOTALS, SET_TRANSACTION_ID
+    DEACTIVATE_RETURNS,
+    DEACTIVATE_STAFF,
+    RESET_TOTALS,
+    RESET_TRANSACTIONS,
+    SET_AUTH_COMMAND,
+    SET_TOTALS,
+    SET_TRANSACTION_ID,
+    SET_TRANSACTIONS
 } from "../constants/till.constants";
 
 export default function tillReducer(state = { errors: [] }, action) {
@@ -14,7 +22,6 @@ export default function tillReducer(state = { errors: [] }, action) {
         case DEACTIVATE_LAY_BYE:
             return { ...state, laybye: action.activate };
         case SET_TRANSACTIONS:
-            console.log(action, "jere");
             return { ...state, transactions: action.transactions };
         case ACTIVATE_RETURNS:
             return { ...state, ...action.returns };
@@ -28,6 +35,16 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, transactions: action.transactions };
         case SET_TRANSACTION_ID:
             return { ...state, held: action.held };
+        case SET_AUTH_COMMAND:
+            return { ...state, command: action.command };
+        case ACTIVATE_EXCHANGE:
+            return { ...state, exchange: action.exchange };
+        case DEACTIVATE_EXCHANGE:
+            return { ...state, exchange: action.exchange };
+        case ACTIVATE_STAFF:
+            return { ...state, staff: action.staff };
+        case DEACTIVATE_STAFF:
+            return { ...state, staff: action.staff };
         default:
             return state;
     }

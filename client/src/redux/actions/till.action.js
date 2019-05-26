@@ -1,10 +1,18 @@
 import {
+    ACTIVATE_EXCHANGE,
     ACTIVATE_LAY_BYE,
     ACTIVATE_RETURNS,
-    SET_TRANSACTIONS,
+    ACTIVATE_STAFF,
+    DEACTIVATE_EXCHANGE,
     DEACTIVATE_LAY_BYE,
-    DEACTIVATE_RETURNS, RESET_TOTALS, RESET_TRANSACTIONS,
-    SET_TOTALS, SET_TRANSACTION_ID
+    DEACTIVATE_RETURNS,
+    DEACTIVATE_STAFF,
+    RESET_TOTALS,
+    RESET_TRANSACTIONS,
+    SET_AUTH_COMMAND,
+    SET_TOTALS,
+    SET_TRANSACTION_ID,
+    SET_TRANSACTIONS
 } from "../constants/till.constants";
 
 export function activateLayBye(activate = true) {
@@ -48,4 +56,24 @@ export function resetTransactions() {
 
 export function setTransactionId(held = "") {
     return { type: SET_TRANSACTION_ID, held }
+}
+
+export function setAuthCommand(command = "") {
+    return { type: SET_AUTH_COMMAND, command }
+}
+
+export function activateExchange(exchange = true) {
+    return { type: ACTIVATE_EXCHANGE, exchange }
+}
+
+export function deactivateExchange(exchange = false) {
+    return { type: DEACTIVATE_EXCHANGE, exchange }
+}
+
+export function activateStaff(staff = true) {
+    return { type: ACTIVATE_STAFF, staff }
+}
+
+export function deactivateStaff(staff = false) {
+    return { type: DEACTIVATE_STAFF, staff }
 }

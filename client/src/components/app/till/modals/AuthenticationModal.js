@@ -4,13 +4,31 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
+import * as tillActions from "../../../../redux/actions/till.action";
 
 import './AuthenticationModal.scss';
 
 class AuthenticationModal extends React.Component {
 
     handleClose = () => {
-        this.props.actions.closeAuthentication();
+        this.props.actions.modal.closeAuthentication();
+    };
+
+    authenticate = async () => {
+        switch (this.props.till.command) {
+            case "exchange":
+                await this.props.actions.till.activateExchange();
+                this.props.mapTransactions();
+                break;
+            case "staff":
+                await this.props.actions.till.activateStaff();
+                this.props.mapTransactions();
+                break;
+            default:
+                this.handleClose();
+        }
+
+        this.handleClose();
     };
 
     render() {
@@ -40,7 +58,7 @@ class AuthenticationModal extends React.Component {
                     <Button variant="danger" onClick={this.handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={this.handleClose}>
+                    <Button variant="primary" onClick={this.authenticate}>
                         Authenticate
                     </Button>
                 </Modal.Footer>
@@ -52,13 +70,17 @@ class AuthenticationModal extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        modal: state.modal
+        modal: state.modal,
+        till: state.till
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(modalActions, dispatch)
+        actions: {
+            modal: bindActionCreators(modalActions, dispatch),
+            till: bindActionCreators(tillActions, dispatch)
+        }
     };
 }
 

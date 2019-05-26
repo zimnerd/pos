@@ -13,6 +13,15 @@ class TransactionBadges extends React.Component {
         this.props.actions.deactivateLayBye();
     };
 
+    removeExchange = () => {
+        this.props.actions.deactivateExchange();
+    };
+
+    removeStaff = async () => {
+        await this.props.actions.deactivateStaff();
+        this.props.mapTransactions();
+    };
+
     removeReturns = () => {
         this.props.actions.deactivateReturns();
     };
@@ -29,6 +38,16 @@ class TransactionBadges extends React.Component {
                     Return for Customer:
                     <span>{this.props.till.returns.customer.name}</span>
                     <span onClick={this.removeReturns}><i className="fa fa-times"/></span>
+                </Badge>
+                }
+                {this.props.till.exchange &&
+                <Badge variant="warning">Exchange <span onClick={this.removeExchange}><i
+                    className="fa fa-times"/></span>
+                </Badge>
+                }
+                {this.props.till.staff &&
+                <Badge variant="info">Staff <span onClick={this.removeStaff}><i
+                    className="fa fa-times"/></span>
                 </Badge>
                 }
             </section>

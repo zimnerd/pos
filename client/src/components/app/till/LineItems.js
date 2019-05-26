@@ -68,38 +68,14 @@ class LineItems extends React.Component {
         };
 
         axios.get(`/api/products/${codeParts[0]}/${codeParts[1]}/${codeParts[2]}`, { headers })
-            .then(response => {
+            .then(async response => {
                 console.log(response.data);
 
                 toastr.success("Product Retrieved!", "Retrieve Product");
 
                 const product = response.data.product;
-                const markdown = product.mdp > 0;
-                const disc = markdown ? product.mdp / product.rp * 100 : 0;
-
-                let transaction = {
-                    code: product.code,
-                    description: product.descr,
-                    size: product.codeKey,
-                    colour: product.colour,
-                    price: Number(product.rp),
-                    qty: 1,
-                    disc: disc.toFixed(2),
-                    markdown: markdown,
-                    cost: product.sp
-                };
-
-                transaction.subtotal = transaction.price * transaction.qty;
-                transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
-
-                let items = this.props.till.transactions;
-                if (typeof items === "undefined") {
-                    items = [];
-                }
-
-                items.push(transaction);
-                this.props.actions.till.setTransactions(items);
-                this.props.mapLineItem(transaction);
+                await this.props.createTransaction(product);
+                await this.props.mapTransactions(product);
                 this.setState({ code: "" });
             })
             .catch(error => {
@@ -157,10 +133,10 @@ class LineItems extends React.Component {
                     </thead>
                     <tbody>
                     {this.props.till.transactions &&
-                        this.props.till.transactions.length === 0 &&
-                        <tr>
-                            <td colSpan="9" className="text-center">No line items added!</td>
-                        </tr>
+                    this.props.till.transactions.length === 0 &&
+                    <tr>
+                        <td colSpan="9" className="text-center">No line items added!</td>
+                    </tr>
                     }
                     {
                         this.props.till && this.props.till.transactions.map((item, index) =>
@@ -189,7 +165,8 @@ class LineItems extends React.Component {
                                     </Badge>
                                     }
                                 </td>
-                                <td><span onClick={() => this.removeItem(index)}><i className="fa fa-trash"/></span></td>
+                                <td><span onClick={() => this.removeItem(index)}><i className="fa fa-trash"/></span>
+                                </td>
                             </tr>
                         )
                     }

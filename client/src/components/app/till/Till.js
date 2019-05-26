@@ -131,14 +131,80 @@ class Till extends React.Component {
         }
     };
 
+    mapTransactions = () => {
+        if (typeof this.props.till.transactions === "undefined") {
+            return;
+        }
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0
+        };
+        for (let transaction of this.props.till.transactions) {
+            if (this.props.till.staff) {
+                transaction.price = transaction.staff;
+                transaction.subtotal = transaction.price * transaction.qty;
+                transaction.total = transaction.subtotal;
+                transaction.discStore = transaction.disc;
+                transaction.disc = 0.00;
+            } else {
+                transaction.price = transaction.retail;
+                transaction.subtotal = transaction.price * transaction.qty;
+
+                if (typeof transaction.discStore !== "undefined") {
+                    transaction.disc = transaction.discStore;
+                    delete transaction.discStore;
+                }
+                transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
+            }
+
+            this.mapHeldItems(transaction, totals);
+        }
+        this.props.actions.till.setTotals(totals);
+        this.props.actions.till.setTransactions(this.props.till.transactions);
+    };
+
+    createTransaction = product => {
+        const markdown = product.mdp > 0;
+        const disc = markdown ? product.mdp / product.rp * 100 : 0;
+
+        let transaction = {
+            code: product.code,
+            description: product.descr,
+            size: product.codeKey,
+            colour: product.colour,
+            price: Number(product.rp),
+            qty: 1,
+            disc: disc.toFixed(2),
+            markdown: markdown,
+            cost: product.sp,
+            staff: Number(product.stfp),
+            retail: Number(product.rp)
+        };
+
+        transaction.subtotal = transaction.price * transaction.qty;
+        transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
+
+        let items = this.props.till.transactions;
+        if (typeof items === "undefined") {
+            items = [];
+        }
+
+        items.push(transaction);
+        this.mapLineItem(transaction);
+        this.props.actions.till.setTransactions(items);
+    };
+
     render() {
         return (
             <article>
                 <Header/>
                 <main className="d-flex">
                     <InformationBar/>
-                    <TransactionBadges/>
-                    <LineItems mapLineItem={this.mapLineItem} />
+                    <TransactionBadges mapTransactions={this.mapTransactions} />
+                    <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions}
+                               createTransaction={this.createTransaction} />
                     <Totals openModal={this.openModal}/>
                 </main>
                 <footer>
@@ -148,8 +214,8 @@ class Till extends React.Component {
                 <CashModal mapLineItem={this.mapHeldItems} />
                 <CardModal mapLineItem={this.mapHeldItems} />
 
-                <AuthenticationModal/>
-                <ProductStyleModal mapLineItem={this.mapLineItem} />
+                <AuthenticationModal mapTransactions={this.mapTransactions} />
+                <ProductStyleModal mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions} />
                 <CompleteSaleModal/>
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>

@@ -24,6 +24,7 @@ class ProductStyleModal extends React.Component {
         transactions.push(product);
         this.props.actions.till.setTransactions(transactions);
         this.props.mapLineItem(product);
+        this.props.mapTransactions();
         this.handleClose();
     };
 
@@ -64,7 +65,9 @@ class ProductStyleModal extends React.Component {
                                 markdown: markdown,
                                 qty: 1,
                                 disc: disc.toFixed(2),
-                                cost: price.sp
+                                cost: price.sp,
+                                staff: price.stfp,
+                                retail: price.rp
                             };
 
                             product.subtotal = product.price * product.qty;
