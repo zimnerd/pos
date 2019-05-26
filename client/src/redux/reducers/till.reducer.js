@@ -3,7 +3,7 @@ import {
     ACTIVATE_RETURNS,
     ADD_LINE_ITEM,
     DEACTIVATE_LAY_BYE,
-    DEACTIVATE_RETURNS,
+    DEACTIVATE_RETURNS, RESET_TOTALS, RESET_TRANSACTIONS,
     SET_TOTALS
 } from "../constants/till.constants";
 
@@ -21,6 +21,10 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, returns: action.returns };
         case SET_TOTALS:
             return { ...state, totals: action.totals };
+        case RESET_TOTALS:
+            return { ...state, totals: action.totals };
+        case RESET_TRANSACTIONS:
+            return { ...state, transactions: action.transactions };
         default:
             return state;
     }

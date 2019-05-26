@@ -1,15 +1,22 @@
 import {
     CLOSE_AUTH_MODAL,
+    CLOSE_CARD_MODAL,
+    CLOSE_CASH_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
-    CLOSE_PAYMENTS_MODAL, CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_PAYMENTS_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL,
     CLOSE_RETURNS_MODAL,
-    CLOSE_SALES_MODAL, OPEN_AUTH_MODAL,
+    CLOSE_SALES_MODAL,
+    OPEN_AUTH_MODAL,
+    OPEN_CARD_MODAL,
+    OPEN_CASH_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
-    OPEN_PAYMENTS_MODAL, OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_PAYMENTS_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL,
     OPEN_RETURNS_MODAL,
     OPEN_SALES_MODAL
 } from "../constants/modal.constants";
@@ -48,6 +55,14 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, others: action.others };
         case CLOSE_OTHERS_MODAL:
             return { ...state, others: action.others };
+        case OPEN_CASH_MODAL:
+            return { ...state, cash: action.cash };
+        case CLOSE_CASH_MODAL:
+            return { ...state, cash: action.cash };
+        case OPEN_CARD_MODAL:
+            return { ...state, card: action.card };
+        case CLOSE_CARD_MODAL:
+            return { ...state, card: action.card };
         default:
             return state;
     }

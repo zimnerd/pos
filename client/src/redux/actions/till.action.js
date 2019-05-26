@@ -3,7 +3,7 @@ import {
     ACTIVATE_RETURNS,
     ADD_LINE_ITEM,
     DEACTIVATE_LAY_BYE,
-    DEACTIVATE_RETURNS,
+    DEACTIVATE_RETURNS, RESET_TOTALS, RESET_TRANSACTIONS,
     SET_TOTALS
 } from "../constants/till.constants";
 
@@ -29,4 +29,19 @@ export function deactivateReturns(returns = undefined) {
 
 export function setTotals(totals = {}) {
     return { type: SET_TOTALS, totals }
+}
+
+export function resetTotals() {
+    let totals = {
+        total: 0,
+        subtotal: 0,
+        vat: 0,
+        discount: 0
+    };
+    return { type: RESET_TOTALS, totals }
+}
+
+export function resetTransactions() {
+    let transactions = [];
+    return { type: RESET_TRANSACTIONS, transactions }
 }

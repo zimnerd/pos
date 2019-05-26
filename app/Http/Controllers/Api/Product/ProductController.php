@@ -105,7 +105,7 @@ class ProductController extends Controller
          * @var Product $product
          */
         $product = Product::query()
-            ->select('product.code', 'product.descr', 'sizecodes.codeKey',
+            ->select('product.code', 'product.descr', 'sizecodes.codeKey', 'pricefil.sp',
                 'colours.colour', 'pricefil.rp', 'pricefil.mdp', 'pricefil.stfp', 'stkmast.QOH')
             ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
             ->join('colours', 'colours.code', '=', 'clrcode.codeKey')

@@ -34,7 +34,7 @@ class CreateDailyTransactionsTable extends Migration
             $table->decimal('SP');
             $table->decimal('SPX');
             $table->decimal('CP');
-            $table->char('DTYPE');
+            $table->char('DTYPE')->nullable();
             $table->string('LPROMPT');
             $table->decimal('DISCPERC');
             $table->decimal('MARKUP');
@@ -46,13 +46,13 @@ class CreateDailyTransactionsTable extends Migration
             $table->integer('IBTDLNO');
             $table->integer('DLNO');
             $table->integer('UPDNO');
-            $table->string('INVREF');
+            $table->string('INVREF')->nullable();
             $table->integer('PERIOD');
             $table->string('COMMENT');
-            $table->string('RESCODE');
+            $table->string('RESCODE')->nullable();
             $table->string('BUSER');
-            $table->string('AUSER');
-            $table->string('FWCNO');
+            $table->string('AUSER')->nullable();
+            $table->string('FWCNO')->nullable();
             $table->string('SERIALNO');
             $table->timestamps();
         });

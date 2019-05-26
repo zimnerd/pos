@@ -1,11 +1,11 @@
 import {
-    CLOSE_AUTH_MODAL,
+    CLOSE_AUTH_MODAL, CLOSE_CARD_MODAL, CLOSE_CASH_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL, CLOSE_PRODUCT_STYLE_MODAL,
     CLOSE_RETURNS_MODAL,
-    CLOSE_SALES_MODAL, OPEN_AUTH_MODAL,
+    CLOSE_SALES_MODAL, OPEN_AUTH_MODAL, OPEN_CARD_MODAL, OPEN_CASH_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
@@ -76,4 +76,20 @@ export function openOthers(others = true) {
 
 export function closeOthers(others = false) {
     return { type: CLOSE_OTHERS_MODAL, others }
+}
+
+export function openCash(cash = true) {
+    return { type: OPEN_CASH_MODAL, cash }
+}
+
+export function closeCash(cash = false) {
+    return { type: CLOSE_CASH_MODAL, cash }
+}
+
+export function openCard(card = true) {
+    return { type: OPEN_CARD_MODAL, card }
+}
+
+export function closeCard(card = false) {
+    return { type: CLOSE_CARD_MODAL, card }
 }

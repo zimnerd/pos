@@ -72,13 +72,14 @@ class ProductStyleModal extends React.Component {
 
                             const product = {
                                 code: `${item.STYLE}`,
-                                description: this.props.stock.product.descr,
+                                description: this.props.stock.product.description,
                                 size: item.SIZES,
                                 colour: colour.colour,
                                 price: Number(price.rp),
                                 markdown: markdown,
                                 qty: 1,
-                                disc: disc.toFixed(2)
+                                disc: disc.toFixed(2),
+                                cost: price.sp
                             };
 
                             product.subtotal = product.price * product.qty;

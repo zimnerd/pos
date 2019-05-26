@@ -20,7 +20,7 @@ class CreateDailySummariesTable extends Migration
             $table->string('BRNO');
             $table->string('BTYPE');
             $table->integer('TRANNO');
-            $table->smallInteger('TAXCODE');
+            $table->smallInteger('TAXCODE')->nullable();
             $table->decimal('VATAMT');
             $table->decimal('AMT');
             $table->integer('GLCODE');
@@ -36,7 +36,7 @@ class CreateDailySummariesTable extends Migration
             $table->date('ODATE');
             $table->string('DEBTOR');
             $table->string('BUSER');
-            $table->string('AUSER');
+            $table->string('AUSER')->nullable();
             $table->integer('PERIOD');
             $table->string('CCQNUM');
             $table->timestamps();
