@@ -38,3 +38,13 @@ Route::group(["prefix" => "api/settings"], function () {
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
 
 });
+
+Route::group(["prefix" => "api/transactions"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+
+        Route::post('', 'Api\Transaction\TransactionController@createTransaction');
+
+    });
+
+});

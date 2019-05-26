@@ -35,4 +35,22 @@ class Prices extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'cp',
+        'sp',
+        'rp',
+        'hp',
+        'stfp',
+        'cmtp',
+        'mdp',
+        'outprice',
+        'style',
+        'sizes',
+        'codeseq',
+        'deflag',
+        'costcode',
+        'dtype',
+    ];
+
 }

@@ -35,4 +35,47 @@ class DailyTransaction extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'ID',
+        'BRNO',
+        'DOCNO',
+        'TILLNO',
+        'LINENO',
+        'DOCTYPE',
+        'STYLE',
+        'SIZES',
+        'CLR',
+        'SUP',
+        'STYPE',
+        'BDATE',
+        'BTIME',
+        'AMT',
+        'VATAMT',
+        'QTY',
+        'SP',
+        'SPX',
+        'CP',
+        'DTYPE',
+        'LPROMPT',
+        'DISCPERC',
+        'MARKUP',
+        'DISCAMT',
+        'SMAN',
+        'UPDFLAG',
+        'LSLTYPE',
+        'APPNO',
+        'IBTDLNO',
+        'DLNO',
+        'UPDNO',
+        'INVREF',
+        'PERIOD',
+        'COMMENT',
+        'RESCODE',
+        'BUSER',
+        'AUSER',
+        'FWCNO',
+        'SERIALNO',
+    ];
+
 }

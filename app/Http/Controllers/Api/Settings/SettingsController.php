@@ -43,6 +43,8 @@ class SettingsController extends Controller
             $details[$info->ColName] = $info->ColValue;
         }
 
+        $details['tillno'] = $id;
+
         return response()->json(['till' => $details], $this->successStatus);
     }
 
