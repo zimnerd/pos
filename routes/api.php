@@ -46,6 +46,8 @@ Route::group(["prefix" => "api/transactions"], function () {
 
         Route::post('', 'Api\Transaction\TransactionController@createTransaction');
 
+        Route::post('hold', 'Api\Transaction\TransactionController@holdSale');
+        
     });
 
 });

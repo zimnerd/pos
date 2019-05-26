@@ -6,6 +6,7 @@ use App\DailyControl;
 use App\DailySummary;
 use App\DailyTransaction;
 use App\Http\Controllers\Controller;
+use App\Sale;
 use App\Till;
 use App\User;
 use Illuminate\Http\Request;
@@ -130,6 +131,48 @@ class TransactionController extends Controller
         $control->save();
 
         return response()->json([], $this->createdStatus);
+    }
+
+    /**
+     * Hold a sale
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function holdSale(Request $request)
+    {
+        $this->validate($request, [
+            'transactions' => 'required',
+            'till' => 'required',
+            'type' => 'required'
+        ]);
+
+        $lineItems = $request->all();
+        $transactions = $lineItems['transactions'];
+
+        $till = $lineItems['till'];
+
+        foreach ($transactions as  $transaction) {
+            $sale = new Sale();
+            $sale->docnum = $till['tillno'] . $till['InvNo'];
+            $sale->type = $lineItems['type'];
+            $sale->code = $transaction['code'];
+            $sale->colour = $transaction['colour'];
+            $sale->cost = $transaction['cost'];
+            $sale->description = $transaction['description'];
+            $sale->disc = $transaction['disc'];
+            $sale->markdown = $transaction['markdown'];
+            $sale->price = $transaction['price'];
+            $sale->qty = $transaction['qty'];
+            $sale->size = $transaction['size'];
+            $sale->subtotal = $transaction['subtotal'];
+            $sale->total = $transaction['total'];
+
+            $sale->save();
+        }
+
+        return response()->json(['sale' => $sale->docnum], $this->createdStatus);
     }
 
 }
