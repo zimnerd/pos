@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Settings;
 use App\Http\Controllers\Controller;
 use App\Shop;
 use App\Till;
+use Illuminate\Http\Request;
 
 class SettingsController extends Controller
 {
@@ -48,4 +49,48 @@ class SettingsController extends Controller
         return response()->json(['till' => $details], $this->successStatus);
     }
 
+    /**
+     * Register for the application.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function saveTill(Request $request)
+    {
+        $this->validate($request, [
+            'InvNo' => 'required',
+            'DepNo' => 'required',
+            'CredInvNo' => 'required',
+            'tillno' => 'required'
+        ]);
+
+        $till = $request->all();
+
+        $tillInfo = Till::query()
+            ->where('tillno', $till['tillno'])
+            ->where('tillno', $till['tillno'])
+            ->get();
+
+        /**
+         * @var Till $info
+         */
+        foreach ($tillInfo as $info) {
+            switch ($info->ColName) {
+                case "InvNo":
+                    $info->ColValue = $request['InvNo'];
+                    break;
+                case "DepNo":
+                    $info->ColValue = $request['DepNo'];
+                    break;
+                case "CredInvNo":
+                    $info->ColValue = $request['CredInvNo'];
+                    break;
+            }
+
+            $info->save();
+        }
+
+        return response()->json(['till' => $till], $this->successStatus);
+    }
 }
