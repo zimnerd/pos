@@ -11,6 +11,7 @@ class SettingsController extends Controller
 {
 
     public $successStatus = 200;
+    public $notFoundStatus = 404;
 
     /**
      * Retrieve the shop settings
@@ -38,6 +39,10 @@ class SettingsController extends Controller
     public function retrieveTillDetails($id)
     {
         $tillInfo = Till::query()->where('tillno', $id)->get();
+
+        if (!$tillInfo) {
+            return response()->json([], $this->notFoundStatus);
+        }
 
         $details = array();
         foreach ($tillInfo as $info) {
@@ -71,6 +76,10 @@ class SettingsController extends Controller
         $tillInfo = Till::query()
             ->where('tillno', $id)
             ->get();
+
+        if (!$tillInfo) {
+            return response()->json([], $this->notFoundStatus);
+        }
 
         /**
          * @var Till $info

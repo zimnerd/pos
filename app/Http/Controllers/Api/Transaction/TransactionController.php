@@ -14,7 +14,9 @@ use Illuminate\Support\Facades\Auth;
 
 class TransactionController extends Controller
 {
+    public $successStatus = 200;
     public $createdStatus = 201;
+    public $notFoundStatus = 404;
 
     /**
      * Create a transaction
@@ -173,6 +175,48 @@ class TransactionController extends Controller
         }
 
         return response()->json(['sale' => $sale->docnum], $this->createdStatus);
+    }
+
+
+    /**
+     * Retrieve a held sale
+     *
+     * @param string $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveSale($id)
+    {
+        $sales = Sale::query()
+            ->where('docnum', $id)
+            ->get();
+
+        if (!$sales) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $lineItems = array("type" => "", "transactions" => array());
+
+        /**
+         * @var Sale $sale
+         */
+        foreach ($sales as $sale) {
+            $transaction = array();
+            $transaction['code'] = $sale->code;
+            $transaction['colour'] = $sale->colour;
+            $transaction['cost'] = $sale->cost;
+            $transaction['description'] = $sale->description;
+            $transaction['disc'] = $sale->disc;
+            $transaction['markdown'] = $sale->markdown;
+            $transaction['price'] = $sale->price;
+            $transaction['qty'] = $sale->qty;
+            $transaction['subtotal'] = $sale->subtotal;
+            $transaction['total'] = $sale->total;
+
+            $lineItems["transactions"][] = $transaction;
+            $lineItems["type"] = $sale->type;
+        }
+
+        return response()->json(['lineItems' => $lineItems], $this->successStatus);
     }
 
 }
