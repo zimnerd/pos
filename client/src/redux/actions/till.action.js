@@ -9,7 +9,7 @@ import {
     DEACTIVATE_STAFF,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
-    SET_AUTH_COMMAND,
+    SET_AUTH_COMMAND, SET_CODE,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS
@@ -76,4 +76,9 @@ export function activateStaff(staff = true) {
 
 export function deactivateStaff(staff = false) {
     return { type: DEACTIVATE_STAFF, staff }
+}
+
+export function setCode(code = "") {
+    debugger
+    return { type: SET_CODE, code }
 }

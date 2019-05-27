@@ -1,5 +1,6 @@
 import React from 'react';
 import { bindActionCreators } from "redux";
+import { Badge } from "react-bootstrap";
 import { connect } from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
@@ -9,57 +10,24 @@ import * as modalActions from "../../../redux/actions/modal.action";
 import * as stockActions from "../../../redux/actions/stock.action";
 
 import './LineItems.scss';
-import { Badge } from "react-bootstrap";
 
 class LineItems extends React.Component {
 
-    state = {
-        code: ""
-    };
-
-    enterProduct = event => {
+    enterProduct = async event => {
+        debugger
         event.preventDefault();
-        let codeParts = this.state.code.split(" ");
+        let codeParts = this.props.till.code.split(" ");
         if (codeParts.length === 0 || codeParts.length > 3) {
-            this.setState({
-                code: "Invalid Product Code"
-            });
+            await this.props.actions.till.setCode("Invalid Product Code");
         } else if (codeParts.length < 3) {
-            this.openStyles(codeParts[0]);
+            this.props.openStyles(codeParts[0]);
         } else if (codeParts.length === 3) {
             this.retrieveProductWithCode(codeParts);
         }
     };
 
-    handleChange = event => {
-        this.setState({
-            code: event.target.value
-        });
-    };
-
-    openStyles = code => {
-        const headers = {
-            'Authorization': 'Bearer ' + this.props.auth.token
-        };
-
-        axios.get(`/api/products/${code}`, { headers })
-            .then(response => {
-                console.log(response.data);
-
-                toastr.success("Product Retrieved!", "Retrieve Product");
-                this.props.actions.stock.retrieveProduct(response.data.product);
-                this.props.actions.modal.openProductStyles();
-            })
-            .catch(error => {
-                console.log(error);
-                if (error.response.status === 401) {
-                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
-                } else if (error.response.status === 404) {
-                    toastr.error("The product code supplied cannot be found.", "Retrieve Product");
-                } else {
-                    toastr.error("Unknown error.");
-                }
-            });
+    handleChange = async event => {
+        await this.props.actions.till.setCode(event.target.value);
     };
 
     retrieveProductWithCode = codeParts => {
@@ -75,8 +43,8 @@ class LineItems extends React.Component {
 
                 const product = response.data.product;
                 await this.props.createTransaction(product);
-                await this.props.mapTransactions(product);
-                this.setState({ code: "" });
+                await this.props.mapTransactions();
+                await this.props.actions.till.setCode();
             })
             .catch(error => {
                 console.log(error);
@@ -90,10 +58,9 @@ class LineItems extends React.Component {
             });
     };
 
-    reset = () => {
-        this.setState({
-            code: ""
-        });
+    reset = async () => {
+        debugger
+        await this.props.actions.till.setCode();
     };
 
     holdItem = (index) => {
@@ -104,9 +71,10 @@ class LineItems extends React.Component {
         this.props.actions.till.setTransactions(transactions);
     };
 
-    removeItem = (index) => {
+    removeItem = async (index) => {
         let transactions = this.props.till.transactions;
         transactions.splice(index, 1);
+        await this.props.mapTransactions();
         this.props.actions.till.setTransactions(transactions);
     };
 
@@ -115,7 +83,7 @@ class LineItems extends React.Component {
             <section>
                 <form className="d-flex">
                     <input onChange={this.handleChange} type="text" onFocus={this.reset}
-                           placeholder="Enter product code" className="form-control" value={this.state.code}/>
+                           placeholder="Enter product code" className="form-control" value={this.props.till.code}/>
                     <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
                 </form>
                 <table className="table table-striped">

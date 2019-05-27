@@ -26,8 +26,14 @@ import CashModal from "./modals/CashModal";
 import CardModal from "./modals/CardModal";
 import TransactionId from "./modals/TransactionId";
 import RetrieveHeldModal from "./modals/RetrieveHeldModal";
+import axios from "axios";
+import toastr from "toastr";
 
 class Till extends React.Component {
+
+    state = {
+        code: ""
+    };
 
     constructor(props) {
         super(props);
@@ -114,6 +120,12 @@ class Till extends React.Component {
                 }
                 this.props.actions.modal.openSales();
                 break;
+            case 121:
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
+                this.openStyles(this.props.till.code);
+                break;
             case 122:
                 if (event.preventDefault) {
                     event.preventDefault();
@@ -129,6 +141,31 @@ class Till extends React.Component {
             default:
                 return;
         }
+    };
+
+    openStyles = code => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/products/${code}`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Product Retrieved!", "Retrieve Product");
+                this.props.actions.stock.retrieveProduct(response.data.product);
+                this.props.actions.modal.openProductStyles();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error("The product code supplied cannot be found.", "Retrieve Product");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     mapTransactions = () => {
@@ -203,7 +240,7 @@ class Till extends React.Component {
                 <main className="d-flex">
                     <InformationBar/>
                     <TransactionBadges mapTransactions={this.mapTransactions} />
-                    <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions}
+                    <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions} openStyles={this.openStyles}
                                createTransaction={this.createTransaction} />
                     <Totals openModal={this.openModal}/>
                 </main>

@@ -31,8 +31,8 @@ class ActionBar extends React.Component {
                     </section>
 
                     <section className="col-4 d-flex">
-                        <section className="card card-body m-2">
-                            <span className="card-text text-center">Product Enquiry</span>
+                        <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 121 })}>
+                            <span className="card-text text-center">Product Enquiry (F10)</span>
                         </section>
                         <section className="card card-body m-2" onClick={() => this.props.openModal({ keyCode: 122 })}>
                             <span className="card-text text-center">Returns (F11)</span>
