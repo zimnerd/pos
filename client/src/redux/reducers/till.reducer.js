@@ -46,7 +46,6 @@ export default function tillReducer(state = { errors: [] }, action) {
         case DEACTIVATE_STAFF:
             return { ...state, staff: action.staff };
         case SET_CODE:
-            debugger
             return { ...state, code: action.code };
         default:
             return state;

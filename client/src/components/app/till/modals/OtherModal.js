@@ -6,6 +6,7 @@ import { connect } from "react-redux";
 import * as modalActions from "../../../../redux/actions/modal.action";
 
 import './OtherModal.scss';
+import { withRouter } from "react-router-dom";
 
 class OtherModal extends React.Component {
 
@@ -20,7 +21,7 @@ class OtherModal extends React.Component {
                     <Modal.Title>Other Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Card>
+                    <Card onClick={() => this.props.history.push("/app/stock")}>
                         <Card.Header>
                             <span><i className="fa fa-search"/></span>
                         </Card.Header>
@@ -52,4 +53,4 @@ function mapDispatchToProps(dispatch) {
     };
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(OtherModal);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps)(OtherModal));

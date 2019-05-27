@@ -14,7 +14,6 @@ import './LineItems.scss';
 class LineItems extends React.Component {
 
     enterProduct = async event => {
-        debugger
         event.preventDefault();
         let codeParts = this.props.till.code.split(" ");
         if (codeParts.length === 0 || codeParts.length > 3) {
@@ -59,7 +58,6 @@ class LineItems extends React.Component {
     };
 
     reset = async () => {
-        debugger
         await this.props.actions.till.setCode();
     };
 

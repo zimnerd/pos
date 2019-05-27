@@ -79,6 +79,5 @@ export function deactivateStaff(staff = false) {
 }
 
 export function setCode(code = "") {
-    debugger
     return { type: SET_CODE, code }
 }
