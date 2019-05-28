@@ -217,7 +217,8 @@ class Till extends React.Component {
             markdown: markdown,
             cost: product.sp,
             staff: Number(product.stfp),
-            retail: Number(product.rp)
+            retail: Number(product.rp),
+            serialNo: product.serialno
         };
 
         transaction.subtotal = transaction.price * transaction.qty;

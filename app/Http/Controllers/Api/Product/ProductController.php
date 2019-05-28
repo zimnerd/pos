@@ -3,6 +3,7 @@
 
 namespace App\Http\Controllers\Api\Product;
 
+use App\Airtime;
 use App\ColourCode;
 use App\Colours;
 use App\Handset;
@@ -85,8 +86,10 @@ class ProductController extends Controller
             $queryBuilder->where('code', $product->code);
             $items = $queryBuilder->get();
 
-            if (!$items) {
-                // TODO: add logic for airtime here
+            if (count($items) === 0) {
+                $queryBuilder = Airtime::query();
+                $queryBuilder->where('code', $product->code);
+                $items = $queryBuilder->get();
             }
         }
 
@@ -113,7 +116,8 @@ class ProductController extends Controller
      * @param $serialno
      * @return \Illuminate\Http\Response
      */
-    public function retrieveItem($code, $serialno) {
+    public function retrieveItem($code, $serialno)
+    {
         /**
          * @var Product $product
          */
@@ -124,7 +128,7 @@ class ProductController extends Controller
             ->first();
 
         if (!$product) {
-            return response()->json(['error' => 'The product style code applied cannot be found.'], $this->notFoundStatus);
+            return $this->retrieveAirtime($code, $serialno);
         }
 
         /**
@@ -138,19 +142,50 @@ class ProductController extends Controller
             ->join('sizecodes', 'sizecodes.sizeCode', '=', 'product.sizes')
             ->join('handsetstk', 'handsetstk.code', '=', 'product.code')
             ->where('product.code', $code)
-            ->where('sizecodes.sizeCode', $product->sizes)
-            ->where('colours.code', $product->clr)
-            ->where('handsetstk.code', $code)
+            ->where('handsetstk.serialno', $serialno)
             ->first();
 
-        $product['code'] = $product['code'] . $product['serialno'];
         $product['rp'] = $product['sp'];
         $product['stfp'] = $product['sp'];
         $product['mdp'] = 0;
 
         return response()->json(['product' => $product], $this->successStatus);
+    }
 
+    private function retrieveAirtime($code, $serialno)
+    {
+        /**
+         * @var Product $product
+         */
+        $product = Product::query()
+            ->join('airtime', 'airtime.code', '=', 'product.code')
+            ->where('product.code', $code)
+            ->where('airtime.serialno', $serialno)
+            ->first();
 
+        if (!$product) {
+            return response()->json(['error' => 'The product style code applied cannot be found.'], $this->notFoundStatus);
+        }
+
+        /**
+         * @var Product $product
+         */
+        $product = Product::query()
+            ->select('airtime.serialno', 'product.code', 'product.descr', 'sizecodes.codeKey',
+                'colours.colour', 'airtime.sp', 'airtime.cp')
+            ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
+            ->join('colours', 'colours.code', '=', 'clrcode.codeKey')
+            ->join('sizecodes', 'sizecodes.sizeCode', '=', 'product.sizes')
+            ->join('airtime', 'airtime.code', '=', 'product.code')
+            ->where('product.code', $code)
+            ->where('airtime.serialno', $serialno)
+            ->first();
+
+        $product['rp'] = $product['sp'];
+        $product['stfp'] = $product['sp'];
+        $product['mdp'] = 0;
+
+        return response()->json(['product' => $product], $this->successStatus);
     }
 
     /**
@@ -161,7 +196,8 @@ class ProductController extends Controller
      * @param $colour
      * @return \Illuminate\Http\Response
      */
-    public function retrieveProductWithCode($code, $size, $colour) {
+    public function retrieveProductWithCode($code, $size, $colour)
+    {
         /**
          * @var Product $product
          */

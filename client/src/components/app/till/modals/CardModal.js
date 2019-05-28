@@ -17,6 +17,7 @@ class CardModal extends React.Component {
     };
 
     completeSale = () => {
+        this.handleClose();
         this.props.actions.till.resetTotals();
         let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
         let transaction = {

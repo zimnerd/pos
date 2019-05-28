@@ -53,12 +53,17 @@ class TransactionController extends Controller
 
         $count = 1;
         foreach ($lineItems as $item) {
+            if (!isset($item['markdown'])) {
+                $item['markdown'] = false;
+            }
+
             $dailyTransaction = new DailyTransaction();
             $dailyTransaction->BRNO = $shop['BrNo'];
             $dailyTransaction->TILLNO = $till['tillno'];
             $dailyTransaction->STYLE = $item['code'];
             $dailyTransaction->SIZES = $item['size'];
             $dailyTransaction->CLR = $item['colour'];
+            $dailyTransaction->SERIALNO = $item['serialno'];
 
             $dailyTransaction->LINENO = $count;
             $dailyTransaction->DOCNO = $till['tillno'] . $till["InvNo"];
@@ -95,7 +100,6 @@ class TransactionController extends Controller
             $dailyTransaction->BUSER = $user->username;
             $dailyTransaction->AUSER = $transaction["auth"];
             $dailyTransaction->FWCNO = null;
-            $dailyTransaction->SERIALNO = "";
 
             $count++;
             $dailyTransaction->save();

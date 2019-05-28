@@ -21,6 +21,12 @@ class ProductStyleModal extends React.Component {
             transactions = [];
         }
 
+        let codes = product.code.split(" ");
+        if (codes.length === 2) {
+            product.code = codes[0];
+            product.serialno = codes[1];
+        }
+
         transactions.push(product);
         this.props.actions.till.setTransactions(transactions);
         this.props.mapLineItem(product);
