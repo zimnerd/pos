@@ -15,8 +15,8 @@ class CreateComboPricesTable extends Migration
     {
         Schema::dropIfExists('comboprice');
         Schema::create('comboprice', function (Blueprint $table) {
-            $table->string('code')->primary();
-            $table->string('style');
+            $table->string('code');
+            $table->string('style')->primary();
             $table->decimal('rp');
             $table->decimal('qty');
             $table->integer('dlno');

@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Product;
 use App\Airtime;
 use App\ColourCode;
 use App\Colours;
+use App\ComboPrice;
 use App\Handset;
 use App\Http\Controllers\Controller;
 use App\Prices;
@@ -227,6 +228,32 @@ class ProductController extends Controller
         }
 
         return response()->json(['product' => $product], $this->successStatus);
+    }
+
+    /**
+     * Retrieve combos for a style code
+     *
+     * @param string $code
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveCombos($code)
+    {
+        $now = date('Y-m-d');
+        $combo = ComboPrice::query()
+            ->select('comboprice.code', 'comboprice.style', 'comboprice.rp', 'comboprice.qty', 'comboprice.qty',
+                'combostyle.description')
+            ->join('combostyle', 'combostyle.code', '=', 'comboprice.style')
+            ->where('comboprice.style', $code)
+            ->where('combostyle.active', 1)
+            ->where('combostyle.startdate', '<=', $now)
+            ->where('combostyle.enddate', '>=', $now)
+            ->first();
+
+        if (!$combo) {
+            return response()->json(['error' => 'The combo cannot be found.'], $this->notFoundStatus);
+        }
+
+        return response()->json(['combo' => $combo], $this->successStatus);
     }
 
 }

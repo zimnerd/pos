@@ -21,6 +21,7 @@ class CreateCombosTable extends Migration
             $table->date('enddate');
             $table->tinyInteger('active');
             $table->dateTime('dts');
+            $table->string('dlno');
             $table->timestamps();
         });
     }

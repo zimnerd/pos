@@ -41,4 +41,15 @@ class Combo extends Model
      * @var bool
      */
     public $timestamps = true;
+
+    public $fillable = [
+        'code',
+        'description',
+        'startdate',
+        'sizes',
+        'enddate',
+        'active',
+        'dts',
+        'dlno'
+    ];
 }
