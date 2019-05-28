@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Product;
 
 use App\ColourCode;
 use App\Colours;
+use App\Handset;
 use App\Http\Controllers\Controller;
 use App\Prices;
 use App\Product;
@@ -34,8 +35,8 @@ class ProductController extends Controller
             $products = Product::paginate($limit);
         } else {
             $products = Product::query()
-                ->where('descr', 'LIKE', "%{$search}%")
-                ->orWhere('code', 'LIKE', "%{$search}%")
+                ->where('code', 'LIKE', "%{$search}%")
+                ->orWhere('descr', 'LIKE', "%{$search}%")
                 ->paginate($limit);
         }
 
@@ -77,6 +78,18 @@ class ProductController extends Controller
         $queryBuilder->where('style', $product->code);
         $prices = $queryBuilder->get();
 
+        // the product is either a handset or airtime
+        $items = array();
+        if (count($prices) === 0) {
+            $queryBuilder = Handset::query();
+            $queryBuilder->where('code', $product->code);
+            $items = $queryBuilder->get();
+
+            if (!$items) {
+                // TODO: add logic for airtime here
+            }
+        }
+
         $queryBuilder = Stock::query();
         $queryBuilder->where('style', $product->code);
         $quantities = $queryBuilder->get();
@@ -86,10 +99,58 @@ class ProductController extends Controller
             "description" => $product->descr,
             "colours" => $colours,
             "prices" => $prices,
-            "info" => $quantities
+            "info" => $quantities,
+            "items" => $items
         );
 
         return response()->json(['product' => $response], $this->successStatus);
+    }
+
+    /**
+     * Retrieve a product with a style and serial number
+     *
+     * @param string $code
+     * @param $serialno
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveItem($code, $serialno) {
+        /**
+         * @var Product $product
+         */
+        $product = Product::query()
+            ->join('handsetstk', 'handsetstk.code', '=', 'product.code')
+            ->where('product.code', $code)
+            ->where('handsetstk.serialno', $serialno)
+            ->first();
+
+        if (!$product) {
+            return response()->json(['error' => 'The product style code applied cannot be found.'], $this->notFoundStatus);
+        }
+
+        /**
+         * @var Product $product
+         */
+        $product = Product::query()
+            ->select('handsetstk.serialno', 'product.code', 'product.descr', 'sizecodes.codeKey',
+                'colours.colour', 'handsetstk.sp', 'handsetstk.cp')
+            ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
+            ->join('colours', 'colours.code', '=', 'clrcode.codeKey')
+            ->join('sizecodes', 'sizecodes.sizeCode', '=', 'product.sizes')
+            ->join('handsetstk', 'handsetstk.code', '=', 'product.code')
+            ->where('product.code', $code)
+            ->where('sizecodes.sizeCode', $product->sizes)
+            ->where('colours.code', $product->clr)
+            ->where('handsetstk.code', $code)
+            ->first();
+
+        $product['code'] = $product['code'] . $product['serialno'];
+        $product['rp'] = $product['sp'];
+        $product['stfp'] = $product['sp'];
+        $product['mdp'] = 0;
+
+        return response()->json(['product' => $product], $this->successStatus);
+
+
     }
 
     /**

@@ -49,9 +49,48 @@ class ProductStyleModal extends React.Component {
                         </thead>
                         <tbody>
                         {this.props.stock.product &&
-                        this.props.stock.product.info.map((item) => {
+                        this.props.stock.product.info.map((item, index) => {
                             let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
                             let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
+
+                            if (typeof price === "undefined") {
+                                let values = [];
+                                let size = item.SIZES;
+                                for (let item of this.props.stock.product.items) {
+                                    let price = Number(item.sp);
+
+                                    const product = {
+                                        description: this.props.stock.product.description,
+                                        code: `${item.code} ${item.serialno}`,
+                                        colour: colour.colour,
+                                        size: size,
+                                        qoh: 1.00,
+                                        disc: 0.00,
+                                        cost: item.cp,
+                                        staff: item.sp,
+                                        retail: item.sp,
+                                        qty: 1
+                                    };
+
+                                    product.subtotal = price * product.qty;
+                                    product.total = product.disc > 0 ? product.subtotal * product.disc / 100 : product.subtotal;
+
+                                    let value = (
+                                        <tr onClick={() => this.selectProduct(product)} key={index}>
+                                            <td>{product.code}</td>
+                                            <td>{product.colour}</td>
+                                            <td>{product.size}</td>
+                                            <td>{product.qoh}</td>
+                                            <td>{product.total.toFixed(2)}</td>
+                                            <td/>
+                                        </tr>
+                                    );
+
+                                    values.push(value);
+                                }
+
+                                return values;
+                            }
 
                             let markdown = price.mdp > 0;
                             const disc = markdown ? price.mdp / price.rp * 100 : 0;
@@ -74,7 +113,7 @@ class ProductStyleModal extends React.Component {
                             product.total = product.disc > 0 ? product.subtotal * product.disc / 100 : product.subtotal;
 
                             return (
-                                <tr onClick={() => this.selectProduct(product)}>
+                                <tr onClick={() => this.selectProduct(product)} key={index}>
                                     <td>{product.code}</td>
                                     <td>{product.colour}</td>
                                     <td>{product.size}</td>

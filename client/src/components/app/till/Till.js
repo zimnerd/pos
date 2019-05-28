@@ -211,7 +211,7 @@ class Till extends React.Component {
             description: product.descr,
             size: product.codeKey,
             colour: product.colour,
-            price: Number(product.rp),
+            price: Number(product.rp).toFixed(2),
             qty: 1,
             disc: disc.toFixed(2),
             markdown: markdown,

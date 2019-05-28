@@ -59,14 +59,36 @@ class ProductDetail extends React.Component {
                         </thead>
                         <tbody>
                         {this.props.stock.product &&
-                        this.props.stock.product.info.map(item => {
+                        this.props.stock.product.info.map((item, index) => {
                             let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
                             let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
+
+                            if (typeof price === "undefined") {
+                                let values = [];
+                                let size = item.SIZES;
+                                for (let item of this.props.stock.product.items) {
+                                    let price = Number(item.sp);
+                                    let value = (
+                                        <tr key={index}>
+                                            <td>{`${item.code} ${item.serialno}`}</td>
+                                            <td>{`${colour.colour}`}</td>
+                                            <td>{`${size}`}</td>
+                                            <td>1.00</td>
+                                            <td>{`${price.toFixed(2)}`}</td>
+                                            <td/>
+                                        </tr>
+                                    );
+
+                                    values.push(value);
+                                }
+
+                                return values;
+                            }
 
                             let markdown = price.mdp > 0;
                             let priceValue = markdown ? price.mdp : price.rp;
                             return (
-                                <tr>
+                                <tr key={index}>
                                     <td>{`${item.STYLE} ${item.SIZES} ${item.CLR}`}</td>
                                     <td>{`${colour.colour}`}</td>
                                     <td>{`${item.SIZES}`}</td>

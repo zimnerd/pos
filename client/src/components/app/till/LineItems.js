@@ -18,8 +18,10 @@ class LineItems extends React.Component {
         let codeParts = this.props.till.code.split(" ");
         if (codeParts.length === 0 || codeParts.length > 3) {
             await this.props.actions.till.setCode("Invalid Product Code");
-        } else if (codeParts.length < 3) {
+        } else if (codeParts.length === 1) {
             this.props.openStyles(codeParts[0]);
+        } else if (codeParts.length === 2) {
+            this.retrieveProductWithSerial(codeParts);
         } else if (codeParts.length === 3) {
             this.retrieveProductWithCode(codeParts);
         }
@@ -27,6 +29,34 @@ class LineItems extends React.Component {
 
     handleChange = async event => {
         await this.props.actions.till.setCode(event.target.value);
+    };
+
+    retrieveProductWithSerial = codeParts => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/products/${codeParts[0]}/${codeParts[1]}`, { headers })
+            .then(async response => {
+                console.log(response.data);
+
+                toastr.success("Product Retrieved!", "Retrieve Product");
+
+                const product = response.data.product;
+                await this.props.createTransaction(product);
+                await this.props.mapTransactions();
+                await this.props.actions.till.setCode();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error(error.response.data.error, "Retrieve Product");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     retrieveProductWithCode = codeParts => {

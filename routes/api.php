@@ -27,6 +27,7 @@ Route::group(["prefix" => "api/products"], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('', 'Api\Product\ProductController@retrieveStock');
         Route::get('{code}', 'Api\Product\ProductController@retrieveProduct');
+        Route::get('{code}/{serialno}', 'Api\Product\ProductController@retrieveItem');
         Route::get('{code}/{size}/{colour}', 'Api\Product\ProductController@retrieveProductWithCode');
     });
 
