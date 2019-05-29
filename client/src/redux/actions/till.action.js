@@ -9,7 +9,7 @@ import {
     DEACTIVATE_STAFF,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
-    SET_AUTH_COMMAND, SET_CODE,
+    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS
@@ -80,4 +80,8 @@ export function deactivateStaff(staff = false) {
 
 export function setCode(code = "") {
     return { type: SET_CODE, code }
+}
+
+export function setCombos(combos = []) {
+    return { type: SET_COMBOS, combos }
 }

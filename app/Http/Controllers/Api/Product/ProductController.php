@@ -242,7 +242,7 @@ class ProductController extends Controller
         $combo = ComboPrice::query()
             ->select('comboprice.code', 'comboprice.style', 'comboprice.rp', 'comboprice.qty', 'comboprice.qty',
                 'combostyle.description')
-            ->join('combostyle', 'combostyle.code', '=', 'comboprice.style')
+            ->join('combostyle', 'combostyle.code', '=', 'comboprice.code')
             ->where('comboprice.style', $code)
             ->where('combostyle.active', 1)
             ->where('combostyle.startdate', '<=', $now)

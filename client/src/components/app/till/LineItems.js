@@ -45,6 +45,7 @@ class LineItems extends React.Component {
                 const product = response.data.product;
                 await this.props.createTransaction(product);
                 await this.props.mapTransactions();
+                await this.props.retrieveCombo(product.code);
                 await this.props.actions.till.setCode();
             })
             .catch(error => {
@@ -73,6 +74,7 @@ class LineItems extends React.Component {
                 const product = response.data.product;
                 await this.props.createTransaction(product);
                 await this.props.mapTransactions();
+                await this.props.retrieveCombo(product.code);
                 await this.props.actions.till.setCode();
             })
             .catch(error => {
@@ -104,6 +106,16 @@ class LineItems extends React.Component {
         transactions.splice(index, 1);
         await this.props.mapTransactions();
         this.props.actions.till.setTransactions(transactions);
+
+        let newCombos = [];
+        for (let transaction of this.props.till.transactions) {
+            let comboMatch = this.props.till.combos.find(combo => combo.style === transaction.code);
+            if (comboMatch) {
+                newCombos.push(comboMatch);
+            }
+        }
+
+        this.props.actions.till.setCombos(newCombos);
     };
 
     render() {
@@ -143,6 +155,9 @@ class LineItems extends React.Component {
                                     <small>{item.size + ", " + item.colour}</small>
                                     {item.markdown &&
                                     <span className="badge badge-danger">Markdown</span>
+                                    }
+                                    {item.combo &&
+                                    <span className="badge badge-info">Combo</span>
                                     }
                                 </td>
                                 <td><span>{item.qty}</span></td>

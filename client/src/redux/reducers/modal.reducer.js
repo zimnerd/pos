@@ -1,7 +1,7 @@
 import {
     CLOSE_AUTH_MODAL,
     CLOSE_CARD_MODAL,
-    CLOSE_CASH_MODAL,
+    CLOSE_CASH_MODAL, CLOSE_COMBO_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
@@ -12,7 +12,7 @@ import {
     CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
-    OPEN_CASH_MODAL,
+    OPEN_CASH_MODAL, OPEN_COMBO_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
@@ -73,6 +73,10 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, retrieveHeld: action.retrieveHeld };
         case CLOSE_RETRIEVE_HELD_MODAL:
             return { ...state, retrieveHeld: action.retrieveHeld };
+        case OPEN_COMBO_MODAL:
+            return { ...state, combo: action.combo };
+        case CLOSE_COMBO_MODAL:
+            return { ...state, combo: action.combo };
         default:
             return state;
     }

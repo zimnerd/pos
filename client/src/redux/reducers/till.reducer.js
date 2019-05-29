@@ -9,7 +9,7 @@ import {
     DEACTIVATE_STAFF,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
-    SET_AUTH_COMMAND, SET_CODE,
+    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS
@@ -47,6 +47,8 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, staff: action.staff };
         case SET_CODE:
             return { ...state, code: action.code };
+        case SET_COMBOS:
+            return { ...state, combos: action.combos };
         default:
             return state;
     }

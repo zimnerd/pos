@@ -29,9 +29,10 @@ class ProductStyleModal extends React.Component {
 
         transactions.push(product);
         this.props.actions.till.setTransactions(transactions);
+        this.handleClose();
         this.props.mapLineItem(product);
         this.props.mapTransactions();
-        this.handleClose();
+        this.props.retrieveCombo(product.code);
     };
 
     render() {
@@ -109,6 +110,7 @@ class ProductStyleModal extends React.Component {
                                 price: Number(price.rp),
                                 markdown: markdown,
                                 qty: 1,
+                                qoh: item.QOH,
                                 disc: disc.toFixed(2),
                                 cost: price.sp,
                                 staff: price.stfp,

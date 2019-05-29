@@ -28,6 +28,7 @@ import TransactionId from "./modals/TransactionId";
 import RetrieveHeldModal from "./modals/RetrieveHeldModal";
 import axios from "axios";
 import toastr from "toastr";
+import ComboModal from "./modals/ComboModal";
 
 class Till extends React.Component {
 
@@ -38,6 +39,7 @@ class Till extends React.Component {
     constructor(props) {
         super(props);
         this.props.actions.till.setTransactions();
+        this.props.actions.till.setCombos();
     }
 
     componentDidMount = () => {
@@ -172,13 +174,10 @@ class Till extends React.Component {
         if (typeof this.props.till.transactions === "undefined") {
             return;
         }
-        let totals = {
-            total: 0,
-            subtotal: 0,
-            vat: 0,
-            discount: 0
-        };
-        for (let transaction of this.props.till.transactions) {
+
+        let comboIndex = -1;
+        for (let x = 0, len = this.props.till.transactions.length; x < len; x++) {
+            let transaction = this.props.till.transactions[x];
             if (this.props.till.staff) {
                 transaction.price = transaction.staff;
                 transaction.subtotal = transaction.price * transaction.qty;
@@ -186,20 +185,93 @@ class Till extends React.Component {
                 transaction.discStore = transaction.disc;
                 transaction.disc = 0.00;
             } else {
-                transaction.price = transaction.retail;
-                transaction.subtotal = transaction.price * transaction.qty;
+                transaction.markdown = transaction.mdp > 0;
+                transaction.combo = false;
 
-                if (typeof transaction.discStore !== "undefined") {
-                    transaction.disc = transaction.discStore;
-                    delete transaction.discStore;
+                if (transaction.markdown) {
+                    transaction.price = transaction.mdp;
+                    transaction.disc = (transaction.mdp / transaction.retail * 100).toFixed(2);
+                } else {
+                    transaction.price = transaction.retail;
+                    transaction.disc = 0.00;
                 }
-                transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
-            }
 
+                let comboFromList = this.props.till.combos.find(combo => combo.style === transaction.code);
+                if (comboFromList) {
+                    if (comboIndex !== -1) {
+                        let oldTran = this.props.till.transactions[comboIndex];
+                        oldTran.price = comboFromList.rp;
+                        oldTran.markdown = false;
+                        oldTran.combo = true;
+                        oldTran.discStore = oldTran.disc;
+                        oldTran.disc = 0.00;
+                        oldTran.subtotal = oldTran.price * oldTran.qty;
+                        oldTran.total = oldTran.subtotal;
+
+                        transaction.price = comboFromList.rp;
+                        transaction.markdown = false;
+                        transaction.combo = true;
+                        transaction.disc = 0.00;
+                        comboIndex = -1;
+                    } else {
+                        comboIndex = x;
+                    }
+                    transaction.subtotal = transaction.price * transaction.qty;
+                    transaction.total = transaction.subtotal;
+                } else {
+                    transaction.price = transaction.retail;
+                    transaction.subtotal = transaction.price * transaction.qty;
+
+                    if (typeof transaction.discStore !== "undefined") {
+                        transaction.disc = transaction.discStore;
+                        delete transaction.discStore;
+                    }
+                    transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
+                }
+            }
+        }
+
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0
+        };
+        for (let transaction of this.props.till.transactions) {
             this.mapHeldItems(transaction, totals);
         }
+
         this.props.actions.till.setTotals(totals);
         this.props.actions.till.setTransactions(this.props.till.transactions);
+    };
+
+    retrieveCombo = (code) => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/products/${code}/combos`, { headers })
+            .then(response => {
+                console.log(response.data);
+                toastr.info("Combos Found!", "Find Combo");
+
+                let combo = this.props.till.combos.find(combo => combo.code === response.data.combo.code);
+                if (!combo) {
+                    this.props.till.combos.push(response.data.combo);
+                    this.props.actions.till.setCombos(this.props.till.combos);
+                    this.props.actions.modal.openCombo();
+                }
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    console.log("No combos found");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     createTransaction = product => {
@@ -212,6 +284,7 @@ class Till extends React.Component {
             size: product.codeKey,
             colour: product.colour,
             price: Number(product.rp).toFixed(2),
+            mdp: product.mdp,
             qty: 1,
             disc: disc.toFixed(2),
             markdown: markdown,
@@ -240,20 +313,22 @@ class Till extends React.Component {
                 <Header/>
                 <main className="d-flex">
                     <InformationBar/>
-                    <TransactionBadges mapTransactions={this.mapTransactions} />
-                    <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions} openStyles={this.openStyles}
-                               createTransaction={this.createTransaction} />
+                    <TransactionBadges mapTransactions={this.mapTransactions}/>
+                    <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions}
+                               openStyles={this.openStyles} retrieveCombo={this.retrieveCombo}
+                               createTransaction={this.createTransaction}/>
                     <Totals openModal={this.openModal}/>
                 </main>
                 <footer>
                     <ActionBar openModal={this.openModal}/>
                 </footer>
 
-                <CashModal mapLineItem={this.mapHeldItems} />
-                <CardModal mapLineItem={this.mapHeldItems} />
+                <CashModal mapLineItem={this.mapHeldItems}/>
+                <CardModal mapLineItem={this.mapHeldItems}/>
 
-                <AuthenticationModal mapTransactions={this.mapTransactions} />
-                <ProductStyleModal mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions} />
+                <AuthenticationModal mapTransactions={this.mapTransactions}/>
+                <ProductStyleModal mapLineItem={this.mapLineItem} retrieveCombo={this.retrieveCombo}
+                                   mapTransactions={this.mapTransactions}/>
                 <CompleteSaleModal/>
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>
@@ -262,6 +337,7 @@ class Till extends React.Component {
                 <PaymentOptionsModal/>
                 <TransactionId/>
                 <RetrieveHeldModal/>
+                <ComboModal/>
             </article>
         )
     }

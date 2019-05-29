@@ -1,7 +1,7 @@
 import {
     CLOSE_AUTH_MODAL,
     CLOSE_CARD_MODAL,
-    CLOSE_CASH_MODAL,
+    CLOSE_CASH_MODAL, CLOSE_COMBO_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
@@ -13,7 +13,7 @@ import {
     CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
-    OPEN_CASH_MODAL,
+    OPEN_CASH_MODAL, OPEN_COMBO_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
@@ -119,4 +119,12 @@ export function openRetrieveHeld(retrieveHeld = true) {
 
 export function closeRetrieveHeld(retrieveHeld = false) {
     return { type: CLOSE_RETRIEVE_HELD_MODAL, retrieveHeld }
+}
+
+export function openCombo(combo = true) {
+    return { type: OPEN_COMBO_MODAL, combo }
+}
+
+export function closeCombo(combo = false) {
+    return { type: CLOSE_COMBO_MODAL, combo }
 }
