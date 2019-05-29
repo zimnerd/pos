@@ -2,15 +2,148 @@ import React from 'react';
 import { Button, Form, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
+import * as tillActions from "../../../../redux/actions/till.action";
 
 import './CompleteSaleModal.scss';
 
 class CompleteSaleModal extends React.Component {
 
+    state = {
+        method: "",
+        tendered: 0.00,
+        cash: 0.00,
+        card: 0.00
+    };
+
     handleClose = () => {
-        this.props.actions.closeCompleteSale();
+        this.props.actions.modal.closeCompleteSale();
+    };
+
+    changeMethod = event => {
+        this.setState({
+            method: event.target.value
+        }, () => {
+            if (this.state.method === "Split") {
+                this.setState({
+                    tendered: this.state.cash + this.state.card
+                })
+            }
+        });
+    };
+
+    handleChange = event => {
+        this.setState({
+            [event.target.name]: Number(event.target.value)
+        }, () => {
+            if (this.state.method === "Split") {
+                this.setState({
+                    tendered: this.state.cash + this.state.card
+                })
+            }
+        });
+    };
+
+    handleText = event => {
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    };
+
+    completeSale = () => {
+        let method = this.state.method;
+        if (method === "Split") {
+            method = this.state.cash >= this.state.card ? "Cash" : "CC";
+        }
+
+        this.props.actions.till.resetTotals();
+        let allTransactions = this.props.till.transactions;
+        let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
+        let transaction = {
+            person: {
+                name: this.state.name,
+                cell: this.state.cell,
+                email: this.state.email
+            },
+            shop: this.props.settings.shop,
+            till: this.props.settings.till,
+            transactions: transactionsToComplete,
+            totals: this.props.till.totals,
+            type: "INV",
+            method: method,
+            auth: ""
+        };
+
+        let heldSales = this.props.till.transactions.filter(item => item.hold);
+        this.mapHeldSales(heldSales);
+
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.post(`/api/transactions`, transaction, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Transaction Completed!", "Create Transaction");
+                this.props.actions.till.setTransactions(heldSales);
+
+                this.saveSettings();
+                this.handleClose();
+            })
+            .catch(error => {
+                console.log(error);
+                this.mapHeldSales(allTransactions);
+                this.props.actions.till.setTransactions(allTransactions);
+
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error('The information you have supplied is invalid!', 'Validation');
+                    this.props.actions.till.validationError(error.response.data.errors);
+                }
+            });
+    };
+
+    mapHeldSales = sales => {
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0
+        };
+        for(let x = 0, len = sales.length; x < len; x++) {
+            let sale = sales[x];
+            totals = this.props.mapLineItem(sale, totals);
+        }
+        this.props.actions.till.setTotals(totals);
+    };
+
+    saveSettings = () => {
+        let till = this.props.settings.till;
+        till.InvNo = Number(till.InvNo) + 1;
+        till.DepNo = Number(till.DepNo) + 1;
+
+        axios.post(`/api/settings/till/1`, till)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till Details updated!", "Update Settings");
+
+                this.props.actions.settings.saveTill(response.data.till);
+                this.handleClose();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     render() {
@@ -27,32 +160,56 @@ class CompleteSaleModal extends React.Component {
                     {this.props.till.transactions &&
                         this.props.till.transactions.length > 0 &&
                         <Form>
-                            <label>Total Invoice Amount: <span>1000.00</span></label>
+                            <label>Total Invoice Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
                             <div className="form-group">
                                 <label>Payment Method:</label>
                                 <span>Cash</span>
-                                <input type="radio" className="form-control" value="Cash" name="payment"/>
+                                <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
+                                       name="method"/>
                                 <span>Card</span>
-                                <input type="radio" className="form-control" value="Card" name="payment"/>
+                                <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
+                                       name="method"/>
                                 <span>Split Payment</span>
-                                <input type="radio" className="form-control" value="Split Payment" name="payment"/>
+                                <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
+                                       name="method"/>
                             </div>
+                            {
+                                this.state.method === "Split" &&
+                                <div className="form-group">
+                                    <label>Cash Amount:</label>
+                                    <input type="number" className="form-control" min="0" name="cash" value={this.state.cash}
+                                           onChange={this.handleChange}/>
+                                    <label>Card Amount:</label>
+                                    <input type="number" className="form-control" min="0" name="card" value={this.state.card}
+                                           onChange={this.handleChange}/>
+                                </div>
+                            }
                             <div className="form-group">
                                 <label>Amount Tendered:</label>
-                                <input type="number" className="form-control" min="0"/>
+                                <input type="number" className="form-control" min="0" value={this.state.tendered} name="tendered"
+                                       disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                             </div>
-                            <label>Change: <span>0.00</span></label>
+                            {this.state.tendered > this.props.till.totals.total &&
+                                <label>Change:
+                                    <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
+                                </label>
+                            }
                             <div className="form-group">
                                 <label>Name:</label>
-                                <input type="text" className="form-control" name="name"/>
+                                <input type="text" className="form-control" name="name" value={this.state.name}
+                                       onChange={this.handleText}/>
                             </div>
                             <div className="form-group">
                                 <label>Cell Number:</label>
-                                <input type="text" className="form-control" name="cell"/>
+                                <input type="text" className="form-control" name="cell" value={this.state.cell}
+                                       onChange={this.handleText}/>
+                                {this.props.auth.errors['person.cell'] && <p>{this.props.auth.errors['person.cell'][0]}</p>}
                             </div>
                             <div className="form-group">
                                 <label>Email Address:</label>
-                                <input type="email" className="form-control" name="email"/>
+                                <input type="email" className="form-control" name="email" value={this.state.email}
+                                       onChange={this.handleText}/>
+                                {this.props.auth.errors['person.email'] && <p>{this.props.auth.errors['person.email'][0]}</p>}
                             </div>
                         </Form>
                     }
@@ -62,8 +219,10 @@ class CompleteSaleModal extends React.Component {
                         Close
                     </Button>
                     {this.props.till.transactions &&
+                    this.props.till.totals &&
+                        this.state.tendered >= this.props.till.totals.total &&
                         this.props.till.transactions.length > 0 &&
-                        <Button variant="primary" onClick={this.handleClose}>
+                        <Button variant="primary" onClick={this.completeSale}>
                             Update & Print
                         </Button>
                     }
@@ -77,13 +236,18 @@ class CompleteSaleModal extends React.Component {
 function mapStateToProps(state) {
     return {
         modal: state.modal,
-        till: state.till
+        till: state.till,
+        settings: state.settings,
+        auth: state.auth
     };
 }
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(modalActions, dispatch)
+        actions: {
+            modal: bindActionCreators(modalActions, dispatch),
+            till: bindActionCreators(tillActions, dispatch)
+        }
     };
 }
 

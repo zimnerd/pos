@@ -31,7 +31,9 @@ class TransactionController extends Controller
             'shop' => 'required',
             'till' => 'required',
             'transactions' => 'required',
-            'totals' => 'required'
+            'totals' => 'required',
+            'person.email' => 'nullable | email',
+            'person.cell' => 'nullable | max:10 | min:10'
         ]);
 
         $transaction = $request->all();
@@ -63,7 +65,12 @@ class TransactionController extends Controller
             $dailyTransaction->STYLE = $item['code'];
             $dailyTransaction->SIZES = $item['size'];
             $dailyTransaction->CLR = $item['colour'];
-            $dailyTransaction->SERIALNO = $item['serialno'];
+
+            if (isset($item['serialno'])) {
+                $dailyTransaction->SERIALNO = $item['serialno'];
+            } else {
+                $dailyTransaction->SERIALNO = '';
+            }
 
             $dailyTransaction->LINENO = $count;
             $dailyTransaction->DOCNO = $till['tillno'] . $till["InvNo"];

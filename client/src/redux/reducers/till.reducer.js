@@ -12,7 +12,7 @@ import {
     SET_AUTH_COMMAND, SET_CODE, SET_COMBOS,
     SET_TOTALS,
     SET_TRANSACTION_ID,
-    SET_TRANSACTIONS
+    SET_TRANSACTIONS, VALIDATION_ERROR
 } from "../constants/till.constants";
 
 export default function tillReducer(state = { errors: [] }, action) {
@@ -49,6 +49,8 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, code: action.code };
         case SET_COMBOS:
             return { ...state, combos: action.combos };
+        case VALIDATION_ERROR:
+            return { ...state, errors: action.errors };
         default:
             return state;
     }

@@ -12,7 +12,7 @@ import {
     SET_AUTH_COMMAND, SET_CODE, SET_COMBOS,
     SET_TOTALS,
     SET_TRANSACTION_ID,
-    SET_TRANSACTIONS
+    SET_TRANSACTIONS, VALIDATION_ERROR
 } from "../constants/till.constants";
 
 export function activateLayBye(activate = true) {
@@ -84,4 +84,8 @@ export function setCode(code = "") {
 
 export function setCombos(combos = []) {
     return { type: SET_COMBOS, combos }
+}
+
+export function validationError(errors) {
+    return { type: VALIDATION_ERROR, errors };
 }
