@@ -101,35 +101,37 @@ class ProductStyleModal extends React.Component {
 
                             let markdown = price.mdp > 0;
                             const disc = markdown ? price.mdp / price.rp * 100 : 0;
+                            
+                            if (Number(item.QOH) > 0) {
+                                const product = {
+                                    code: `${item.STYLE}`,
+                                    description: this.props.stock.product.description,
+                                    size: item.SIZES,
+                                    colour: colour.colour,
+                                    price: Number(price.rp),
+                                    markdown: markdown,
+                                    qty: 1,
+                                    qoh: item.QOH,
+                                    disc: disc.toFixed(2),
+                                    cost: price.sp,
+                                    staff: price.stfp,
+                                    retail: price.rp
+                                };
 
-                            const product = {
-                                code: `${item.STYLE}`,
-                                description: this.props.stock.product.description,
-                                size: item.SIZES,
-                                colour: colour.colour,
-                                price: Number(price.rp),
-                                markdown: markdown,
-                                qty: 1,
-                                qoh: item.QOH,
-                                disc: disc.toFixed(2),
-                                cost: price.sp,
-                                staff: price.stfp,
-                                retail: price.rp
-                            };
+                                product.subtotal = product.price * product.qty;
+                                product.total = product.disc > 0 ? product.subtotal * product.disc / 100 : product.subtotal;
 
-                            product.subtotal = product.price * product.qty;
-                            product.total = product.disc > 0 ? product.subtotal * product.disc / 100 : product.subtotal;
-
-                            return (
-                                <tr onClick={() => this.selectProduct(product)} key={index}>
-                                    <td>{product.code}</td>
-                                    <td>{product.colour}</td>
-                                    <td>{product.size}</td>
-                                    <td>{product.qoh}</td>
-                                    <td>{product.total.toFixed(2)}</td>
-                                    <td>{markdown && <span className="badge badge-danger">Markdown</span>}</td>
-                                </tr>
-                            )
+                                return (
+                                    <tr onClick={() => this.selectProduct(product)} key={index}>
+                                        <td>{product.code}</td>
+                                        <td>{product.colour}</td>
+                                        <td>{product.size}</td>
+                                        <td>{product.qoh}</td>
+                                        <td>{product.total.toFixed(2)}</td>
+                                        <td>{markdown && <span className="badge badge-danger">Markdown</span>}</td>
+                                    </tr>
+                                )
+                            }
                         })
                         }
                         </tbody>

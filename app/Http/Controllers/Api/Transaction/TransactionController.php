@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers\Api\Transaction;
 
+use App\Airtime;
+use App\Colours;
 use App\DailyControl;
 use App\DailySummary;
 use App\DailyTransaction;
+use App\Handset;
 use App\Http\Controllers\Controller;
 use App\Sale;
+use App\Stock;
 use App\Till;
 use App\User;
 use Illuminate\Http\Request;
@@ -110,6 +114,46 @@ class TransactionController extends Controller
 
             $count++;
             $dailyTransaction->save();
+
+            $colour = Colours::query()
+                ->where("colour", $item['colour'])
+                ->first();
+
+            /**
+             * @var Stock $stock
+             */
+            $stock = Stock::query()
+                ->where("STYLE", $item['code'])
+                ->where("SIZES", $item['size'])
+                ->where("CLR", $colour->code)
+                ->first();
+
+            $stock->QOH = $stock->QOH - 1;
+            $stock->save();
+
+            if (isset($item['serialno'])) {
+
+                $queryBuilder = Handset::query();
+                $queryBuilder->where('code', $dailyTransaction->STYLE)
+                ->where('serialno', $dailyTransaction->SERIALNO);
+                /**
+                 * @var Handset $item
+                 */
+                $item = $queryBuilder->first();
+
+                if (!$item) {
+                    $queryBuilder = Airtime::query();
+                    $queryBuilder->where('code', $dailyTransaction->STYLE)
+                        ->where('serialno', $dailyTransaction->SERIALNO);
+                    /**
+                     * @var Airtime $item
+                     */
+                    $item = $queryBuilder->first();
+                }
+
+                $item->solddate = new \DateTime();
+                $item->save();
+            }
         }
 
         $summmary = new DailySummary();

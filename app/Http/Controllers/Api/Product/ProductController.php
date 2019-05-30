@@ -84,12 +84,14 @@ class ProductController extends Controller
         $items = array();
         if (count($prices) === 0) {
             $queryBuilder = Handset::query();
-            $queryBuilder->where('code', $product->code);
+            $queryBuilder->where('code', $product->code)
+                ->whereNull('solddate');
             $items = $queryBuilder->get();
 
             if (count($items) === 0) {
                 $queryBuilder = Airtime::query();
-                $queryBuilder->where('code', $product->code);
+                $queryBuilder->where('code', $product->code)
+                    ->whereNull('solddate');
                 $items = $queryBuilder->get();
             }
         }
@@ -126,6 +128,7 @@ class ProductController extends Controller
             ->join('handsetstk', 'handsetstk.code', '=', 'product.code')
             ->where('product.code', $code)
             ->where('handsetstk.serialno', $serialno)
+            ->whereNull('handsetstk.solddate')
             ->first();
 
         if (!$product) {
@@ -162,6 +165,7 @@ class ProductController extends Controller
             ->join('airtime', 'airtime.code', '=', 'product.code')
             ->where('product.code', $code)
             ->where('airtime.serialno', $serialno)
+            ->whereNull('airtime.solddate')
             ->first();
 
         if (!$product) {
