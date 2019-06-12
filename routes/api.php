@@ -44,10 +44,12 @@ Route::group(["prefix" => "api/settings"], function () {
 
 Route::group(["prefix" => "api/transactions"], function () {
 
+    Route::get('{id}/print', 'Api\Transaction\TransactionController@printReceipt');
+
     Route::group(['middleware' => 'auth:api'], function () {
 
         Route::post('', 'Api\Transaction\TransactionController@createTransaction');
-        
+
         Route::post('hold', 'Api\Transaction\TransactionController@holdSale');
         Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
 

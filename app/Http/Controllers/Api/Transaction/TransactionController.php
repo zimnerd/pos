@@ -9,12 +9,17 @@ use App\DailySummary;
 use App\DailyTransaction;
 use App\Handset;
 use App\Http\Controllers\Controller;
+use App\Product;
 use App\Sale;
 use App\Stock;
 use App\Till;
 use App\User;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\View;
 
 class TransactionController extends Controller
 {
@@ -57,6 +62,7 @@ class TransactionController extends Controller
          */
         $user = Auth::user();
 
+        $docNo = $till['tillno'] . $till["InvNo"];
         $count = 1;
         foreach ($lineItems as $item) {
             if (!isset($item['markdown'])) {
@@ -77,7 +83,7 @@ class TransactionController extends Controller
             }
 
             $dailyTransaction->LINENO = $count;
-            $dailyTransaction->DOCNO = $till['tillno'] . $till["InvNo"];
+            $dailyTransaction->DOCNO = $docNo;
             $dailyTransaction->DOCTYPE = $transaction["type"];
             $dailyTransaction->SUP = $transaction["method"];
             $dailyTransaction->STYPE = $transaction["method"];
@@ -135,7 +141,7 @@ class TransactionController extends Controller
 
                 $queryBuilder = Handset::query();
                 $queryBuilder->where('code', $dailyTransaction->STYLE)
-                ->where('serialno', $dailyTransaction->SERIALNO);
+                    ->where('serialno', $dailyTransaction->SERIALNO);
                 /**
                  * @var Handset $item
                  */
@@ -173,7 +179,7 @@ class TransactionController extends Controller
         $summmary->DLNO = 0;
         $summmary->UPDNO = 0;
         $summmary->OTTYPE = $transaction["type"];
-        $summmary->OTRANNO = $till['tillno'] . $till["InvNo"];
+        $summmary->OTRANNO = $docNo;
         $summmary->ODATE = \date("Y-m-d");
         $summmary->DEBTOR = $transaction["type"] === "INV" ? "Cash" : $transaction['debtor'];
         $summmary->BUSER = $user->username;
@@ -183,11 +189,11 @@ class TransactionController extends Controller
         $summmary->save();
 
         $control = new DailyControl();
-        $control->docnum = $till['tillno'] . $till["InvNo"];
+        $control->docnum = $docNo;
         $control->transtype = $transaction["type"];
         $control->save();
 
-        return response()->json([], $this->createdStatus);
+        return response()->json(["number" => $docNo], $this->createdStatus);
     }
 
     /**
@@ -210,7 +216,7 @@ class TransactionController extends Controller
 
         $till = $lineItems['till'];
 
-        foreach ($transactions as  $transaction) {
+        foreach ($transactions as $transaction) {
             $sale = new Sale();
             $sale->docnum = $till['tillno'] . $till['InvNo'];
             $sale->type = $lineItems['type'];
@@ -273,6 +279,122 @@ class TransactionController extends Controller
         }
 
         return response()->json(['lineItems' => $lineItems], $this->successStatus);
+    }
+
+    /**
+     * Retrieve all line items for a document number
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveTransaction($id) {
+        $transactions = DailyTransaction::query()
+            ->where('DOCNO', $id)
+            ->get();
+
+        if (!$transactions) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $lineItems = array("type" => "", "branch" => "", "till" => "",
+            "transactions" => array(), "totals" => array("vat" => 0, "total" => 0, "qty" => 0));
+
+        $vat = 0;
+        $total = 0;
+        $qty = 0;
+
+        /**
+         * @var DailyTransaction $item
+         */
+        foreach ($transactions as $item) {
+            $qty++;
+
+            $transaction = array();
+            $transaction['code'] = $item->STYLE;
+            $transaction['colour'] = $item->CLR;
+            $transaction['size'] = $item->SIZES;
+            $transaction['cost'] = $item->CP;
+
+            /**
+             * @var Product $product
+             */
+            $product = Product::query()->where('code', $item->STYLE)->get()[0];
+            $transaction['description'] = $product->DESCR;
+
+            $transaction['disc'] = $item->DISCAMT;
+            $transaction['markdown'] = $item->LSLTYPE === 'M' ? true : false;
+            $transaction['price'] = $item->SP;
+            $transaction['qty'] = $item->QTY;
+            $transaction['subtotal'] = $item->QTY * $item->SP;
+            $transaction['total'] = $item->AMT;
+            $total += $item->AMT;
+            $vat += $item->VATAMT;
+
+            $lineItems["transactions"][] = $transaction;
+            $lineItems["type"] = $item->SUP;
+            $lineItems["branch"] = $item->BRNO;
+            $lineItems["till"] = $item->TILLNO;
+        }
+
+        $lineItems["totals"]["vat"] = $vat;
+        $lineItems["totals"]["qty"] = $qty;
+        $lineItems["totals"]["total"] = $total;
+
+        return response()->json(['lineItems' => $lineItems], $this->successStatus);
+    }
+
+    /**
+     * Print transaction receipt.
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function printReceipt($id)
+    {
+        /**
+         * @var Response $response
+         */
+        $response = $this->retrieveTransaction($id);
+        if (!$response->isOk()) {
+            return response()->json([], $response->getStatusCode());
+        }
+
+        $transaction = $response->getOriginalContent()['lineItems'];
+
+        /**
+         * @var DailyTransaction[] $lineItems
+         */
+        $lineItems = $transaction["transactions"];
+        $totals = $transaction["totals"];
+
+        $date = \date('Y-m-d');
+        $time = \date("H:i:s");
+
+        /**
+         * @var SnappyPdf $snappy
+         */
+        $snappy = App::make('snappy.pdf');
+        $html = View::make('receipt', [
+            "transaction_id" => $id,
+            "date" => $date,
+            "time" => $time,
+            "transactions" => $lineItems,
+            "totals" => $totals,
+            "branch" => $transaction['branch'],
+            "till" => $transaction['till'],
+            "method" => $transaction['type'],
+            "tendered" => 0,
+            "change" => $totals['total'] - 0
+        ]);
+        return new Response(
+            $snappy->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="file.pdf"'
+            )
+        );
+
     }
 
 }

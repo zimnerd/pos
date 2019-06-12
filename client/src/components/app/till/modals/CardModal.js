@@ -44,6 +44,7 @@ class CardModal extends React.Component {
 
                 toastr.success("Transaction Completed!", "Create Transaction");
 
+                this.printReceipt(response.data.number);
                 this.saveSettings();
             })
             .catch(error => {
@@ -54,6 +55,15 @@ class CardModal extends React.Component {
                     toastr.error("Unknown error.");
                 }
             });
+    };
+
+    printReceipt = number => {
+        let a = document.createElement('a');
+        a.href = `http://localhost:8000/api/api/transactions/${number}/print`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     mapHeldSales = sales => {

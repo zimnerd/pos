@@ -16,7 +16,8 @@ class CompleteSaleModal extends React.Component {
         method: "",
         tendered: 0.00,
         cash: 0.00,
-        card: 0.00
+        card: 0.00,
+        document: undefined
     };
 
     handleClose = () => {
@@ -91,6 +92,8 @@ class CompleteSaleModal extends React.Component {
                 toastr.success("Transaction Completed!", "Create Transaction");
                 this.props.actions.till.setTransactions(heldSales);
 
+                this.printReceipt(response.data.number);
+
                 this.saveSettings();
                 this.handleClose();
             })
@@ -108,6 +111,15 @@ class CompleteSaleModal extends React.Component {
             });
     };
 
+    printReceipt = number => {
+        let a = document.createElement('a');
+        a.href = `http://localhost:8000/api/api/transactions/${number}/print`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
     mapHeldSales = sales => {
         let totals = {
             total: 0,
@@ -115,7 +127,7 @@ class CompleteSaleModal extends React.Component {
             vat: 0,
             discount: 0
         };
-        for(let x = 0, len = sales.length; x < len; x++) {
+        for (let x = 0, len = sales.length; x < len; x++) {
             let sale = sales[x];
             totals = this.props.mapLineItem(sale, totals);
         }
@@ -154,64 +166,69 @@ class CompleteSaleModal extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                     {this.props.till.transactions &&
-                        this.props.till.transactions.length === 0 &&
-                        <p>There are no transaction line items to pay for!</p>
+                    this.props.till.transactions.length === 0 &&
+                    <p>There are no transaction line items to pay for!</p>
                     }
                     {this.props.till.transactions &&
-                        this.props.till.transactions.length > 0 &&
-                        <Form>
-                            <label>Total Invoice Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
+                    this.props.till.transactions.length > 0 &&
+                    <Form>
+                        <label>Total Invoice
+                            Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
+                        <div className="form-group">
+                            <label>Payment Method:</label>
+                            <span>Cash</span>
+                            <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
+                                   name="method"/>
+                            <span>Card</span>
+                            <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
+                                   name="method"/>
+                            <span>Split Payment</span>
+                            <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
+                                   name="method"/>
+                        </div>
+                        {
+                            this.state.method === "Split" &&
                             <div className="form-group">
-                                <label>Payment Method:</label>
-                                <span>Cash</span>
-                                <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
-                                       name="method"/>
-                                <span>Card</span>
-                                <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
-                                       name="method"/>
-                                <span>Split Payment</span>
-                                <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
-                                       name="method"/>
+                                <label>Cash Amount:</label>
+                                <input type="number" className="form-control" min="0" name="cash"
+                                       value={this.state.cash}
+                                       onChange={this.handleChange}/>
+                                <label>Card Amount:</label>
+                                <input type="number" className="form-control" min="0" name="card"
+                                       value={this.state.card}
+                                       onChange={this.handleChange}/>
                             </div>
-                            {
-                                this.state.method === "Split" &&
-                                <div className="form-group">
-                                    <label>Cash Amount:</label>
-                                    <input type="number" className="form-control" min="0" name="cash" value={this.state.cash}
-                                           onChange={this.handleChange}/>
-                                    <label>Card Amount:</label>
-                                    <input type="number" className="form-control" min="0" name="card" value={this.state.card}
-                                           onChange={this.handleChange}/>
-                                </div>
-                            }
-                            <div className="form-group">
-                                <label>Amount Tendered:</label>
-                                <input type="number" className="form-control" min="0" value={this.state.tendered} name="tendered"
-                                       disabled={this.state.method === "Split"} onChange={this.handleChange}/>
-                            </div>
-                            {this.state.tendered > this.props.till.totals.total &&
-                                <label>Change:
-                                    <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
-                                </label>
-                            }
-                            <div className="form-group">
-                                <label>Name:</label>
-                                <input type="text" className="form-control" name="name" value={this.state.name}
-                                       onChange={this.handleText}/>
-                            </div>
-                            <div className="form-group">
-                                <label>Cell Number:</label>
-                                <input type="text" className="form-control" name="cell" value={this.state.cell}
-                                       onChange={this.handleText}/>
-                                {this.props.auth.errors['person.cell'] && <p>{this.props.auth.errors['person.cell'][0]}</p>}
-                            </div>
-                            <div className="form-group">
-                                <label>Email Address:</label>
-                                <input type="email" className="form-control" name="email" value={this.state.email}
-                                       onChange={this.handleText}/>
-                                {this.props.auth.errors['person.email'] && <p>{this.props.auth.errors['person.email'][0]}</p>}
-                            </div>
-                        </Form>
+                        }
+                        <div className="form-group">
+                            <label>Amount Tendered:</label>
+                            <input type="number" className="form-control" min="0" value={this.state.tendered}
+                                   name="tendered"
+                                   disabled={this.state.method === "Split"} onChange={this.handleChange}/>
+                        </div>
+                        {this.state.tendered > this.props.till.totals.total &&
+                        <label>Change:
+                            <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
+                        </label>
+                        }
+                        <div className="form-group">
+                            <label>Name:</label>
+                            <input type="text" className="form-control" name="name" value={this.state.name}
+                                   onChange={this.handleText}/>
+                        </div>
+                        <div className="form-group">
+                            <label>Cell Number:</label>
+                            <input type="text" className="form-control" name="cell" value={this.state.cell}
+                                   onChange={this.handleText}/>
+                            {this.props.auth.errors['person.cell'] && <p>{this.props.auth.errors['person.cell'][0]}</p>}
+                        </div>
+                        <div className="form-group">
+                            <label>Email Address:</label>
+                            <input type="email" className="form-control" name="email" value={this.state.email}
+                                   onChange={this.handleText}/>
+                            {this.props.auth.errors['person.email'] &&
+                            <p>{this.props.auth.errors['person.email'][0]}</p>}
+                        </div>
+                    </Form>
                     }
                 </Modal.Body>
                 <Modal.Footer>
@@ -220,11 +237,11 @@ class CompleteSaleModal extends React.Component {
                     </Button>
                     {this.props.till.transactions &&
                     this.props.till.totals &&
-                        this.state.tendered >= this.props.till.totals.total &&
-                        this.props.till.transactions.length > 0 &&
-                        <Button variant="primary" onClick={this.completeSale}>
-                            Update & Print
-                        </Button>
+                    this.state.tendered >= this.props.till.totals.total &&
+                    this.props.till.transactions.length > 0 &&
+                    <Button variant="primary" onClick={this.completeSale}>
+                        Update & Print
+                    </Button>
                     }
                 </Modal.Footer>
             </Modal>
