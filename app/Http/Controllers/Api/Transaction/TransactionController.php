@@ -9,6 +9,7 @@ use App\DailySummary;
 use App\DailyTransaction;
 use App\Handset;
 use App\Http\Controllers\Controller;
+use App\Person;
 use App\Product;
 use App\Sale;
 use App\Stock;
@@ -193,6 +194,14 @@ class TransactionController extends Controller
         $control->transtype = $transaction["type"];
         $control->save();
 
+        /**
+         * @var mixed $person
+         */
+        $person = $transaction['person'];
+        $request = new Request();
+        $request->replace($person);
+        $this->savePerson($request, $docNo);
+
         return response()->json(["number" => $docNo], $this->createdStatus);
     }
 
@@ -287,7 +296,8 @@ class TransactionController extends Controller
      * @param $id
      * @return \Illuminate\Http\Response
      */
-    public function retrieveTransaction($id) {
+    public function retrieveTransaction($id)
+    {
         $transactions = DailyTransaction::query()
             ->where('DOCNO', $id)
             ->get();
@@ -395,6 +405,31 @@ class TransactionController extends Controller
             )
         );
 
+    }
+
+    /**
+     * Save the person details associated with a transaction
+     *
+     * @param Request $request
+     * @param $id
+     * @return void
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function savePerson(Request $request, $id)
+    {
+        $this->validate($request, [
+            'email' => 'nullable | email',
+            'cell' => 'nullable | max:10 | min:10'
+        ]);
+
+        /**
+         * @var Person $person
+         */
+        $person = $request->all();
+        $person->docNo = $id;
+        $person->save();
+
+        return response()->json([], $this->createdStatus);
     }
 
 }
