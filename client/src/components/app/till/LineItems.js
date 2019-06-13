@@ -15,7 +15,8 @@ class LineItems extends React.Component {
 
     enterProduct = async event => {
         event.preventDefault();
-        let codeParts = this.props.till.code.split(" ");
+        let code = this.props.till.code.trim();
+        let codeParts = code.split(" ");
         if (codeParts.length === 0 || codeParts.length > 3) {
             await this.props.actions.till.setCode("Invalid Product Code");
         } else if (codeParts.length === 1) {

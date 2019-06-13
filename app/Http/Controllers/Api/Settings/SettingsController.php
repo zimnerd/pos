@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\Settings;
 
+use App\ComboPrice;
 use App\Haddith;
 use App\Http\Controllers\Controller;
 use App\Shop;
@@ -100,13 +101,13 @@ class SettingsController extends Controller
     }
 
     /**
-     * Save the till settings.
-     *
-     * @param string $id
-     * @param Request $request
-     * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Validation\ValidationException
-     */
+ * Save the till settings.
+ *
+ * @param string $id
+ * @param Request $request
+ * @return \Illuminate\Http\Response
+ * @throws \Illuminate\Validation\ValidationException
+ */
     public function saveTill($id, Request $request)
     {
         $this->validate($request, [
@@ -146,5 +147,28 @@ class SettingsController extends Controller
         }
 
         return response()->json(['till' => $till], $this->successStatus);
+    }
+
+    /**
+     * Retrieve all running combos
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveCombos()
+    {
+        $now = date('Y-m-d');
+        $combos = ComboPrice::query()
+            ->select('comboprice.code', 'comboprice.style', 'comboprice.rp', 'comboprice.qty', 'combostyle.description')
+            ->join('combostyle', 'combostyle.code', '=', 'comboprice.code')
+            ->where('combostyle.active', 1)
+            ->where('combostyle.startdate', '<=', $now)
+            ->where('combostyle.enddate', '>=', $now)
+            ->get();
+
+        if (!$combos) {
+            return response()->json(['error' => 'The combo cannot be found.'], $this->notFoundStatus);
+        }
+
+        return response()->json(['combos' => $combos], $this->successStatus);
     }
 }
