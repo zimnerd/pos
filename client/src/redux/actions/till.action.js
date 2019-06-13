@@ -1,10 +1,10 @@
 import {
     ACTIVATE_EXCHANGE,
-    ACTIVATE_LAY_BYE,
+    ACTIVATE_LAY_BYE, ACTIVATE_REFUND,
     ACTIVATE_RETURNS,
     ACTIVATE_STAFF,
     DEACTIVATE_EXCHANGE,
-    DEACTIVATE_LAY_BYE,
+    DEACTIVATE_LAY_BYE, DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
     DEACTIVATE_STAFF,
     RESET_TOTALS,
@@ -88,4 +88,12 @@ export function setCombos(combos = []) {
 
 export function validationError(errors) {
     return { type: VALIDATION_ERROR, errors };
+}
+
+export function activateRefund(refund = true) {
+    return { type: ACTIVATE_REFUND, refund }
+}
+
+export function deactivateRefund(refund = false) {
+    return { type: DEACTIVATE_REFUND, refund }
 }

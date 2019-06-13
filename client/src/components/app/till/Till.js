@@ -30,6 +30,7 @@ import RetrieveHeldModal from "./modals/RetrieveHeldModal";
 import axios from "axios";
 import toastr from "toastr";
 import ComboModal from "./modals/ComboModal";
+import RefundModal from "./modals/RefundModal";
 
 class Till extends React.Component {
 
@@ -364,6 +365,7 @@ class Till extends React.Component {
                 <TransactionId/>
                 <RetrieveHeldModal/>
                 <ComboModal/>
+                <RefundModal mapLineItem={this.mapHeldItems}/>
             </article>
         )
     }

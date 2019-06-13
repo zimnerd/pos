@@ -1,10 +1,10 @@
 import {
     ACTIVATE_EXCHANGE,
-    ACTIVATE_LAY_BYE,
+    ACTIVATE_LAY_BYE, ACTIVATE_REFUND,
     ACTIVATE_RETURNS,
     ACTIVATE_STAFF,
     DEACTIVATE_EXCHANGE,
-    DEACTIVATE_LAY_BYE,
+    DEACTIVATE_LAY_BYE, DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
     DEACTIVATE_STAFF,
     RESET_TOTALS,
@@ -51,6 +51,10 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, combos: action.combos };
         case VALIDATION_ERROR:
             return { ...state, errors: action.errors };
+        case ACTIVATE_REFUND:
+            return { ...state, refund: action.refund };
+        case DEACTIVATE_REFUND:
+            return { ...state, refund: action.refund };
         default:
             return state;
     }

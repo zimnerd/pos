@@ -8,6 +8,12 @@ import './Totals.scss';
 
 class Totals extends React.Component {
 
+    completeRefund = () => {
+        this.props.actions.resetTotals();
+        this.props.actions.resetTransactions();
+        this.props.actions.deactivateRefund();
+    };
+
     render() {
         return (
             <aside className="float-right">
@@ -20,6 +26,7 @@ class Totals extends React.Component {
                     <h3>{(this.props.till.totals.total).toFixed(2)}</h3>
                 </main>
                 }
+                {!this.props.till.refund &&
                 <footer>
                     <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 112 })}>Cash
                         (F1)
@@ -32,6 +39,14 @@ class Totals extends React.Component {
                         (F12)
                     </button>
                 </footer>
+                }
+                {this.props.till.refund &&
+                <footer>
+                    <button className="btn btn-secondary" onClick={this.completeRefund}>
+                        Complete Refund
+                    </button>
+                </footer>
+                }
             </aside>
         )
     }

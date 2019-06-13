@@ -24,7 +24,7 @@ class InformationBar extends React.Component {
         axios.get(`/api/settings/combos`, { headers })
             .then(response => {
                 console.log(response.data);
-                toastr.info("All Combos Found!", "Find All Combos");
+                toastr.success("All Combos Found!", "Find All Combos");
 
                 this.props.actions.settings.setCombos(response.data.combos);
             })

@@ -6,7 +6,7 @@ import {
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
-    CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL, CLOSE_REFUND_MODAL,
     CLOSE_RETRIEVE_HELD_MODAL,
     CLOSE_RETURNS_MODAL,
     CLOSE_SALES_MODAL,
@@ -18,7 +18,7 @@ import {
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
-    OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL, OPEN_REFUND_MODAL,
     OPEN_RETRIEVE_HELD_MODAL,
     OPEN_RETURNS_MODAL,
     OPEN_SALES_MODAL,
@@ -127,4 +127,12 @@ export function openCombo(combo = true) {
 
 export function closeCombo(combo = false) {
     return { type: CLOSE_COMBO_MODAL, combo }
+}
+
+export function openRefund(refund = true) {
+    return { type: OPEN_REFUND_MODAL, refund }
+}
+
+export function closeRefund(refund = false) {
+    return { type: CLOSE_REFUND_MODAL, refund }
 }

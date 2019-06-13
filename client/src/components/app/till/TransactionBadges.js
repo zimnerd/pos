@@ -26,6 +26,12 @@ class TransactionBadges extends React.Component {
         this.props.actions.deactivateReturns();
     };
 
+    removeRefund = () => {
+        this.props.actions.resetTotals();
+        this.props.actions.resetTransactions();
+        this.props.actions.deactivateRefund();
+    };
+
     render() {
         return (
             <section>
@@ -47,6 +53,11 @@ class TransactionBadges extends React.Component {
                 }
                 {this.props.till.staff &&
                 <Badge variant="info">Staff <span onClick={this.removeStaff}><i
+                    className="fa fa-times"/></span>
+                </Badge>
+                }
+                {this.props.till.refund &&
+                <Badge variant="dark">Refund <span onClick={this.removeRefund}><i
                     className="fa fa-times"/></span>
                 </Badge>
                 }

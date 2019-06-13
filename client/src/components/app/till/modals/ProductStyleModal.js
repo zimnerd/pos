@@ -27,7 +27,6 @@ class ProductStyleModal extends React.Component {
             product.serialno = codes[1];
         }
 
-        debugger
         transactions.push(product);
         this.props.actions.till.setTransactions(transactions);
         this.handleClose();

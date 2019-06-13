@@ -20,6 +20,11 @@ class CreditNoteOptionsModal extends React.Component {
         this.handleClose();
     };
 
+    refund = () => {
+        this.props.actions.modal.openRefund();
+        this.handleClose();
+    };
+
     render() {
         return (
             <Modal show={this.props.modal.credit} onHide={this.handleClose}>
@@ -35,7 +40,7 @@ class CreditNoteOptionsModal extends React.Component {
                             <Card.Title>Exchange</Card.Title>
                         </Card.Body>
                     </Card>
-                    <Card>
+                    <Card onClick={this.refund}>
                         <Card.Header>
                             <span><i className="fa fa-refresh"/></span>
                         </Card.Header>

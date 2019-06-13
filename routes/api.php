@@ -55,6 +55,7 @@ Route::group(["prefix" => "api/transactions"], function () {
     Route::group(['middleware' => 'auth:api'], function () {
 
         Route::post('', 'Api\Transaction\TransactionController@createTransaction');
+        Route::get('{id}', 'Api\Transaction\TransactionController@retrieveTransaction');
 
         Route::post('hold', 'Api\Transaction\TransactionController@holdSale');
         Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
