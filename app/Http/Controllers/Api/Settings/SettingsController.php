@@ -55,6 +55,25 @@ class SettingsController extends Controller
     }
 
     /**
+     * Retrieve the till settings
+     *
+     * @param integer $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveHaddith()
+    {
+        $rotateDate = Shop::query()->where('ColName', 'LastHaddithRotatedDate')->get();
+
+        if (!$rotateDate) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $date = date_parse($rotateDate);
+
+        return response()->json(['date' => $date], $this->successStatus);
+    }
+
+    /**
      * Save the till settings.
      *
      * @param string $id
