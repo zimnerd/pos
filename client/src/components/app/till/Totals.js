@@ -3,15 +3,14 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 
 import * as tillActions from "../../../redux/actions/till.action";
+import * as modalActions from "../../../redux/actions/modal.action";
 
 import './Totals.scss';
 
 class Totals extends React.Component {
 
     completeRefund = () => {
-        this.props.actions.resetTotals();
-        this.props.actions.resetTransactions();
-        this.props.actions.deactivateRefund();
+        this.props.actions.modal.openCompleteRefund();
     };
 
     render() {
@@ -61,7 +60,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(tillActions, dispatch)
+        actions: {
+            modal: bindActionCreators(modalActions, dispatch),
+            till: bindActionCreators(tillActions, dispatch)
+        }
     };
 }
 

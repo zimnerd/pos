@@ -1,23 +1,33 @@
 import {
     CLOSE_AUTH_MODAL,
     CLOSE_CARD_MODAL,
-    CLOSE_CASH_MODAL, CLOSE_COMBO_MODAL,
+    CLOSE_CASH_MODAL,
+    CLOSE_COMBO_MODAL,
+    CLOSE_COMPLETE_REFUND_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
-    CLOSE_PRODUCT_STYLE_MODAL, CLOSE_REFUND_MODAL, CLOSE_RETRIEVE_HELD_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_REFUND_DETAILS_MODAL,
+    CLOSE_REFUND_MODAL,
+    CLOSE_RETRIEVE_HELD_MODAL,
     CLOSE_RETURNS_MODAL,
     CLOSE_SALES_MODAL,
     CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
-    OPEN_CASH_MODAL, OPEN_COMBO_MODAL,
+    OPEN_CASH_MODAL,
+    OPEN_COMBO_MODAL,
+    OPEN_COMPLETE_REFUND_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
-    OPEN_PRODUCT_STYLE_MODAL, OPEN_REFUND_MODAL, OPEN_RETRIEVE_HELD_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_REFUND_DETAILS_MODAL,
+    OPEN_REFUND_MODAL,
+    OPEN_RETRIEVE_HELD_MODAL,
     OPEN_RETURNS_MODAL,
     OPEN_SALES_MODAL,
     OPEN_TRANSACTION_MODAL
@@ -81,6 +91,14 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, refund: action.refund };
         case CLOSE_REFUND_MODAL:
             return { ...state, refund: action.refund };
+        case OPEN_REFUND_DETAILS_MODAL:
+            return { ...state, refundDetails: action.refundDetails };
+        case CLOSE_REFUND_DETAILS_MODAL:
+            return { ...state, refundDetails: action.refundDetails };
+        case OPEN_COMPLETE_REFUND_MODAL:
+            return { ...state, refundComplete: action.refundComplete };
+        case CLOSE_COMPLETE_REFUND_MODAL:
+            return { ...state, refundComplete: action.refundComplete };
         default:
             return state;
     }

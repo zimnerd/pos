@@ -48,7 +48,7 @@ class RefundModal extends React.Component {
         axios.get(`/api/transactions/${this.state.docNo}`, { headers })
             .then(response => {
                 console.log(response.data);
-                toastr.success("All Combos Found!", "Find All Combos");
+                toastr.success("Transaction found!", "Find Transaction");
 
                 this.mapHeldSales(response.data.lineItems.transactions);
                 this.props.actions.till.setTransactions(response.data.lineItems.transactions);
@@ -60,7 +60,9 @@ class RefundModal extends React.Component {
                 if (error.response.status === 401) {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
                 } else if (error.response.status === 404) {
-                    console.log("No combos found");
+                    toastr.error("Transaction could not be found!", "Find Transaction");
+                    this.props.actions.modal.closeRefund();
+                    this.props.actions.modal.openRefundDetails();
                 } else {
                     toastr.error("Unknown error.");
                 }

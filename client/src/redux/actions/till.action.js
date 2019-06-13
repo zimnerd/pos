@@ -1,18 +1,24 @@
 import {
     ACTIVATE_EXCHANGE,
-    ACTIVATE_LAY_BYE, ACTIVATE_REFUND,
+    ACTIVATE_LAY_BYE,
+    ACTIVATE_REFUND,
     ACTIVATE_RETURNS,
     ACTIVATE_STAFF,
     DEACTIVATE_EXCHANGE,
-    DEACTIVATE_LAY_BYE, DEACTIVATE_REFUND,
+    DEACTIVATE_LAY_BYE,
+    DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
     DEACTIVATE_STAFF,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
-    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS,
+    SET_AUTH_COMMAND,
+    SET_CODE,
+    SET_COMBOS,
+    SET_REFUND,
     SET_TOTALS,
     SET_TRANSACTION_ID,
-    SET_TRANSACTIONS, VALIDATION_ERROR
+    SET_TRANSACTIONS,
+    VALIDATION_ERROR
 } from "../constants/till.constants";
 
 export function activateLayBye(activate = true) {
@@ -96,4 +102,8 @@ export function activateRefund(refund = true) {
 
 export function deactivateRefund(refund = false) {
     return { type: DEACTIVATE_REFUND, refund }
+}
+
+export function setRefund(refundData) {
+    return { type: SET_REFUND, refundData }
 }

@@ -11,6 +11,7 @@ use App\Handset;
 use App\Http\Controllers\Controller;
 use App\Person;
 use App\Product;
+use App\Refund;
 use App\Sale;
 use App\Stock;
 use App\Till;
@@ -307,7 +308,7 @@ class TransactionController extends Controller
             ->where('DOCNO', $id)
             ->get();
 
-        if (!$transactions) {
+        if (count($transactions) === 0) {
             return response()->json([], $this->notFoundStatus);
         }
 
@@ -417,7 +418,7 @@ class TransactionController extends Controller
      *
      * @param Request $request
      * @param $id
-     * @return void
+     * @return \Illuminate\Http\Response
      * @throws \Illuminate\Validation\ValidationException
      */
     public function savePerson(Request $request, $id)
@@ -432,6 +433,31 @@ class TransactionController extends Controller
         $person = new Person($data);
         $person['docNo'] = $id;
         $person->save();
+
+        return response()->json([], $this->createdStatus);
+    }
+
+    /**
+     * Save the refund details for an invoice number that was not found
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function saveRefund(Request $request)
+    {
+        $this->validate($request, [
+            'invNo' => 'required',
+            'invDate' => 'required',
+            'idNo' => 'required',
+            'cell' => 'required | max:10 | min:10',
+            'brNo' => 'required'
+        ]);
+
+        $data = $request->all();
+
+        $refund = new Refund($data);
+        $refund->save();
 
         return response()->json([], $this->createdStatus);
     }

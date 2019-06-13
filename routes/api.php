@@ -60,6 +60,8 @@ Route::group(["prefix" => "api/transactions"], function () {
         Route::post('hold', 'Api\Transaction\TransactionController@holdSale');
         Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
 
+        Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
+
     });
 
 });

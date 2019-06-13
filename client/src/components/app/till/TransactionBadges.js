@@ -30,6 +30,7 @@ class TransactionBadges extends React.Component {
         this.props.actions.resetTotals();
         this.props.actions.resetTransactions();
         this.props.actions.deactivateRefund();
+        this.props.actions.setRefund();
     };
 
     render() {

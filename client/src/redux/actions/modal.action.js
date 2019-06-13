@@ -1,24 +1,32 @@
 import {
     CLOSE_AUTH_MODAL,
     CLOSE_CARD_MODAL,
-    CLOSE_CASH_MODAL, CLOSE_COMBO_MODAL,
+    CLOSE_CASH_MODAL,
+    CLOSE_COMBO_MODAL,
+    CLOSE_COMPLETE_REFUND_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
-    CLOSE_PRODUCT_STYLE_MODAL, CLOSE_REFUND_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_REFUND_DETAILS_MODAL,
+    CLOSE_REFUND_MODAL,
     CLOSE_RETRIEVE_HELD_MODAL,
     CLOSE_RETURNS_MODAL,
     CLOSE_SALES_MODAL,
     CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
-    OPEN_CASH_MODAL, OPEN_COMBO_MODAL,
+    OPEN_CASH_MODAL,
+    OPEN_COMBO_MODAL,
+    OPEN_COMPLETE_REFUND_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
-    OPEN_PRODUCT_STYLE_MODAL, OPEN_REFUND_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_REFUND_DETAILS_MODAL,
+    OPEN_REFUND_MODAL,
     OPEN_RETRIEVE_HELD_MODAL,
     OPEN_RETURNS_MODAL,
     OPEN_SALES_MODAL,
@@ -135,4 +143,20 @@ export function openRefund(refund = true) {
 
 export function closeRefund(refund = false) {
     return { type: CLOSE_REFUND_MODAL, refund }
+}
+
+export function openRefundDetails(refundDetails = true) {
+    return { type: OPEN_REFUND_DETAILS_MODAL, refundDetails }
+}
+
+export function closeRefundDetails(refundDetails = false) {
+    return { type: CLOSE_REFUND_DETAILS_MODAL, refundDetails }
+}
+
+export function openCompleteRefund(refundComplete = true) {
+    return { type: OPEN_COMPLETE_REFUND_MODAL, refundComplete }
+}
+
+export function closeCompleteRefund(refundComplete = false) {
+    return { type: CLOSE_COMPLETE_REFUND_MODAL, refundComplete }
 }
