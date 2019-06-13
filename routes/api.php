@@ -36,6 +36,7 @@ Route::group(["prefix" => "api/products"], function () {
 
 Route::group(["prefix" => "api/settings"], function () {
 
+    Route::get('haddith', 'Api\Settings\SettingsController@retrieveHaddith');
     Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');

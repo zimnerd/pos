@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\Api\Settings;
 
+use App\Haddith;
 use App\Http\Controllers\Controller;
 use App\Shop;
 use App\Till;
+use DateTime;
 use Illuminate\Http\Request;
 
 class SettingsController extends Controller
@@ -62,15 +64,39 @@ class SettingsController extends Controller
      */
     public function retrieveHaddith()
     {
-        $rotateDate = Shop::query()->where('ColName', 'LastHaddithRotatedDate')->get();
+        /**
+         * @var Shop $rotateDate
+         */
+        $rotateDate = Shop::query()->where('ColName', 'LastHaddithRotatedDate')->first();
 
         if (!$rotateDate) {
             return response()->json([], $this->notFoundStatus);
         }
 
-        $date = date_parse($rotateDate);
+        $nowDateTime = \date('Y-m-d');
 
-        return response()->json(['date' => $date], $this->successStatus);
+        /**
+         * @var Haddith $haddith
+         */
+        $haddith = Haddith::query()->where('active', true)->first();
+
+        if ($nowDateTime > $rotateDate['ColValue']) {
+            $haddith->active = false;
+            $haddith->save();
+
+            $haddith = Haddith::query()->where('id', $haddith->id + 1)->first();
+            if (empty($haddith)) {
+                $haddith = Haddith::query()->where('id', 1)->first();
+            }
+
+            $haddith->active = true;
+            $haddith->save();
+
+            $rotateDate->ColValue = $nowDateTime;
+            $rotateDate->save();
+        }
+
+        return response()->json(['haddith' => $haddith], $this->successStatus);
     }
 
     /**

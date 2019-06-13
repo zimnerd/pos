@@ -5,6 +5,7 @@ import { bindActionCreators } from "redux";
 import * as modalActions from "../../../redux/actions/modal.action";
 import * as tillActions from "../../../redux/actions/till.action";
 import * as stockActions from "../../../redux/actions/stock.action";
+import * as settingsActions from "../../../redux/actions/settings.action";
 
 import './Till.scss';
 
@@ -46,6 +47,31 @@ class Till extends React.Component {
         document.addEventListener("keydown", this.keydownFunction, false);
 
         this.props.actions.till.resetTotals();
+        this.retrieveHaddiths();
+    };
+
+    retrieveHaddiths = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/api/settings/haddith`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Haddith retrieved!", "Retrieve Haddith");
+                this.props.actions.settings.retrieveHaddith(response.data.haddith);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error("The product code supplied cannot be found.", "Retrieve Product");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     componentWillUnmount = () => {
@@ -357,6 +383,7 @@ function mapDispatchToProps(dispatch) {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
             till: bindActionCreators(tillActions, dispatch),
+            settings: bindActionCreators(settingsActions, dispatch),
             stock: bindActionCreators(stockActions, dispatch)
         }
     };

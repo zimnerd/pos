@@ -1,4 +1,9 @@
-import { RETRIEVE_SHOP_DETAILS, RETRIEVE_TILL_DETAILS, SAVE_TILL_DETAILS } from "../constants/settings.constants";
+import {
+    RETRIEVE_HADDITH,
+    RETRIEVE_SHOP_DETAILS,
+    RETRIEVE_TILL_DETAILS,
+    SAVE_TILL_DETAILS
+} from "../constants/settings.constants";
 
 export default function settingsReducer(state = { errors: [] }, action) {
     switch (action.type) {
@@ -8,6 +13,8 @@ export default function settingsReducer(state = { errors: [] }, action) {
             return { ...state, till: action.till };
         case SAVE_TILL_DETAILS:
             return { ...state, till: action.till };
+        case RETRIEVE_HADDITH:
+            return { ...state, haddith: action.haddith };
         default:
             return state;
     }

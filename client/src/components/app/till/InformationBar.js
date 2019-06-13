@@ -10,27 +10,17 @@ import './InformationBar.scss';
 class InformationBar extends React.Component {
 
     state = {
-        key: ''
+        key: 'combos'
     };
 
     render() {
         return (
             <aside className="float-left">
-                <main>
-                    <fieldset>
-                        <h3>Here</h3>
-                        <ol>
-                            <li>One options</li>
-                            <li>One options</li>
-                            <li>One options</li>
-                            <li>One options</li>
-                            <li>One options</li>
-                            <li>One options</li>
-                            <li>One options</li>
-                            <li>One options</li>
-                        </ol>
-                    </fieldset>
+                {this.props.settings.haddith &&
+                <main style={{ width: '300px' }}
+                      dangerouslySetInnerHTML={{ __html: this.props.settings.haddith.value }}>
                 </main>
+                }
                 <footer>
                     <Tabs
                         id="controlled-tab-example"
@@ -55,7 +45,8 @@ class InformationBar extends React.Component {
 function mapStateToProps(state) {
     return {
         till: state.till,
-        auth: state.auth
+        auth: state.auth,
+        settings: state.settings
     };
 }
 
