@@ -194,12 +194,17 @@ class TransactionController extends Controller
         $control->transtype = $transaction["type"];
         $control->save();
 
-        /**
-         * @var mixed $person
-         */
-        $person = $transaction['person'];
+
         $request = new Request();
-        $request->replace($person);
+        if (!isset($transaction['person'])) {
+            $request->replace([]);
+        } else {
+            /**
+             * @var mixed $person
+             */
+            $person = $transaction['person'];
+            $request->replace($person);
+        }
         $this->savePerson($request, $docNo);
 
         return response()->json(["number" => $docNo], $this->createdStatus);
@@ -422,11 +427,10 @@ class TransactionController extends Controller
             'cell' => 'nullable | max:10 | min:10'
         ]);
 
-        /**
-         * @var Person $person
-         */
-        $person = $request->all();
-        $person->docNo = $id;
+        $data = $request->all();
+
+        $person = new Person($data);
+        $person['docNo'] = $id;
         $person->save();
 
         return response()->json([], $this->createdStatus);
