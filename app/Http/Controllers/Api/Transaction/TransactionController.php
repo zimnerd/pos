@@ -497,4 +497,14 @@ class TransactionController extends Controller
         return response()->json([], $this->successStatus);
     }
 
+    /**
+     * Validates authentication for activating exchanges.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function activateExchange()
+    {
+        return response()->json([], $this->successStatus);
+    }
+
 }

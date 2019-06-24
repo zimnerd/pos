@@ -33,6 +33,7 @@ import ComboModal from "./modals/ComboModal";
 import RefundModal from "./modals/RefundModal";
 import RefundDetailsModal from "./modals/RefundDetailsModal";
 import CompleteRefund from "./modals/CompleteRefund";
+import CompleteExchange from "./modals/CompleteExchange";
 
 class Till extends React.Component {
 
@@ -372,6 +373,7 @@ class Till extends React.Component {
                 <RefundModal mapLineItem={this.mapHeldItems}/>
                 <RefundDetailsModal/>
                 <CompleteRefund mapLineItem={this.mapHeldItems}/>
+                <CompleteExchange mapLineItem={this.mapHeldItems}/>
             </article>
         )
     }

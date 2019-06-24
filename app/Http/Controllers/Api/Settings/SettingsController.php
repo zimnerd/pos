@@ -114,6 +114,8 @@ class SettingsController extends Controller
             'InvNo' => 'required',
             'DepNo' => 'required',
             'CredInvNo' => 'required',
+            'LbNo' => 'required',
+            'CrnNo' => 'required',
             'tillno' => 'required'
         ]);
 
@@ -140,6 +142,12 @@ class SettingsController extends Controller
                     break;
                 case "CredInvNo":
                     $info->ColValue = $request['CredInvNo'];
+                    break;
+                case "CrnNo":
+                    $info->ColValue = $request['CrnNo'];
+                    break;
+                case "LbNo":
+                    $info->ColValue = $request['LbNo'];
                     break;
             }
 

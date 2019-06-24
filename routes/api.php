@@ -66,9 +66,11 @@ Route::group(["prefix" => "transactions"], function () {
     });
 
     Route::group(['middleware' => ['auth:api', 'scope:staff']], function () {
-
         Route::get('activate/staff', 'Api\Transaction\TransactionController@activateStaff');
+    });
 
+    Route::group(['middleware' => ['auth:api', 'scope:notes']], function () {
+        Route::get('activate/exchange', 'Api\Transaction\TransactionController@activateExchange');
     });
 
 });
