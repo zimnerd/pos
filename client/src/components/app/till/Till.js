@@ -58,7 +58,7 @@ class Till extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/settings/haddith`, { headers })
+        axios.get(`/settings/haddith`, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -179,7 +179,7 @@ class Till extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/products/${code}`, { headers })
+        axios.get(`/products/${code}`, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -279,7 +279,7 @@ class Till extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/products/${code}/combos`, { headers })
+        axios.get(`/products/${code}/combos`, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.info("Combos Found!", "Find Combo");

@@ -39,7 +39,7 @@ class CashModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/api/transactions`, transaction, { headers })
+        axios.post(`/transactions`, transaction, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -86,7 +86,7 @@ class CashModal extends React.Component {
         till.InvNo = Number(till.InvNo) + 1;
         till.DepNo = Number(till.DepNo) + 1;
 
-        axios.post(`/api/settings/till/1`, till)
+        axios.post(`/settings/till/1`, till)
             .then(response => {
                 console.log(response.data);
 

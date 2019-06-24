@@ -31,7 +31,7 @@ class RetrieveHeldModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/transactions/hold/${this.state.number}`, { headers })
+        axios.get(`/transactions/hold/${this.state.number}`, { headers })
             .then(response => {
                 console.log(response.data);
                 this.props.actions.till.setTransactions(response.data.lineItems.transactions);

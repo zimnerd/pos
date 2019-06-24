@@ -462,4 +462,14 @@ class TransactionController extends Controller
         return response()->json([], $this->createdStatus);
     }
 
+    /**
+     * Validates authentication for activating staff prices.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function activateStaff()
+    {
+        return response()->json([], $this->successStatus);
+    }
+
 }

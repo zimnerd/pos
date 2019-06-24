@@ -21,7 +21,7 @@ class InformationBar extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/settings/combos`, { headers })
+        axios.get(`/settings/combos`, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("All Combos Found!", "Find All Combos");

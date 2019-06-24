@@ -19,7 +19,7 @@ import './App.scss';
 class App extends React.Component {
 
     componentDidMount() {
-        axios.get('/api/settings/shop')
+        axios.get('/settings/shop')
             .then(response => {
                 console.log(response.data);
 
@@ -31,7 +31,7 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get('/api/settings/till/1')
+        axios.get('/settings/till/1')
             .then(response => {
                 console.log(response.data);
 

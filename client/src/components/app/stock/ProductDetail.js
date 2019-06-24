@@ -19,7 +19,7 @@ class ProductDetail extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/products/${params.code}`, { headers })
+        axios.get(`/products/${params.code}`, { headers })
             .then(response => {
                 console.log(response.data);
 

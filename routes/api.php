@@ -11,10 +11,11 @@
 |
 */
 
-Route::group(["prefix" => "api/user"], function () {
+Route::group(["prefix" => "user"], function () {
 
     Route::post('login', 'Api\Authentication\UserController@login');
     Route::post('register', 'Api\Authentication\UserController@register');
+    Route::post('admin/login', 'Api\Authentication\UserController@adminLogin');
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('details', 'Api\Authentication\UserController@details');
@@ -22,7 +23,7 @@ Route::group(["prefix" => "api/user"], function () {
 
 });
 
-Route::group(["prefix" => "api/products"], function () {
+Route::group(["prefix" => "products"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('', 'Api\Product\ProductController@retrieveStock');
@@ -34,7 +35,7 @@ Route::group(["prefix" => "api/products"], function () {
 
 });
 
-Route::group(["prefix" => "api/settings"], function () {
+Route::group(["prefix" => "settings"], function () {
 
 
     Route::group(['middleware' => 'auth:api'], function () {
@@ -48,7 +49,7 @@ Route::group(["prefix" => "api/settings"], function () {
 
 });
 
-Route::group(["prefix" => "api/transactions"], function () {
+Route::group(["prefix" => "transactions"], function () {
 
     Route::get('{id}/print', 'Api\Transaction\TransactionController@printReceipt');
 
@@ -61,6 +62,12 @@ Route::group(["prefix" => "api/transactions"], function () {
         Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
 
         Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
+
+    });
+
+    Route::group(['middleware' => ['auth:api', 'scope:staff']], function () {
+
+        Route::get('activate/staff', 'Api\Transaction\TransactionController@activateStaff');
 
     });
 

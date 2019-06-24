@@ -37,7 +37,7 @@ class LineItems extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/products/${codeParts[0]}/${codeParts[1]}`, { headers })
+        axios.get(`/products/${codeParts[0]}/${codeParts[1]}`, { headers })
             .then(async response => {
                 console.log(response.data);
 
@@ -66,7 +66,7 @@ class LineItems extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/api/products/${codeParts[0]}/${codeParts[1]}/${codeParts[2]}`, { headers })
+        axios.get(`/products/${codeParts[0]}/${codeParts[1]}/${codeParts[2]}`, { headers })
             .then(async response => {
                 console.log(response.data);
 

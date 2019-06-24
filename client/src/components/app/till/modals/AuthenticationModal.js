@@ -7,22 +7,44 @@ import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
 
 import './AuthenticationModal.scss';
+import axios from "axios";
+import toastr from "toastr";
 
 class AuthenticationModal extends React.Component {
+
+    state = {
+        username: "",
+        password: ""
+    };
+
+    handleChange = event => {
+        this.setState({
+            [event.target.name]: event.target.value
+        });
+    };
 
     handleClose = () => {
         this.props.actions.modal.closeAuthentication();
     };
 
     authenticate = async () => {
+        let auth = await this.authUser();
+        if (!auth) {
+            return;
+        }
+
         switch (this.props.till.command) {
             case "exchange":
-                await this.props.actions.till.activateExchange();
-                this.props.mapTransactions();
+                if (await this.activate(this.props.till.command)) {
+                    await this.props.actions.till.activateExchange();
+                    this.props.mapTransactions();
+                }
                 break;
             case "staff":
-                await this.props.actions.till.activateStaff();
-                this.props.mapTransactions();
+                if (await this.activate(this.props.till.command)) {
+                    await this.props.actions.till.activateStaff();
+                    this.props.mapTransactions();
+                }
                 break;
             default:
                 this.handleClose();
@@ -30,6 +52,54 @@ class AuthenticationModal extends React.Component {
 
         this.handleClose();
     };
+
+    authUser = async () => {
+        if (this.props.user.username === this.state.username) {
+            toastr.error("The admin authentication cannot be the same as the signed in user.", "Forbidden");
+            return false;
+        }
+        let credentials = { username: this.state.username, password: this.state.password };
+        return await axios.post("/user/admin/login", credentials)
+            .then(async response => {
+                console.log(response);
+                toastr.success("Admin Authenticated!", "Admin Authentication");
+
+                await this.setState({ user: response.data.success.token });
+                return true;
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("Admin details supplied are invalid.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+                return false;
+            });
+    };
+
+    activate = async (type) => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.state.user
+        };
+        return await axios.get(`/transactions/activate/${type}`, { headers: headers })
+            .then(response => {
+                console.log(response);
+                toastr.success("Activation has been authorized!", "Authorize Activation");
+
+                return true;
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("Admin details supplied are invalid.", "Unauthorized");
+                } else if (error.response.status === 403) {
+                    toastr.error("The details supplied do not have the required permissions to activate.", "Forbidden");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+                return false;
+            });};
 
     render() {
         return (
@@ -46,11 +116,13 @@ class AuthenticationModal extends React.Component {
                         </div>
                         <div className="form-group">
                             <label>Username: </label>
-                            <input type="text" className="form-control" placeholder="Username"/>
+                            <input type="text" name="username" className="form-control" placeholder="Username"
+                                   value={this.state.username} onChange={this.handleChange}/>
                         </div>
                         <div className="form-group">
                             <label>Password: </label>
-                            <input type="password" className="form-control" placeholder="Password"/>
+                            <input type="password" name="password" className="form-control" placeholder="Password"
+                                   value={this.state.password} onChange={this.handleChange}/>
                         </div>
                     </Form>
                 </Modal.Body>
@@ -71,7 +143,8 @@ class AuthenticationModal extends React.Component {
 function mapStateToProps(state) {
     return {
         modal: state.modal,
-        till: state.till
+        till: state.till,
+        user: state.user
     };
 }
 

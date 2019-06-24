@@ -30,7 +30,7 @@ class CompleteRefund extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/api/transactions/refunds`, this.props.till.refundData, { headers })
+        axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund saved!", "Save Refund");

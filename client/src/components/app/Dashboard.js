@@ -15,7 +15,7 @@ class Dashboard extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get("/api/user/details", { headers: headers })
+        axios.get("/user/details", { headers: headers })
             .then(response => {
                 console.log(response);
                 toastr.success("User Details Retrieved!", "User Details");
@@ -38,7 +38,7 @@ class Dashboard extends React.Component {
                 <header className="text-center">
                     <h1>Welcome, {this.props.user.name}</h1>
                     <h4>@{this.props.user.username}</h4>
-                    <h5 className="text-uppercase">{this.props.user.group}</h5>
+                    <h5 className="text-uppercase">{this.props.user.role && this.props.user.role.description}</h5>
                 </header>
                 <main className="d-flex">
                     <section className="col-6 card">
