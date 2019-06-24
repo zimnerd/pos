@@ -21,6 +21,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\View;
 
 class TransactionController extends Controller
@@ -28,6 +30,7 @@ class TransactionController extends Controller
     public $successStatus = 200;
     public $createdStatus = 201;
     public $notFoundStatus = 404;
+    public $errorStatus = 500;
 
     /**
      * Create a transaction
@@ -48,192 +51,200 @@ class TransactionController extends Controller
         ]);
 
         $transaction = $request->all();
-        $shop = $transaction["shop"];
-        /**
-         * @var Till $till
-         */
-        $till = $transaction["till"];
-        /**
-         * @var DailyTransaction[] $transaction
-         */
-        $lineItems = $transaction["transactions"];
-        $totals = $transaction["totals"];
 
-        /**
-         * @var User $user
-         */
-        $user = Auth::user();
+        try {
+            DB::beginTransaction();
 
-        $docNo = $till['tillno'] . $till["InvNo"];
-        switch ($transaction["type"]) {
-            case "INV":
-                $docNo = $till['tillno'] . $till["InvNo"];
-                break;
-            case "CRN":
-                $docNo = $till['tillno'] . $till["CrnNo"];
-                break;
-            case "L/B":
-                $docNo = $till['tillno'] . $till["LbNo"];
-                break;
-        }
-
-
-        $count = 1;
-        foreach ($lineItems as $item) {
-            if (!isset($item['markdown'])) {
-                $item['markdown'] = false;
-            }
-
-            $dailyTransaction = new DailyTransaction();
-            $dailyTransaction->BRNO = $shop['BrNo'];
-            $dailyTransaction->TILLNO = $till['tillno'];
-            $dailyTransaction->STYLE = $item['code'];
-            $dailyTransaction->SIZES = $item['size'];
-            $dailyTransaction->CLR = $item['colour'];
-
-            if (isset($item['serialno'])) {
-                $dailyTransaction->SERIALNO = $item['serialno'];
-            } else {
-                $dailyTransaction->SERIALNO = '';
-            }
-
-            $dailyTransaction->LINENO = $count;
-            $dailyTransaction->DOCNO = $docNo;
-            $dailyTransaction->DOCTYPE = $transaction["type"];
-            $dailyTransaction->SUP = $transaction["method"];
-
-            if (isset($transaction['stype'])) {
-                $dailyTransaction->STYPE = $transaction['stype'];
-            } else {
-                $dailyTransaction->STYPE = $transaction["method"];
-            }
-
-            $dailyTransaction->BDATE = \date("Y-m-d");
-            $dailyTransaction->BTIME = \date("H:i:s");
-
-            $vat = $item['total'] * 15 / 100;
-            $dailyTransaction->AMT = $item['total'];
-            $dailyTransaction->VATAMT = $vat;
-            $dailyTransaction->QTY = $item['qty'];
-            $dailyTransaction->SP = $item['subtotal'];
-            $dailyTransaction->SPX = $item['subtotal'];
-            $dailyTransaction->CP = $item['cost'];
-            $dailyTransaction->DTYPE = '';
-            $dailyTransaction->LPROMPT = "Enter";
-            $dailyTransaction->DISCPERC = $item['disc'];
-            $dailyTransaction->MARKUP = 0.00;
-            $dailyTransaction->DISCAMT = $item['subtotal'] - $item['total'];
-            $dailyTransaction->SMAN = "1";
-            $dailyTransaction->UPDFLAG = 0;
-            $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' : 'R';
-            $dailyTransaction->APPNO = 0;
-            $dailyTransaction->IBTDLNO = 0;
-            $dailyTransaction->DLNO = 0;
-            $dailyTransaction->UPDNO = 0;
-            $dailyTransaction->UPDFLAG = 0;
-            $dailyTransaction->INVREF = null;
-            $dailyTransaction->PERIOD = $shop['Period'];
-            $dailyTransaction->COMMENT = "";
-            $dailyTransaction->RESCODE = null;
-            $dailyTransaction->BUSER = $user->username;
-            $dailyTransaction->AUSER = $transaction["auth"];
-            $dailyTransaction->FWCNO = null;
-
-            $count++;
-            $dailyTransaction->save();
-
-            $colour = Colours::query()
-                ->where("colour", $item['colour'])
-                ->first();
+            $shop = $transaction["shop"];
+            /**
+             * @var Till $till
+             */
+            $till = $transaction["till"];
+            /**
+             * @var DailyTransaction[] $transaction
+             */
+            $lineItems = $transaction["transactions"];
+            $totals = $transaction["totals"];
 
             /**
-             * @var Stock $stock
+             * @var User $user
              */
-            $stock = Stock::query()
-                ->where("STYLE", $item['code'])
-                ->where("SIZES", $item['size'])
-                ->where("CLR", $colour->code)
-                ->first();
+            $user = Auth::user();
 
-            $stock->QOH = $stock->QOH - 1;
-            $stock->save();
+            $docNo = $till['tillno'] . $till["InvNo"];
+            switch ($transaction["type"]) {
+                case "INV":
+                    $docNo = $till['tillno'] . $till["InvNo"];
+                    break;
+                case "CRN":
+                    $docNo = $till['tillno'] . $till["CrnNo"];
+                    break;
+                case "L/B":
+                    $docNo = $till['tillno'] . $till["LbNo"];
+                    break;
+            }
 
-            if (isset($item['serialno'])) {
+            $count = 1;
+            foreach ($lineItems as $item) {
+                if (!isset($item['markdown'])) {
+                    $item['markdown'] = false;
+                }
 
-                $queryBuilder = Handset::query();
-                $queryBuilder->where('code', $dailyTransaction->STYLE)
-                    ->where('serialno', $dailyTransaction->SERIALNO);
+                $dailyTransaction = new DailyTransaction();
+                $dailyTransaction->BRNO = $shop['BrNo'];
+                $dailyTransaction->TILLNO = $till['tillno'];
+                $dailyTransaction->STYLE = $item['code'];
+                $dailyTransaction->SIZES = $item['size'];
+                $dailyTransaction->CLR = $item['colour'];
+
+                if (isset($item['serialno'])) {
+                    $dailyTransaction->SERIALNO = $item['serialno'];
+                } else {
+                    $dailyTransaction->SERIALNO = '';
+                }
+
+                $dailyTransaction->LINENO = $count;
+                $dailyTransaction->DOCNO = $docNo;
+                $dailyTransaction->DOCTYPE = $transaction["type"];
+                $dailyTransaction->SUP = $transaction["method"];
+
+//                if (isset($transaction['stype'])) {
+                    $dailyTransaction->STYPE = $transaction['stype'];
+//                } else {
+//                    $dailyTransaction->STYPE = $transaction["method"];
+//                }
+
+                $dailyTransaction->BDATE = \date("Y-m-d");
+                $dailyTransaction->BTIME = \date("H:i:s");
+
+                $vat = $item['total'] * 15 / 100;
+                $dailyTransaction->AMT = $item['total'];
+                $dailyTransaction->VATAMT = $vat;
+                $dailyTransaction->QTY = $item['qty'];
+                $dailyTransaction->SP = $item['subtotal'];
+                $dailyTransaction->SPX = $item['subtotal'];
+                $dailyTransaction->CP = $item['cost'];
+                $dailyTransaction->DTYPE = '';
+                $dailyTransaction->LPROMPT = "Enter";
+                $dailyTransaction->DISCPERC = $item['disc'];
+                $dailyTransaction->MARKUP = 0.00;
+                $dailyTransaction->DISCAMT = $item['subtotal'] - $item['total'];
+                $dailyTransaction->SMAN = "1";
+                $dailyTransaction->UPDFLAG = 0;
+                $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' : 'R';
+                $dailyTransaction->APPNO = 0;
+                $dailyTransaction->IBTDLNO = 0;
+                $dailyTransaction->DLNO = 0;
+                $dailyTransaction->UPDNO = 0;
+                $dailyTransaction->UPDFLAG = 0;
+                $dailyTransaction->INVREF = null;
+                $dailyTransaction->PERIOD = $shop['Period'];
+                $dailyTransaction->COMMENT = "";
+                $dailyTransaction->RESCODE = null;
+                $dailyTransaction->BUSER = $user->username;
+                $dailyTransaction->AUSER = $transaction["auth"];
+                $dailyTransaction->FWCNO = null;
+
+                $count++;
+                $dailyTransaction->save();
+
+                $colour = Colours::query()
+                    ->where("colour", $item['colour'])
+                    ->first();
+
                 /**
-                 * @var Handset $item
+                 * @var Stock $stock
                  */
-                $item = $queryBuilder->first();
+                $stock = Stock::query()
+                    ->where("STYLE", $item['code'])
+                    ->where("SIZES", $item['size'])
+                    ->where("CLR", $colour->code)
+                    ->first();
 
-                if (!$item) {
-                    $queryBuilder = Airtime::query();
+                $stock->QOH = $stock->QOH - 1;
+                $stock->save();
+
+                if (isset($item['serialno'])) {
+
+                    $queryBuilder = Handset::query();
                     $queryBuilder->where('code', $dailyTransaction->STYLE)
                         ->where('serialno', $dailyTransaction->SERIALNO);
                     /**
-                     * @var Airtime $item
+                     * @var Handset $item
                      */
                     $item = $queryBuilder->first();
+
+                    if (!$item) {
+                        $queryBuilder = Airtime::query();
+                        $queryBuilder->where('code', $dailyTransaction->STYLE)
+                            ->where('serialno', $dailyTransaction->SERIALNO);
+                        /**
+                         * @var Airtime $item
+                         */
+                        $item = $queryBuilder->first();
+                    }
+
+                    $item->solddate = new \DateTime();
+                    $item->save();
                 }
-
-                $item->solddate = new \DateTime();
-                $item->save();
             }
+
+            $summmary = new DailySummary();
+            $summmary->BDATE = \date("Y-m-d");
+            $summmary->BRNO = $shop['BrNo'];
+            $summmary->BTYPE = $transaction["type"] === "INV" ? "DEP" : "PAY";
+            $summmary->TRANNO = $till['tillno'] . $transaction["type"] === "INV" ? $till['DepNo'] : $till['CredInvNo'];
+            $summmary->TAXCODE = null;
+            $summmary->VATAMT = $totals["vat"];
+            $summmary->AMT = $totals["total"];
+            $summmary->GLCODE = 0;
+            $summmary->REMARKS = $transaction["type"] === "INV" ? "Sale" : "Credit";
+            $summmary->COB = $transaction["method"];
+
+            if (isset($transaction['stype'])) {
+                $summmary->STYPE = $transaction['stype'];
+            } else {
+                $summmary->STYPE = $transaction["method"];
+            }
+
+            $summmary->UPDFLAG = 0;
+            $summmary->TILLNO = $till['tillno'];
+            $summmary->DLNO = 0;
+            $summmary->UPDNO = 0;
+            $summmary->OTTYPE = $transaction["type"];
+            $summmary->OTRANNO = $docNo;
+            $summmary->ODATE = \date("Y-m-d");
+            $summmary->DEBTOR = $transaction["type"] !== "L/B" ? "Cash" : $transaction['debtor'];
+            $summmary->BUSER = $user->username;
+            $summmary->AUSER = $transaction["auth"];
+            $summmary->PERIOD = $shop['Period'];
+            $summmary->CCQNUM = "";
+            $summmary->save();
+
+            $control = new DailyControl();
+            $control->docnum = $docNo;
+            $control->transtype = $transaction["type"];
+            $control->save();
+
+            $request = new Request();
+            if (!isset($transaction['person'])) {
+                $request->replace([]);
+            } else {
+                /**
+                 * @var mixed $person
+                 */
+                $person = $transaction['person'];
+                $request->replace($person);
+            }
+            $this->savePerson($request, $docNo);
+
+            DB::commit();
+            return response()->json(["number" => $docNo], $this->createdStatus);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
         }
-
-        $summmary = new DailySummary();
-        $summmary->BDATE = \date("Y-m-d");
-        $summmary->BRNO = $shop['BrNo'];
-        $summmary->BTYPE = $transaction["type"] === "INV" ? "DEP" : "PAY";
-        $summmary->TRANNO = $till['tillno'] . $transaction["type"] === "INV" ? $till['DepNo'] : $till['CredInvNo'];
-        $summmary->TAXCODE = null;
-        $summmary->VATAMT = $totals["vat"];
-        $summmary->AMT = $totals["total"];
-        $summmary->GLCODE = 0;
-        $summmary->REMARKS = $transaction["type"] === "INV" ? "Sale" : "Credit";
-        $summmary->COB = $transaction["method"];
-
-        if (isset($transaction['stype'])) {
-            $summmary->STYPE = $transaction['stype'];
-        } else {
-            $summmary->STYPE = $transaction["method"];
-        }
-
-        $summmary->UPDFLAG = 0;
-        $summmary->TILLNO = $till['tillno'];
-        $summmary->DLNO = 0;
-        $summmary->UPDNO = 0;
-        $summmary->OTTYPE = $transaction["type"];
-        $summmary->OTRANNO = $docNo;
-        $summmary->ODATE = \date("Y-m-d");
-        $summmary->DEBTOR = $transaction["type"] !== "L/B" ? "Cash" : $transaction['debtor'];
-        $summmary->BUSER = $user->username;
-        $summmary->AUSER = $transaction["auth"];
-        $summmary->PERIOD = $shop['Period'];
-        $summmary->CCQNUM = "";
-        $summmary->save();
-
-        $control = new DailyControl();
-        $control->docnum = $docNo;
-        $control->transtype = $transaction["type"];
-        $control->save();
-
-
-        $request = new Request();
-        if (!isset($transaction['person'])) {
-            $request->replace([]);
-        } else {
-            /**
-             * @var mixed $person
-             */
-            $person = $transaction['person'];
-            $request->replace($person);
-        }
-        $this->savePerson($request, $docNo);
-
-        return response()->json(["number" => $docNo], $this->createdStatus);
     }
 
     /**
@@ -252,30 +263,40 @@ class TransactionController extends Controller
         ]);
 
         $lineItems = $request->all();
-        $transactions = $lineItems['transactions'];
 
-        $till = $lineItems['till'];
+        try {
+            DB::beginTransaction();
+            $transactions = $lineItems['transactions'];
 
-        foreach ($transactions as $transaction) {
-            $sale = new Sale();
-            $sale->docnum = $till['tillno'] . $till['InvNo'];
-            $sale->type = $lineItems['type'];
-            $sale->code = $transaction['code'];
-            $sale->colour = $transaction['colour'];
-            $sale->cost = $transaction['cost'];
-            $sale->description = $transaction['description'];
-            $sale->disc = $transaction['disc'];
-            $sale->markdown = $transaction['markdown'];
-            $sale->price = $transaction['price'];
-            $sale->qty = $transaction['qty'];
-            $sale->size = $transaction['size'];
-            $sale->subtotal = $transaction['subtotal'];
-            $sale->total = $transaction['total'];
+            $till = $lineItems['till'];
+            $docNo = $till['tillno'] . $till['InvNo'];
 
-            $sale->save();
+            foreach ($transactions as $transaction) {
+                $sale = new Sale();
+                $sale->docnum = $docNo;
+                $sale->type = $lineItems['type'];
+                $sale->code = $transaction['code'];
+                $sale->colour = $transaction['colour'];
+                $sale->cost = $transaction['cost'];
+                $sale->description = $transaction['description'];
+                $sale->disc = $transaction['disc'];
+                $sale->markdown = $transaction['markdown'];
+                $sale->price = $transaction['price'];
+                $sale->qty = $transaction['qty'];
+                $sale->size = $transaction['size'];
+                $sale->subtotal = $transaction['subtotal'];
+                $sale->total = $transaction['total'];
+
+                $sale->save();
+            }
+
+            DB::commit();
+            return response()->json(['sale' => $docNo], $this->createdStatus);
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
         }
-
-        return response()->json(['sale' => $sale->docnum], $this->createdStatus);
     }
 
 
@@ -455,11 +476,20 @@ class TransactionController extends Controller
 
         $data = $request->all();
 
-        $person = new Person($data);
-        $person['docNo'] = $id;
-        $person->save();
+        try {
+            DB::beginTransaction();
 
-        return response()->json([], $this->createdStatus);
+            $person = new Person($data);
+            $person['docNo'] = $id;
+            $person->save();
+
+            DB::commit();
+            return response()->json([], $this->createdStatus);
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
+        }
     }
 
     /**
@@ -480,11 +510,20 @@ class TransactionController extends Controller
         ]);
 
         $data = $request->all();
+        try {
+            DB::beginTransaction();
 
-        $refund = new Refund($data);
-        $refund->save();
+            $refund = new Refund($data);
+            $refund->save();
 
-        return response()->json([], $this->createdStatus);
+
+            DB::commit();
+            return response()->json([], $this->createdStatus);
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
+        }
     }
 
     /**

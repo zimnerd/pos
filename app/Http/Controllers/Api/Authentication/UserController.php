@@ -8,11 +8,15 @@ use App\Role;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class UserController extends Controller
 {
     public $successStatus = 200;
     public $createStatus = 201;
+    public $unauthorizedStatus = 401;
+    public $errorStatus = 500;
 
     /**
      * Login to the application.
@@ -40,7 +44,7 @@ class UserController extends Controller
 
             return response()->json(['success' => $success], $this->successStatus);
         } else {
-            return response()->json(['error' => 'Unauthorised'], 401);
+            return response()->json(['error' => 'Unauthorised'], $this->unauthorizedStatus);
         }
     }
 
@@ -62,15 +66,26 @@ class UserController extends Controller
         ]);
 
         $input = $request->all();
-        $input['password'] = bcrypt($input['password']);
-        $input['role'] = "T";
 
-        $user = User::create($input);
+        try {
+            DB::beginTransaction();
 
-        $success['token'] = $user->createToken($user->username, ['user'])->accessToken;
-        $success['name'] = $user->name;
+            $input['password'] = bcrypt($input['password']);
+            $input['role'] = "T";
 
-        return response()->json(['success' => $success], $this->createStatus);
+            $user = User::create($input);
+
+            $success['token'] = $user->createToken($user->username, ['user'])->accessToken;
+            $success['name'] = $user->name;
+
+            DB::commit();
+
+            return response()->json(['success' => $success], $this->createStatus);
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
+        }
     }
 
     /**

@@ -7,14 +7,16 @@ use App\Haddith;
 use App\Http\Controllers\Controller;
 use App\Shop;
 use App\Till;
-use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class SettingsController extends Controller
 {
 
     public $successStatus = 200;
     public $notFoundStatus = 404;
+    public $errorStatus = 500;
 
     /**
      * Retrieve the shop settings
@@ -101,13 +103,13 @@ class SettingsController extends Controller
     }
 
     /**
- * Save the till settings.
- *
- * @param string $id
- * @param Request $request
- * @return \Illuminate\Http\Response
- * @throws \Illuminate\Validation\ValidationException
- */
+     * Save the till settings.
+     *
+     * @param string $id
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     * @throws \Illuminate\Validation\ValidationException
+     */
     public function saveTill($id, Request $request)
     {
         $this->validate($request, [
@@ -129,32 +131,41 @@ class SettingsController extends Controller
             return response()->json([], $this->notFoundStatus);
         }
 
-        /**
-         * @var Till $info
-         */
-        foreach ($tillInfo as $info) {
-            switch ($info->ColName) {
-                case "InvNo":
-                    $info->ColValue = $request['InvNo'];
-                    break;
-                case "DepNo":
-                    $info->ColValue = $request['DepNo'];
-                    break;
-                case "CredInvNo":
-                    $info->ColValue = $request['CredInvNo'];
-                    break;
-                case "CrnNo":
-                    $info->ColValue = $request['CrnNo'];
-                    break;
-                case "LbNo":
-                    $info->ColValue = $request['LbNo'];
-                    break;
+        try {
+            DB::beginTransaction();
+
+            /**
+             * @var Till $info
+             */
+            foreach ($tillInfo as $info) {
+                switch ($info->ColName) {
+                    case "InvNo":
+                        $info->ColValue = $request['InvNo'];
+                        break;
+                    case "DepNo":
+                        $info->ColValue = $request['DepNo'];
+                        break;
+                    case "CredInvNo":
+                        $info->ColValue = $request['CredInvNo'];
+                        break;
+                    case "CrnNo":
+                        $info->ColValue = $request['CrnNo'];
+                        break;
+                    case "LbNo":
+                        $info->ColValue = $request['LbNo'];
+                        break;
+                }
+
+                $info->save();
             }
 
-            $info->save();
+            DB::commit();
+            return response()->json(['till' => $till], $this->successStatus);
+        } catch (\PDOException $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
         }
-
-        return response()->json(['till' => $till], $this->successStatus);
     }
 
     /**
