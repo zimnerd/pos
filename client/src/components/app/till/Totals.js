@@ -18,6 +18,7 @@ class Totals extends React.Component {
             <aside className="float-right">
                 {this.props.till.totals &&
                 <main>
+                    <label>Items: <span>{this.props.till.totals.items}</span></label>
                     <label>Subtotal: <span>{(this.props.till.totals.subtotal).toFixed(2)}</span></label>
                     <label>Discount: <span>{(this.props.till.totals.discount).toFixed(2)}</span></label>
                     <label>Tax Total: <span>{(this.props.till.totals.vat).toFixed(2)}</span></label>

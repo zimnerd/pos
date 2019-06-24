@@ -50,7 +50,8 @@ export function resetTotals() {
         total: 0,
         subtotal: 0,
         vat: 0,
-        discount: 0
+        discount: 0,
+        items: 0
     };
     return { type: RESET_TOTALS, totals }
 }

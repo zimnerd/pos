@@ -60,7 +60,7 @@ class CashModal extends React.Component {
 
     printReceipt = number => {
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/api/transactions/${number}/print`;
+        a.href = `http://localhost:8000/api/transactions/${number}/print`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();
@@ -72,11 +72,13 @@ class CashModal extends React.Component {
             total: 0,
             subtotal: 0,
             vat: 0,
-            discount: 0
+            discount: 0,
+            items: 0
         };
         for(let x = 0, len = sales.length; x < len; x++) {
             let sale = sales[x];
             totals = this.props.mapLineItem(sale, totals);
+            totals.items++;
         }
         this.props.actions.till.setTotals(totals);
     };

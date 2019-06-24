@@ -264,10 +264,12 @@ class Till extends React.Component {
             total: 0,
             subtotal: 0,
             vat: 0,
-            discount: 0
+            discount: 0,
+            items: 0
         };
         for (let transaction of this.props.till.transactions) {
             this.mapHeldItems(transaction, totals);
+            totals.items++;
         }
 
         this.props.actions.till.setTotals(totals);
