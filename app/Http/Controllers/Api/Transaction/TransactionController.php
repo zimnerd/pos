@@ -65,6 +65,19 @@ class TransactionController extends Controller
         $user = Auth::user();
 
         $docNo = $till['tillno'] . $till["InvNo"];
+        switch ($transaction["type"]) {
+            case "INV":
+                $docNo = $till['tillno'] . $till["InvNo"];
+                break;
+            case "CRN":
+                $docNo = $till['tillno'] . $till["CrnNo"];
+                break;
+            case "L/B":
+                $docNo = $till['tillno'] . $till["LbNo"];
+                break;
+        }
+
+
         $count = 1;
         foreach ($lineItems as $item) {
             if (!isset($item['markdown'])) {
@@ -88,7 +101,13 @@ class TransactionController extends Controller
             $dailyTransaction->DOCNO = $docNo;
             $dailyTransaction->DOCTYPE = $transaction["type"];
             $dailyTransaction->SUP = $transaction["method"];
-            $dailyTransaction->STYPE = $transaction["method"];
+
+            if (isset($transaction['stype'])) {
+                $dailyTransaction->STYPE = $transaction['stype'];
+            } else {
+                $dailyTransaction->STYPE = $transaction["method"];
+            }
+
             $dailyTransaction->BDATE = \date("Y-m-d");
             $dailyTransaction->BTIME = \date("H:i:s");
 
@@ -175,7 +194,13 @@ class TransactionController extends Controller
         $summmary->GLCODE = 0;
         $summmary->REMARKS = $transaction["type"] === "INV" ? "Sale" : "Credit";
         $summmary->COB = $transaction["method"];
-        $summmary->STYPE = $transaction["method"];
+
+        if (isset($transaction['stype'])) {
+            $summmary->STYPE = $transaction['stype'];
+        } else {
+            $summmary->STYPE = $transaction["method"];
+        }
+
         $summmary->UPDFLAG = 0;
         $summmary->TILLNO = $till['tillno'];
         $summmary->DLNO = 0;
@@ -183,7 +208,7 @@ class TransactionController extends Controller
         $summmary->OTTYPE = $transaction["type"];
         $summmary->OTRANNO = $docNo;
         $summmary->ODATE = \date("Y-m-d");
-        $summmary->DEBTOR = $transaction["type"] === "INV" ? "Cash" : $transaction['debtor'];
+        $summmary->DEBTOR = $transaction["type"] !== "L/B" ? "Cash" : $transaction['debtor'];
         $summmary->BUSER = $user->username;
         $summmary->AUSER = $transaction["auth"];
         $summmary->PERIOD = $shop['Period'];

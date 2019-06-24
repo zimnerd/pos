@@ -371,7 +371,7 @@ class Till extends React.Component {
                 <ComboModal/>
                 <RefundModal mapLineItem={this.mapHeldItems}/>
                 <RefundDetailsModal/>
-                <CompleteRefund/>
+                <CompleteRefund mapLineItem={this.mapHeldItems}/>
             </article>
         )
     }

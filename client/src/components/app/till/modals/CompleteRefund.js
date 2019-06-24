@@ -15,14 +15,102 @@ class CompleteRefund extends React.Component {
     completeRefund = async () => {
         if (this.props.till.refundData) {
             await this.saveRefund();
+        } else {
+            await this.refundTransaction();
         }
 
-        this.props.actions.till.resetTotals();
-        this.props.actions.till.resetTransactions();
         this.props.actions.till.deactivateRefund();
         this.props.actions.till.setRefund();
-        this.props.actions.modal.closeCompleteRefund();
+    };
+
+    mapHeldSales = sales => {
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0,
+            items: 0
+        };
+        for(let x = 0, len = sales.length; x < len; x++) {
+            let sale = sales[x];
+            totals = this.props.mapLineItem(sale, totals);
+            totals.items++;
+        }
+        this.props.actions.till.setTotals(totals);
+    };
+
+    refundTransaction = async () => {
         this.handleClose();
+        this.props.actions.till.resetTotals();
+        let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
+        let transaction = {
+            shop: this.props.settings.shop,
+            till: this.props.settings.till,
+            transactions: transactionsToComplete,
+            totals: this.props.till.totals,
+            type: "CRN",
+            method: "Cash",
+            stype: "Refund",
+            auth: ""
+        };
+
+        let heldSales = this.props.till.transactions.filter(item => item.hold);
+        this.mapHeldSales(heldSales);
+        this.props.actions.till.setTransactions(heldSales);
+
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.post(`/transactions`, transaction, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Transaction Refunded!", "Refund Transaction");
+
+                this.printReceipt(response.data.number);
+                this.saveSettings();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+    
+    printReceipt = number => {
+        let a = document.createElement('a');
+        a.href = `http://localhost:8000/api/transactions/${number}/print`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    };
+
+    saveSettings = () => {
+        let till = this.props.settings.till;
+        till.CrnNo = Number(till.CrnNo) + 1;
+
+        axios.post(`/settings/till/1`, till)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till Details updated!", "Update Settings");
+
+                this.props.actions.settings.saveTill(response.data.till);
+                this.handleClose();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     saveRefund = async () => {
@@ -30,7 +118,7 @@ class CompleteRefund extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
+        await axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund saved!", "Save Refund");

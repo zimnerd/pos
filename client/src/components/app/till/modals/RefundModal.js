@@ -42,7 +42,8 @@ class RefundModal extends React.Component {
         this.props.actions.till.setTotals(totals);
     };
 
-    findDocument = () => {
+    findDocument = (e) => {
+        e.preventDefault();
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
@@ -79,7 +80,7 @@ class RefundModal extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                     <p>Enter the invoice number you would like a refund for:</p>
-                    <Form>
+                    <Form onSubmit={this.findDocument}>
                         <div className="form-group">
                             <label>Invoice Number:</label>
                             <input name="invoice" type="text" className="form-control"
