@@ -33,13 +33,9 @@ class Totals extends React.Component {
                 {!this.props.till.refund &&
                 !this.props.till.exchange &&
                 <footer>
-                    <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 112 })}>Cash
-                        (F1)
+                    <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 114 })}>Cash/Card
+                        (F3)
                     </button>
-                    <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 113 })}>Card
-                        (F2)
-                    </button>
-
                     <button className="btn btn-secondary" onClick={() => this.props.openModal({ keyCode: 123 })}>Other
                         (F12)
                     </button>

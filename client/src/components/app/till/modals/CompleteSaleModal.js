@@ -31,7 +31,11 @@ class CompleteSaleModal extends React.Component {
             if (this.state.method === "Split") {
                 this.setState({
                     tendered: this.state.cash + this.state.card
-                })
+                });
+            } else if (this.state.method === "CC") {
+                this.setState({
+                    tendered: this.props.till.totals.total.toFixed(2)
+                });
             }
         });
     };
@@ -41,8 +45,11 @@ class CompleteSaleModal extends React.Component {
             [event.target.name]: Number(event.target.value)
         }, () => {
             if (this.state.method === "Split") {
+                let card = this.props.till.totals.total.toFixed(2) - this.state.cash;
                 this.setState({
-                    tendered: this.state.cash + this.state.card
+                    cash: this.state.cash,
+                    card: card,
+                    tendered: this.state.cash + card
                 })
             }
         });
@@ -115,7 +122,7 @@ class CompleteSaleModal extends React.Component {
 
     printReceipt = number => {
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/api/transactions/${number}/print`;
+        a.href = `http://localhost:8000/api/transactions/${number}/print`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();
@@ -198,18 +205,18 @@ class CompleteSaleModal extends React.Component {
                             this.state.method === "Split" &&
                             <div className="form-group">
                                 <label>Cash Amount:</label>
-                                <input type="number" className="form-control" min="0" name="cash"
+                                <input type="text" className="form-control" name="cash"
                                        value={this.state.cash}
                                        onChange={this.handleChange}/>
                                 <label>Card Amount:</label>
-                                <input type="number" className="form-control" min="0" name="card"
+                                <input type="text" className="form-control" name="card"
                                        value={this.state.card}
                                        onChange={this.handleChange}/>
                             </div>
                         }
                         <div className="form-group">
                             <label>Amount Tendered:</label>
-                            <input type="number" className="form-control" min="0" value={this.state.tendered}
+                            <input type="text" className="form-control" value={this.state.tendered}
                                    name="tendered"
                                    disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                         </div>

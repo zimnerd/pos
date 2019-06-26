@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as modalActions from "../../../redux/actions/modal.action";
 import * as tillActions from "../../../redux/actions/till.action";
@@ -27,8 +29,6 @@ import CashModal from "./modals/CashModal";
 import CardModal from "./modals/CardModal";
 import TransactionId from "./modals/TransactionId";
 import RetrieveHeldModal from "./modals/RetrieveHeldModal";
-import axios from "axios";
-import toastr from "toastr";
 import ComboModal from "./modals/ComboModal";
 import RefundModal from "./modals/RefundModal";
 import RefundDetailsModal from "./modals/RefundDetailsModal";
@@ -116,18 +116,6 @@ class Till extends React.Component {
 
     openModal = (event) => {
         switch (event.keyCode) {
-            case 112:
-                if (event.preventDefault) {
-                    event.preventDefault();
-                }
-                this.props.actions.modal.openCash();
-                break;
-            case 113:
-                if (event.preventDefault) {
-                    event.preventDefault();
-                }
-                this.props.actions.modal.openCard();
-                break;
             case 114:
                 if (event.preventDefault) {
                     event.preventDefault();
