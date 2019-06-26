@@ -108,11 +108,11 @@ class TransactionController extends Controller
                 $dailyTransaction->DOCTYPE = $transaction["type"];
                 $dailyTransaction->SUP = $transaction["method"];
 
-//                if (isset($transaction['stype'])) {
+                if (isset($transaction['stype'])) {
                     $dailyTransaction->STYPE = $transaction['stype'];
-//                } else {
-//                    $dailyTransaction->STYPE = $transaction["method"];
-//                }
+                } else {
+                    $dailyTransaction->STYPE = $transaction["method"];
+                }
 
                 $dailyTransaction->BDATE = \date("Y-m-d");
                 $dailyTransaction->BTIME = \date("H:i:s");
@@ -192,13 +192,13 @@ class TransactionController extends Controller
             $summmary = new DailySummary();
             $summmary->BDATE = \date("Y-m-d");
             $summmary->BRNO = $shop['BrNo'];
-            $summmary->BTYPE = $transaction["type"] === "INV" ? "DEP" : "PAY";
+            $summmary->BTYPE = $transaction["type"] !== "CRN" ? "DEP" : "PAY";
             $summmary->TRANNO = $till['tillno'] . $transaction["type"] === "INV" ? $till['DepNo'] : $till['CredInvNo'];
             $summmary->TAXCODE = null;
             $summmary->VATAMT = $totals["vat"];
             $summmary->AMT = $totals["total"];
             $summmary->GLCODE = 0;
-            $summmary->REMARKS = $transaction["type"] === "INV" ? "Sale" : "Credit";
+            $summmary->REMARKS = "Sale";
             $summmary->COB = $transaction["method"];
 
             if (isset($transaction['stype'])) {
@@ -214,7 +214,13 @@ class TransactionController extends Controller
             $summmary->OTTYPE = $transaction["type"];
             $summmary->OTRANNO = $docNo;
             $summmary->ODATE = \date("Y-m-d");
-            $summmary->DEBTOR = $transaction["type"] !== "L/B" ? "Cash" : $transaction['debtor'];
+
+            if (isset($transaction['debtor'])) {
+                $summmary->DEBTOR = $transaction['debtor'];
+            } else {
+                $summmary->DEBTOR = "Cash";
+            }
+
             $summmary->BUSER = $user->username;
             $summmary->AUSER = $transaction["auth"];
             $summmary->PERIOD = $shop['Period'];

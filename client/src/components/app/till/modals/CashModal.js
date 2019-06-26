@@ -26,7 +26,8 @@ class CashModal extends React.Component {
             till: this.props.settings.till,
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
-            type: "INV",
+            type: this.props.till.laybye ? "L/B" : "INV",
+            stype: this.props.till.laybye ? "Lay-Bye" : "Cash",
             method: "Cash",
             auth: ""
         };
@@ -46,7 +47,8 @@ class CashModal extends React.Component {
                 toastr.success("Transaction Completed!", "Create Transaction");
 
                 this.printReceipt(response.data.number);
-                this.saveSettings();
+                this.saveSettings(transaction.type);
+                this.props.actions.till.deactivateLayBye();
             })
             .catch(error => {
                 console.log(error);
@@ -83,10 +85,14 @@ class CashModal extends React.Component {
         this.props.actions.till.setTotals(totals);
     };
 
-    saveSettings = () => {
+    saveSettings = (type) => {
         let till = this.props.settings.till;
-        till.InvNo = Number(till.InvNo) + 1;
         till.DepNo = Number(till.DepNo) + 1;
+        if (type === "L/B") {
+            till.LbNo = Number(till.LbNo) + 1;
+        } else {
+            till.InvNo = Number(till.InvNo) + 1;
+        }
 
         axios.post(`/settings/till/1`, till)
             .then(response => {
