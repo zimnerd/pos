@@ -1,8 +1,8 @@
 {
-    "name": "laravel/laravel",
+    "name": "fasion-world-pos",
     "type": "project",
-    "description": "The Laravel Framework.",
-    "version": "0.2.0",
+    "description": "Fashion World POS Application.",
+    "version": "0.3.0",
     "keywords": [
         "framework",
         "laravel"
