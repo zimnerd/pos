@@ -2,12 +2,11 @@ import React from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import { Tab, Tabs } from "react-bootstrap";
-import axios from "axios";
-import toastr from "toastr";
 
 import * as settingsActions from "../../../redux/actions/settings.action";
 
 import './InformationBar.scss';
+
 import Table from "react-bootstrap/Table";
 
 class InformationBar extends React.Component {
@@ -15,30 +14,6 @@ class InformationBar extends React.Component {
     state = {
         key: 'combos'
     };
-
-    componentDidMount(): void {
-        const headers = {
-            'Authorization': 'Bearer ' + this.props.auth.token
-        };
-
-        axios.get(`/settings/combos`, { headers })
-            .then(response => {
-                console.log(response.data);
-                toastr.success("All Combos Found!", "Find All Combos");
-
-                this.props.actions.settings.setCombos(response.data.combos);
-            })
-            .catch(error => {
-                console.log(error);
-                if (error.response.status === 401) {
-                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
-                } else if (error.response.status === 404) {
-                    console.log("No combos found");
-                } else {
-                    toastr.error("Unknown error.");
-                }
-            });
-    }
 
     render() {
         return (
@@ -54,6 +29,7 @@ class InformationBar extends React.Component {
                         activeKey={this.state.key}
                         onSelect={key => this.setState({ key })}
                     >
+                        {this.props.settings.combos && this.props.settings.combos.length > 0 &&
                         <Tab eventKey="combos" title="Combos">
                             <Table striped>
                                 <thead>
@@ -66,7 +42,7 @@ class InformationBar extends React.Component {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                {this.props.settings.combos && this.props.settings.combos.map((item, index) => {
+                                {this.props.settings.combos.map((item, index) => {
                                     return (
                                         <tr key={index}>
                                             <td>{index + 1}.</td>
@@ -81,6 +57,7 @@ class InformationBar extends React.Component {
                                 </tbody>
                             </Table>
                         </Tab>
+                        }
                     </Tabs>
                 </footer>
             </aside>
