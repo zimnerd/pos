@@ -16,6 +16,7 @@ class Register extends React.Component {
         email: '',
         username: '',
         password: '',
+        role: 'RM',
         confirm: ''
     };
 
@@ -28,7 +29,7 @@ class Register extends React.Component {
                 console.log(response);
                 toastr.success('You have been registered successfully!', 'Register User');
 
-                this.props.history.push('/');
+                this.props.history.push('/app/dashboard');
             })
             .catch(error => {
                 console.log(error);
@@ -76,6 +77,22 @@ class Register extends React.Component {
                                 {this.props.auth.errors['email'] && <p>{this.props.auth.errors['email']}</p>}
                             </section>
                             <section className='form-group'>
+                                <label>Role:</label>
+                                <select id='role' name='role' placeholder='Role'
+                                       value={this.state.role}
+                                        // defaultValue='Role'
+                                       onChange={this.handleChange} className='form-control' required>
+                                {this.props.auth.roles &&
+                                    this.props.auth.roles.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.code}>{item.description}</option>
+                                        )
+                                    })
+                                }
+                                </select>
+                                {this.props.auth.errors['role'] && <p>{this.props.auth.errors['role']}</p>}
+                            </section>
+                            <section className='form-group'>
                                 <label>Username:</label>
                                 <input id='username' name='username' className='form-control' type='text'
                                        value={this.state.username}
@@ -99,7 +116,7 @@ class Register extends React.Component {
                         </main>
                         <footer>
                             <button className='btn btn-primary float-right' onClick={this.onSubmit}>Register</button>
-                            <Link to='/' className='btn btn-secondary float-left'>Back</Link>
+                            <Link to='/app/dashboard' className='btn btn-secondary float-left'>Back</Link>
                         </footer>
                     </form>
                 </main>

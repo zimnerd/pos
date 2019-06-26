@@ -62,7 +62,8 @@ class UserController extends Controller
             'username' => 'required',
             'email' => 'required|email',
             'password' => 'required',
-            'confirm' => 'required|same:password'
+            'confirm' => 'required|same:password',
+            'role' => 'required'
         ]);
 
         $input = $request->all();
@@ -71,7 +72,6 @@ class UserController extends Controller
             DB::beginTransaction();
 
             $input['password'] = bcrypt($input['password']);
-            $input['role'] = "T";
 
             $user = User::create($input);
 

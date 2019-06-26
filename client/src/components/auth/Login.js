@@ -76,7 +76,6 @@ class Login extends React.Component {
                         </main>
                         <footer>
                             <button className='btn btn-primary float-right' onClick={this.onSubmit}>Login</button>
-                            <Link to='/register' className='btn btn-secondary float-left'>Register</Link>
                         </footer>
                     </form>
                 </main>

@@ -6,6 +6,7 @@ import axios from "axios";
 import toastr from "toastr";
 
 import * as settingsActions from "./redux/actions/settings.action";
+import * as authActions from "./redux/actions/auth.action";
 
 import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
@@ -24,7 +25,7 @@ class App extends React.Component {
                 console.log(response.data);
 
                 toastr.success("Shop Details Retrieved!", "Retrieve Shop Details");
-                this.props.actions.retrieveShop(response.data.shop);
+                this.props.actions.settings.retrieveShop(response.data.shop);
             })
             .catch(error => {
                 console.log(error);
@@ -36,7 +37,19 @@ class App extends React.Component {
                 console.log(response.data);
 
                 toastr.success("Till Details Retrieved!", "Retrieve Till Details");
-                this.props.actions.retrieveTill(response.data.till);
+                this.props.actions.settings.retrieveTill(response.data.till);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
+
+        axios.get('/auth/roles')
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Roles Retrieved!", "Retrieve Roles");
+                this.props.actions.auth.retrieveRoles(response.data.roles);
             })
             .catch(error => {
                 console.log(error);
@@ -49,8 +62,8 @@ class App extends React.Component {
             <Router>
                 <main>
                     <Route path="/" exact component={Login}/>
-                    <Route path="/register" component={Register}/>
 
+                    <Route path="/app/register" component={Register}/>
                     <Route path="/app/dashboard" component={Dashboard}/>
 
                     <Route path="/app/till" component={Till}/>
@@ -74,7 +87,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(settingsActions, dispatch)
+        actions: {
+            settings: bindActionCreators(settingsActions, dispatch),
+            auth: bindActionCreators(authActions, dispatch)
+        }
     };
 }
 

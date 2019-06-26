@@ -14,11 +14,11 @@
 Route::group(["prefix" => "user"], function () {
 
     Route::post('login', 'Api\Authentication\UserController@login');
-    Route::post('register', 'Api\Authentication\UserController@register');
     Route::post('admin/login', 'Api\Authentication\UserController@adminLogin');
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('details', 'Api\Authentication\UserController@details');
+        Route::post('register', 'Api\Authentication\UserController@register');
     });
 
 });
@@ -47,6 +47,10 @@ Route::group(["prefix" => "settings"], function () {
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');
 
+});
+
+Route::group(["prefix" => "auth"], function () {
+    Route::get('roles', 'Api\Authentication\AuthenticationController@retrieveRoles');
 });
 
 Route::group(["prefix" => "transactions"], function () {

@@ -62,6 +62,9 @@ class Dashboard extends React.Component {
                         </main>
                     </section>
                 </main>
+                <footer className="text-center">
+                    <Link to='/app/register' className='btn btn-secondary'>Register</Link>
+                </footer>
             </main>
         )
     }
