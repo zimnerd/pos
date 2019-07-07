@@ -131,7 +131,9 @@ class TransactionController extends Controller
                 $dailyTransaction->DISCAMT = $item['subtotal'] - $item['total'];
                 $dailyTransaction->SMAN = "1";
                 $dailyTransaction->UPDFLAG = 0;
-                $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' : 'R';
+                $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+                        $item['combo'] ? 'D' :
+                        $item['staff'] ? 'S' :'R';
                 $dailyTransaction->APPNO = 0;
                 $dailyTransaction->IBTDLNO = 0;
                 $dailyTransaction->DLNO = 0;
