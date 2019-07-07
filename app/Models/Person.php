@@ -38,6 +38,7 @@ class Person extends Model
 
     public $fillable = [
         'docNo',
+        'docType',
         'name',
         'email',
         'cell'

@@ -16,6 +16,7 @@ class CreatePeopleTable extends Migration
         Schema::dropIfExists('people');
         Schema::create('people', function (Blueprint $table) {
             $table->string('docNo')->primary();
+            $table->string('docType');
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('cell')->nullable();

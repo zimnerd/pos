@@ -244,7 +244,7 @@ class TransactionController extends Controller
                 $person = $transaction['person'];
                 $request->replace($person);
             }
-            $this->savePerson($request, $docNo);
+            $this->savePerson($request, $docNo, $transaction["type"]);
 
             DB::commit();
             return response()->json(["number" => $docNo], $this->createdStatus);
@@ -476,7 +476,7 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      * @throws \Illuminate\Validation\ValidationException
      */
-    public function savePerson(Request $request, $id)
+    public function savePerson(Request $request, $id, $docType)
     {
         $this->validate($request, [
             'email' => 'nullable | email',
@@ -490,6 +490,7 @@ class TransactionController extends Controller
 
             $person = new Person($data);
             $person['docNo'] = $id;
+            $person['docType'] = $docType;
             $person->save();
 
             DB::commit();
