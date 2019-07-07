@@ -50,14 +50,6 @@ class CreditNoteOptionsModal extends React.Component {
                     </Card>
                     <Card>
                         <Card.Header>
-                            <span><i className="fa fa-money"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Lay-Bye</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card>
-                        <Card.Header>
                             <span><i className="fa fa-credit-card"/></span>
                         </Card.Header>
                         <Card.Body>

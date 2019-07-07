@@ -17,6 +17,11 @@ class CompleteExchange extends React.Component {
 
         this.props.actions.till.deactivateExchange();
         this.props.actions.till.setRefund();
+
+        this.props.actions.till.deactivateLayBye();
+        this.props.actions.till.deactivateReturns();
+        this.props.actions.till.deactivateStaff();
+        this.props.actions.till.deactivateRefund();
     };
 
     mapHeldSales = sales => {

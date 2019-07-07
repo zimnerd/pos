@@ -104,7 +104,12 @@ class CompleteSaleModal extends React.Component {
 
                 this.saveSettings(transaction.type);
                 this.handleClose();
+
                 this.props.actions.till.deactivateLayBye();
+                this.props.actions.till.deactivateReturns();
+                this.props.actions.till.deactivateExchange();
+                this.props.actions.till.deactivateStaff();
+                this.props.actions.till.deactivateRefund();
             })
             .catch(error => {
                 console.log(error);
