@@ -2,13 +2,13 @@ import React from 'react';
 import { Button, Form, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
 
 import './AuthenticationModal.scss';
-import axios from "axios";
-import toastr from "toastr";
 
 class AuthenticationModal extends React.Component {
 
@@ -24,6 +24,10 @@ class AuthenticationModal extends React.Component {
     };
 
     handleClose = () => {
+        this.setState({
+            username: "",
+            password: ""
+        });
         this.props.actions.modal.closeAuthentication();
     };
 

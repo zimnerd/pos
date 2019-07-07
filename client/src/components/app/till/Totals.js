@@ -36,9 +36,6 @@ class Totals extends React.Component {
                     <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 114 })}>Cash/Card
                         (F3)
                     </button>
-                    <button className="btn btn-secondary" onClick={() => this.props.openModal({ keyCode: 123 })}>Other
-                        (F12)
-                    </button>
                 </footer>
                 }
                 {!this.props.till.exchange &&

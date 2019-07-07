@@ -22,6 +22,13 @@ class CompleteSaleModal extends React.Component {
     };
 
     handleClose = () => {
+        this.setState({
+            method: "",
+            tendered: 0.00,
+            cash: 0.00,
+            card: 0.00,
+            document: undefined
+        });
         this.props.actions.modal.closeCompleteSale();
     };
 
@@ -111,6 +118,7 @@ class CompleteSaleModal extends React.Component {
                 this.props.actions.till.deactivateExchange();
                 this.props.actions.till.deactivateStaff();
                 this.props.actions.till.deactivateRefund();
+                this.props.actions.till.setCombos();
             })
             .catch(error => {
                 console.log(error);
