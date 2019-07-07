@@ -90,8 +90,8 @@ class Till extends React.Component {
         let totals = this.props.till.totals;
 
         const discount = transaction.price - transaction.total;
-        const vat = transaction.total * 15 / 100;
-        const subtotal = transaction.total - vat;
+        const subtotal = transaction.total / 115 * 100;
+        const vat = transaction.total - subtotal;
 
         totals.total += Number(transaction.total);
         totals.discount += discount;
@@ -103,8 +103,8 @@ class Till extends React.Component {
 
     mapHeldItems = (transaction, totals) => {
         const discount = transaction.price - transaction.total;
-        const vat = transaction.total * 15 / 100;
-        const subtotal = transaction.total - vat;
+        const subtotal = transaction.total / 115 * 100;
+        const vat = transaction.total - subtotal;
 
         totals.total += Number(transaction.total);
         totals.discount += discount;
