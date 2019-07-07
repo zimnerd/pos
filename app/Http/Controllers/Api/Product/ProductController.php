@@ -257,7 +257,17 @@ class ProductController extends Controller
             return response()->json(['error' => 'The combo cannot be found.'], $this->notFoundStatus);
         }
 
-        return response()->json(['combo' => $combo], $this->successStatus);
+        $combos = ComboPrice::query()
+            ->select('comboprice.code', 'comboprice.style', 'comboprice.rp', 'comboprice.qty', 'comboprice.qty',
+                'combostyle.description')
+            ->join('combostyle', 'combostyle.code', '=', 'comboprice.code')
+            ->where('comboprice.code', $combo['code'])
+            ->where('combostyle.active', 1)
+            ->where('combostyle.startdate', '<=', $now)
+            ->where('combostyle.enddate', '>=', $now)
+            ->get();
+
+        return response()->json(['combo' => $combos], $this->successStatus);
     }
 
 }

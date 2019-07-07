@@ -275,9 +275,9 @@ class Till extends React.Component {
                 console.log(response.data);
                 toastr.info("Combos Found!", "Find Combo");
 
-                let combo = this.props.till.combos.find(combo => combo.code === response.data.combo.code);
+                let combo = this.props.till.combos.find(combo => combo.style === code);
                 if (!combo) {
-                    this.props.till.combos.push(response.data.combo);
+                    this.props.till.combos = this.props.till.combos.concat(response.data.combo);
                     this.props.actions.till.setCombos(this.props.till.combos);
                     this.props.actions.modal.openCombo();
                 }
