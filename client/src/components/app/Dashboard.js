@@ -8,6 +8,7 @@ import toastr from "toastr";
 import * as userActions from "../../redux/actions/user.action";
 
 import './Dashboard.scss';
+import Header from "./Header";
 
 class Dashboard extends React.Component {
 
@@ -35,6 +36,7 @@ class Dashboard extends React.Component {
     render() {
         return (
             <main className="container">
+                <Header/>
                 <header className="text-center">
                     <h1>Welcome, {this.props.user.name}</h1>
                     <h4>@{this.props.user.username}</h4>
@@ -62,9 +64,11 @@ class Dashboard extends React.Component {
                         </main>
                     </section>
                 </main>
+                {this.props.user.role && this.props.user.role.description === 'Administrator' &&
                 <footer className="text-center">
                     <Link to='/app/register' className='btn btn-secondary'>Register</Link>
                 </footer>
+                }
             </main>
         )
     }
