@@ -95,7 +95,7 @@ class TransactionController extends Controller
                 $dailyTransaction->TILLNO = $till['tillno'];
                 $dailyTransaction->STYLE = $item['code'];
                 $dailyTransaction->SIZES = $item['size'];
-                $dailyTransaction->CLR = $item['colour'];
+                $dailyTransaction->CLR = $item['clrcode'];
 
                 if (isset($item['serialno'])) {
                     $dailyTransaction->SERIALNO = $item['serialno'];
@@ -382,6 +382,7 @@ class TransactionController extends Controller
             $transaction['colour'] = $item->CLR;
             $transaction['size'] = $item->SIZES;
             $transaction['cost'] = $item->CP;
+            $transaction['type'] = $item->DOCTYPE;
 
             /**
              * @var Product $product

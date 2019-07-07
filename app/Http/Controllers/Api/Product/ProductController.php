@@ -139,7 +139,7 @@ class ProductController extends Controller
          * @var Product $product
          */
         $product = Product::query()
-            ->select('handsetstk.serialno', 'product.code', 'product.descr', 'sizecodes.codeKey',
+            ->select('handsetstk.serialno', 'product.code', 'product.descr', 'sizecodes.codeKey', 'colours.code AS clrcode',
                 'colours.colour', 'handsetstk.sp', 'handsetstk.cp')
             ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
             ->join('colours', 'colours.code', '=', 'clrcode.codeKey')
@@ -176,7 +176,7 @@ class ProductController extends Controller
          * @var Product $product
          */
         $product = Product::query()
-            ->select('airtime.serialno', 'product.code', 'product.descr', 'sizecodes.codeKey',
+            ->select('airtime.serialno', 'product.code', 'product.descr', 'sizecodes.codeKey', 'colours.code AS clrcode',
                 'colours.colour', 'airtime.sp', 'airtime.cp')
             ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
             ->join('colours', 'colours.code', '=', 'clrcode.codeKey')
@@ -207,7 +207,7 @@ class ProductController extends Controller
          * @var Product $product
          */
         $product = Product::query()
-            ->select('product.code', 'product.descr', 'sizecodes.codeKey', 'pricefil.sp',
+            ->select('product.code', 'product.descr', 'sizecodes.codeKey', 'pricefil.sp', 'colours.code AS clrcode',
                 'colours.colour', 'pricefil.rp', 'pricefil.mdp', 'pricefil.stfp', 'stkmast.QOH')
             ->join('clrcode', 'clrcode.productCode', '=', 'product.code')
             ->join('colours', 'colours.code', '=', 'clrcode.codeKey')

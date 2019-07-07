@@ -7,6 +7,7 @@ import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
+import * as settingsActions from "../../../../redux/actions/settings.action";
 
 import './CardModal.scss';
 
@@ -158,7 +159,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
-            till: bindActionCreators(tillActions, dispatch)
+            till: bindActionCreators(tillActions, dispatch),
+            settings: bindActionCreators(settingsActions, dispatch)
         }
     };
 }

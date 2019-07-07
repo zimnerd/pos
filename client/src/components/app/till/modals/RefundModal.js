@@ -34,7 +34,7 @@ class RefundModal extends React.Component {
             discount: 0,
             items: 0
         };
-        for(let x = 0, len = sales.length; x < len; x++) {
+        for (let x = 0, len = sales.length; x < len; x++) {
             let sale = sales[x];
             totals = this.props.mapLineItem(sale, totals);
             totals.items++;
@@ -56,6 +56,7 @@ class RefundModal extends React.Component {
                 this.mapHeldSales(response.data.lineItems.transactions);
                 this.props.actions.till.setTransactions(response.data.lineItems.transactions);
                 this.props.actions.till.activateRefund();
+                this.checkLaybye(response.data.lineItems.transactions);
                 this.handleClose();
             })
             .catch(error => {
@@ -70,6 +71,17 @@ class RefundModal extends React.Component {
                     toastr.error("Unknown error.");
                 }
             });
+    };
+
+    checkLaybye = (transactions) => {
+        for (let transaction of transactions) {
+            if (transaction.type !== 'L/B') {
+                continue;
+            }
+
+            this.props.actions.till.activateLayBye();
+            break;
+        }
     };
 
     render() {

@@ -7,6 +7,7 @@ import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
+import * as settingsActions from "../../../../redux/actions/settings.action";
 
 import './CompleteRefund.scss';
 
@@ -53,7 +54,7 @@ class CompleteRefund extends React.Component {
             till: this.props.settings.till,
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
-            type: "CRN",
+            type: this.props.till.laybye ? "LBC" : "CRN",
             method: "Cash",
             stype: "Refund",
             auth: ""
@@ -188,7 +189,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
-            till: bindActionCreators(tillActions, dispatch)
+            till: bindActionCreators(tillActions, dispatch),
+            settings: bindActionCreators(settingsActions, dispatch)
         }
     };
 }

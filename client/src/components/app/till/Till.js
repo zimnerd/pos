@@ -93,7 +93,7 @@ class Till extends React.Component {
         const subtotal = transaction.total / 115 * 100;
         const vat = transaction.total - subtotal;
 
-        totals.total += Number(transaction.total);
+        totals.total += Number(Number(transaction.total).toFixed(2));
         totals.discount += discount;
         totals.vat += vat;
         totals.subtotal += subtotal;
@@ -106,7 +106,7 @@ class Till extends React.Component {
         const subtotal = transaction.total / 115 * 100;
         const vat = transaction.total - subtotal;
 
-        totals.total += Number(transaction.total);
+        totals.total += Number(Number(transaction.total).toFixed(2));
         totals.discount += discount;
         totals.vat += vat;
         totals.subtotal += subtotal;
@@ -303,6 +303,7 @@ class Till extends React.Component {
             description: product.descr,
             size: product.codeKey,
             colour: product.colour,
+            clrcode: product.clrcode,
             price: Number(product.rp).toFixed(2),
             mdp: product.mdp,
             qty: 1,
@@ -349,7 +350,7 @@ class Till extends React.Component {
                 <AuthenticationModal mapTransactions={this.mapTransactions}/>
                 <ProductStyleModal mapLineItem={this.mapLineItem} retrieveCombo={this.retrieveCombo}
                                    mapTransactions={this.mapTransactions}/>
-                <CompleteSaleModal/>
+                <CompleteSaleModal mapLineItem={this.mapHeldItems}/>
                 <SalesOptionsModal/>
                 <CreditNoteOptionsModal/>
                 <ReturnsModal/>
