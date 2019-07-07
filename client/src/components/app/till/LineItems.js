@@ -118,12 +118,16 @@ class LineItems extends React.Component {
 
         this.props.actions.till.setCombos(newCombos);
     };
+    componentDidMount(){
+        this.codeInput.focus();
+    };
 
     render() {
         return (
             <section>
                 <form className="d-flex">
-                    <input onChange={this.handleChange} type="text" onFocus={this.reset}
+                    <input ref={(input) => { this.codeInput = input; }}
+                        onChange={this.handleChange} type="text" onFocus={this.reset}
                            placeholder="Enter product code" className="form-control" value={this.props.till.code}/>
                     <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
                 </form>
