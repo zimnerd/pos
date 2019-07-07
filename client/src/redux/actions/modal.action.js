@@ -162,7 +162,6 @@ export function closeCompleteRefund(refundComplete = false) {
 }
 
 export function openCompleteExchange(exchangeComplete = true) {
-    debugger
     return { type: OPEN_COMPLETE_EXCHANGE_MODAL, exchangeComplete }
 }
 

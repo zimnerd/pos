@@ -65,9 +65,15 @@ class ProductStyleModal extends React.Component {
             let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
             let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
 
+            debugger
             if (typeof price === "undefined") {
                 let size = item.SIZES;
                 let price = Number(item.sp);
+
+                if (isNaN(price)) {
+                    item = this.props.stock.product.items[idx];
+                    price = Number(item.sp);
+                }
 
                 const product = {
                     description: this.props.stock.product.description,
@@ -143,6 +149,7 @@ class ProductStyleModal extends React.Component {
                             if (typeof price === "undefined") {
                                 let values = [];
                                 let size = item.SIZES;
+                                let indexVal = 0;
                                 for (let item of this.props.stock.product.items) {
                                     let price = Number(item.sp);
 
@@ -164,8 +171,8 @@ class ProductStyleModal extends React.Component {
                                     product.total = product.disc > 0 ? product.subtotal * product.disc / 100 : product.subtotal;
 
                                     let value = (
-                                        <tr id={"row-" + index} tabIndex={index}
-                                            onClick={() => this.selectProduct(product)} key={index}>
+                                        <tr id={"row-" + indexVal} tabIndex={indexVal}
+                                            onClick={() => this.selectProduct(product)} key={indexVal}>
                                             <td>{product.code}</td>
                                             <td>{product.colour}</td>
                                             <td>{product.size}</td>
@@ -176,6 +183,7 @@ class ProductStyleModal extends React.Component {
                                     );
 
                                     values.push(value);
+                                    indexVal++;
                                 }
 
                                 return values;

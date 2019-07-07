@@ -100,7 +100,6 @@ export default function modalReducer(state = { errors: [] }, action) {
         case CLOSE_COMPLETE_REFUND_MODAL:
             return { ...state, refundComplete: action.refundComplete };
         case OPEN_COMPLETE_EXCHANGE_MODAL:
-            debugger
             return { ...state, exchangeComplete: action.exchangeComplete };
         case CLOSE_COMPLETE_EXCHANGE_MODAL:
             return { ...state, exchangeComplete: action.exchangeComplete };
