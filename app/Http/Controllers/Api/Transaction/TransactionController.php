@@ -202,7 +202,7 @@ class TransactionController extends Controller
             $summmary->BDATE = \date("Y-m-d");
             $summmary->BRNO = $shop['BrNo'];
             $summmary->BTYPE = $transaction["type"] !== "CRN" ? "DEP" : "PAY";
-            $summmary->TRANNO = $till['tillno'] . $transaction["type"] === "INV" ? $till['DepNo'] : $till['CredInvNo'];
+            $summmary->TRANNO = $docNo;
             $summmary->TAXCODE = null;
             $summmary->VATAMT = $totals["vat"];
             $summmary->AMT = $totals["total"];
@@ -373,7 +373,7 @@ class TransactionController extends Controller
             return response()->json([], $this->notFoundStatus);
         }
 
-        $lineItems = array("type" => "", "branch" => "", "till" => "",
+        $lineItems = array("type" => "", "branch" => "", "till" => "", "method" => "",
             "transactions" => array(), "totals" => array("vat" => 0, "total" => 0, "qty" => 0));
 
         $vat = 0;
@@ -409,7 +409,8 @@ class TransactionController extends Controller
             $vat += $item->VATAMT;
 
             $lineItems["transactions"][] = $transaction;
-            $lineItems["type"] = $item->SUP;
+            $lineItems["method"] = $item->SUP;
+            $lineItems["type"] = $item->DOCTYPE;
             $lineItems["branch"] = $item->BRNO;
             $lineItems["till"] = $item->TILLNO;
         }
@@ -460,7 +461,8 @@ class TransactionController extends Controller
             "totals" => $totals,
             "branch" => $transaction['branch'],
             "till" => $transaction['till'],
-            "method" => $transaction['type'],
+            "method" => $transaction['method'],
+            "type" => $transaction['type'],
             "tendered" => 0,
             "change" => $totals['total'] - 0
         ]);

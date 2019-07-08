@@ -50,10 +50,9 @@ class Login extends React.Component {
     };
 
     keyDown = e => {
-        e.preventDefault();
-
         let event = window.event ? window.event : e;
         if (event.keyCode === 13) { //enter
+            e.preventDefault();
             let usernameField = $('#username');
             let passwordField = $('#password');
 
@@ -65,6 +64,8 @@ class Login extends React.Component {
             usernameField.focus();
             return true;
         }
+
+        return false;
     };
 
     render() {

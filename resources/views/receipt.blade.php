@@ -13,8 +13,8 @@
         <h4>Fashion World</h4>
     </header>
     <section>
-        <span>Tax Invoice</span>
-        <span>Cash</span>
+        <span>Tax {{ $type }}</span>
+        <span>{{ $method }}</span>
     </section>
     <footer>
         <article>
