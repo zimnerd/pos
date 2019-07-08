@@ -133,9 +133,24 @@ class TransactionController extends Controller
                 $dailyTransaction->DISCAMT = $item['subtotal'] - $item['total'];
                 $dailyTransaction->SMAN = "1";
                 $dailyTransaction->UPDFLAG = 0;
-                $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+
+                $combo = isset($item['combo']);
+                $staff = isset($item['staff']);
+
+                if ($combo && $staff) {
+                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
                         $item['combo'] ? 'D' :
-                        $item['staff'] ? 'S' :'R';
+                            $item['staff'] ? 'S' : 'R';
+                } else if ($combo && !$staff) {
+                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+                        $item['combo'] ? 'D' : 'R';
+                } else if (!$combo && $staff) {
+                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+                        $item['staff'] ? 'S' : 'R';
+                } else {
+                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' : 'R';
+                }
+
                 $dailyTransaction->APPNO = 0;
                 $dailyTransaction->IBTDLNO = 0;
                 $dailyTransaction->DLNO = 0;
@@ -153,7 +168,7 @@ class TransactionController extends Controller
                 $dailyTransaction->save();
 
                 $colour = Colours::query()
-                    ->where("colour", $item['colour'])
+                    ->where("code", $item['clrcode'])
                     ->first();
 
                 /**
@@ -389,6 +404,7 @@ class TransactionController extends Controller
             $transaction = array();
             $transaction['code'] = $item->STYLE;
             $transaction['colour'] = $item->CLR;
+            $transaction['clrcode'] = $item->CLR;
             $transaction['size'] = $item->SIZES;
             $transaction['cost'] = $item->CP;
             $transaction['type'] = $item->DOCTYPE;
