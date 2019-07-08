@@ -72,12 +72,14 @@ class TransactionController extends Controller
             $user = Auth::user();
 
             $docNo = $till['tillno'] . $till["InvNo"];
+            $refund = false;
             switch ($transaction["type"]) {
                 case "INV":
                     $docNo = $till['tillno'] . $till["InvNo"];
                     break;
                 case "CRN":
                     $docNo = $till['tillno'] . $till["CrnNo"];
+                    $refund = true;
                     break;
                 case "L/B":
                     $docNo = $till['tillno'] . $till["LbNo"];
@@ -117,7 +119,7 @@ class TransactionController extends Controller
                 $dailyTransaction->BDATE = \date("Y-m-d");
                 $dailyTransaction->BTIME = \date("H:i:s");
 
-                $vat = $item['total'] * 15 / 100;
+                $vat = $item['total'] / 115 * 100;
                 $dailyTransaction->AMT = $item['total'];
                 $dailyTransaction->VATAMT = $vat;
                 $dailyTransaction->QTY = $item['qty'];
@@ -163,7 +165,12 @@ class TransactionController extends Controller
                     ->where("CLR", $colour->code)
                     ->first();
 
-                $stock->QOH = $stock->QOH - 1;
+                if ($refund) {
+                    $stock->QOH = $stock->QOH + 1;
+                } else {
+                    $stock->QOH = $stock->QOH - 1;
+                }
+
                 $stock->save();
 
                 if (isset($item['serialno'])) {
