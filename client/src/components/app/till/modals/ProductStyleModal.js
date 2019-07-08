@@ -65,7 +65,6 @@ class ProductStyleModal extends React.Component {
             let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
             let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
 
-            debugger
             if (typeof price === "undefined") {
                 let size = item.SIZES;
                 let price = Number(item.sp);

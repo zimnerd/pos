@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import axios from 'axios';
 import toastr from 'toastr';
+import $ from "jquery";
 
 import * as authActions from '../../redux/actions/auth.action';
 
@@ -48,6 +49,24 @@ class Login extends React.Component {
         this.setState(formValues);
     };
 
+    keyDown = e => {
+        e.preventDefault();
+
+        let event = window.event ? window.event : e;
+        if (event.keyCode === 13) { //enter
+            let usernameField = $('#username');
+            let passwordField = $('#password');
+
+            if (usernameField.is(':focus')) {
+                passwordField.focus();
+                return true;
+            }
+
+            usernameField.focus();
+            return true;
+        }
+    };
+
     render() {
         return (
             <section>
@@ -57,7 +76,7 @@ class Login extends React.Component {
                 </header>
                 <main>
                     <form id='login-form'>
-                        <main>
+                        <main onKeyDown={this.keyDown}>
                             <section className='form-group'>
                                 <label>Username:</label>
                                 <input id='username' name='username' className='form-control' type='text'
