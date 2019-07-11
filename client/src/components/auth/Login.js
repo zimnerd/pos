@@ -52,6 +52,10 @@ class Login extends React.Component {
     keyDown = e => {
         let event = window.event ? window.event : e;
         if (event.keyCode === 13) { //enter
+            if (this.state.password !== "" && this.state.username !== "") {
+                return false;
+            }
+
             e.preventDefault();
             let usernameField = $('#username');
             let passwordField = $('#password');
