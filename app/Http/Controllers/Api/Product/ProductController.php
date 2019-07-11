@@ -91,8 +91,9 @@ class ProductController extends Controller
             if (count($items) === 0) {
                 $queryBuilder = Airtime::query();
                 $queryBuilder->where('code', $product->code)
-                    ->whereNull('solddate');
-                $items = $queryBuilder->get();
+                    ->whereNull('solddate')
+                    ->orderBy('receiveddate', 'asc');
+                $items[] = $queryBuilder->first();
             }
         }
 
