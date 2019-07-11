@@ -112,7 +112,6 @@ class AuthenticationModal extends React.Component {
                     <Modal.Title>Authenticate</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-
                     <Form>
                         <div className="text-center">
                             <span><i className="fa fa-warning"/></span>

@@ -9,6 +9,7 @@ use App\DailySummary;
 use App\DailyTransaction;
 use App\Handset;
 use App\Http\Controllers\Controller;
+use App\Models\Transaction\StockTransaction;
 use App\Person;
 use App\Product;
 use App\Refund;
@@ -137,19 +138,21 @@ class TransactionController extends Controller
                 $combo = isset($item['combo']);
                 $staff = isset($item['staff']);
 
+                $saleType = "";
                 if ($combo && $staff) {
-                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+                    $saleType = $item['markdown'] ? 'M' :
                         $item['combo'] ? 'D' :
                             $item['staff'] ? 'S' : 'R';
                 } else if ($combo && !$staff) {
-                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+                    $saleType = $item['markdown'] ? 'M' :
                         $item['combo'] ? 'D' : 'R';
                 } else if (!$combo && $staff) {
-                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' :
+                    $saleType = $item['markdown'] ? 'M' :
                         $item['staff'] ? 'S' : 'R';
                 } else {
-                    $dailyTransaction->LSLTYPE = $item['markdown'] ? 'M' : 'R';
+                    $saleType = $item['markdown'] ? 'M' : 'R';
                 }
+                $dailyTransaction->LSLTYPE = $saleType;
 
                 $dailyTransaction->APPNO = 0;
                 $dailyTransaction->IBTDLNO = 0;
@@ -219,6 +222,29 @@ class TransactionController extends Controller
                     $item->solddate = new \DateTime();
                     $item->save();
                 }
+
+                $stockTransaction = new StockTransaction();
+                $stockTransaction->STYLE = $item['code'];
+                $stockTransaction->SIZES = $item['size'];
+                $stockTransaction->CLR = $item['clrcode'];
+                $stockTransaction->BRNO = $shop['BrNo'];
+                $stockTransaction->CSTREF = $shop['BrNo'];
+                $stockTransaction->BDATE = \date("Y-m-d");
+                $stockTransaction->REF = "";
+                $stockTransaction->QOH = $stock->QOH;
+                $stockTransaction->QTY = $item['qty'];
+                $stockTransaction->SP = $item['subtotal'];
+                $stockTransaction->CP = $item['cost'];
+                $stockTransaction->DLNO = $docNo;
+                $stockTransaction->ASSNO = 0;
+                $stockTransaction->LBTAKEN = "";
+                $stockTransaction->SMAN = "";
+                $stockTransaction->SLTYPE = $saleType;
+                $stockTransaction->BTYPE = $transaction["type"];
+                $stockTransaction->VATAMT = $vat;
+                $stockTransaction->DISCAMT = $item['subtotal'] - $item['total'];
+
+                $stockTransaction->save();
             }
 
             $summmary = new DailySummary();
