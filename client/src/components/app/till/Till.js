@@ -122,6 +122,12 @@ class Till extends React.Component {
                 if (event.preventDefault) {
                     event.preventDefault();
                 }
+                
+                if (this.props.till.exchange) {
+                    toastr.error('You are not allowed to complete a sale on an exchange!', 'Invalid Action');
+                    return;
+                }
+
                 this.props.actions.modal.openCompleteSale();
                 break;
             case 115:
