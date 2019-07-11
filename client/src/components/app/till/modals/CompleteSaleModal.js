@@ -40,7 +40,7 @@ class CompleteSaleModal extends React.Component {
                 this.setState({
                     tendered: this.state.cash + this.state.card
                 });
-            } else if (this.state.method === "CC") {
+            } else {
                 this.setState({
                     tendered: this.props.till.totals.total.toFixed(2)
                 });
@@ -69,7 +69,95 @@ class CompleteSaleModal extends React.Component {
         });
     };
 
+    saveRefund = async () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        await axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
+            .then(response => {
+                console.log(response.data);
+                toastr.success("Refund saved!", "Save Refund");
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
+    refundTransaction = async () => {
+        let method = this.state.method;
+        if (method === "Split") {
+            method = this.state.cash >= this.state.card ? "Cash" : "CC";
+        }
+
+        this.handleClose();
+        this.props.actions.till.resetTotals();
+        let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
+        let transaction = {
+            shop: this.props.settings.shop,
+            till: this.props.settings.till,
+            transactions: transactionsToComplete,
+            totals: this.props.till.totals,
+            type: this.props.till.laybye ? "LBC" : "CRN",
+            method: method,
+            stype: "Refund",
+            auth: ""
+        };
+
+        let heldSales = this.props.till.transactions.filter(item => item.hold);
+        this.mapHeldSales(heldSales);
+        this.props.actions.till.setTransactions(heldSales);
+
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.post(`/transactions`, transaction, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Transaction Refunded!", "Refund Transaction");
+
+                this.printReceipt(response.data.number);
+                this.saveSettings(transaction.type);
+
+                this.props.actions.till.setCompletedTransaction({ type: transaction.type, number: response.data.number });
+                this.props.actions.modal.openTransactionComplete();
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
     completeSale = () => {
+        if (this.props.till.refund) {
+            if (this.props.till.refundData) {
+                this.saveRefund();
+            } else {
+                this.refundTransaction();
+            }
+
+            this.props.actions.till.deactivateRefund();
+            this.props.actions.till.setRefund();
+
+            this.props.actions.till.deactivateLayBye();
+            this.props.actions.till.deactivateReturns();
+            this.props.actions.till.deactivateExchange();
+            this.props.actions.till.deactivateStaff();
+            this.props.actions.till.setCombos();
+            return;
+        }
+
         let method = this.state.method;
         if (method === "Split") {
             method = this.state.cash >= this.state.card ? "Cash" : "CC";
@@ -167,6 +255,8 @@ class CompleteSaleModal extends React.Component {
         till.DepNo = Number(till.DepNo) + 1;
         if (type === "L/B") {
             till.LbNo = Number(till.LbNo) + 1;
+        } else if (type === "CRN" || type === "LBC") {
+            till.CrnNo = Number(till.CrnNo) + 1;
         } else {
             till.InvNo = Number(till.InvNo) + 1;
         }
