@@ -285,7 +285,7 @@ class CompleteSaleModal extends React.Component {
             till.InvNo = Number(till.InvNo) + 1;
         }
 
-        axios.post(`/settings/till/1`, till)
+        axios.post(`/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 

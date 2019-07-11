@@ -101,7 +101,7 @@ class CompleteRefund extends React.Component {
         let till = this.props.settings.till;
         till.CrnNo = Number(till.CrnNo) + 1;
 
-        axios.post(`/settings/till/1`, till)
+        axios.post(`/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 

@@ -2,7 +2,7 @@ import {
     RETRIEVE_HADDITH,
     RETRIEVE_REASONS,
     RETRIEVE_SHOP_DETAILS,
-    RETRIEVE_TILL_DETAILS,
+    RETRIEVE_TILL_DETAILS, RETRIEVE_TILL_NUMBER,
     SAVE_TILL_DETAILS,
     SET_COMBOS
 } from "../constants/settings.constants";
@@ -29,4 +29,8 @@ export function setCombos(combos = []) {
 
 export function retrieveReasons(reasons = []) {
     return { type: RETRIEVE_REASONS, reasons };
+}
+
+export function retrieveTillNumber(number = []) {
+    return { type: RETRIEVE_TILL_NUMBER, number };
 }

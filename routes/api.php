@@ -37,7 +37,6 @@ Route::group(["prefix" => "products"], function () {
 
 Route::group(["prefix" => "settings"], function () {
 
-
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('combos', 'Api\Settings\SettingsController@retrieveCombos');
     });
@@ -46,6 +45,7 @@ Route::group(["prefix" => "settings"], function () {
     Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');
+    Route::get('till', 'Api\Settings\SettingsController@retrieveTillNumber');
     Route::get('reasons', 'Api\Settings\SettingsController@refundReasons');
 
 });

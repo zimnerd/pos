@@ -19,7 +19,19 @@ import './App.scss';
 
 class App extends React.Component {
 
-    componentDidMount() {
+    componentDidMount = async () => {
+        await axios.get('/settings/till')
+            .then(async response => {
+                console.log(response.data);
+
+                toastr.success("Till Number Retrieved!", "Retrieve Till Number");
+                this.props.actions.settings.retrieveTillNumber(response.data.number);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
+
         axios.get('/settings/shop')
             .then(response => {
                 console.log(response.data);
@@ -32,7 +44,7 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get('/settings/till/1')
+        axios.get(`/settings/till/${this.props.settings.number}`)
             .then(response => {
                 console.log(response.data);
 
@@ -67,7 +79,7 @@ class App extends React.Component {
                 console.log(error);
                 toastr.error("Unknown error.");
             });
-    }
+    };
 
     render() {
         return (
