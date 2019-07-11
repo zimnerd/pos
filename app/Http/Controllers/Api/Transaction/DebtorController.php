@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Transaction;
 use App\Debtor;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Input;
 
 class DebtorController extends Controller
 {
@@ -19,12 +20,16 @@ class DebtorController extends Controller
      */
     public function retrieveDebtors()
     {
-        $debtors = Debtor::all();
+        $type = Input::get('stype');
+        $debtors = Debtor::query()->where('stype', $type)->get();
+
+        $count = Debtor::all()->count();
+
         if (count($debtors) === 0) {
-            return response()->json([], $this->notFoundStatus);
+            return response()->json(["next" => $count + 1], $this->notFoundStatus);
         }
 
-        return response()->json(['debtors' => $debtors], $this->successStatus);
+        return response()->json(['debtors' => $debtors, "next" => $count + 1], $this->successStatus);
     }
 
     /**

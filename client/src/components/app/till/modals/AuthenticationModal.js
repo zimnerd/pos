@@ -47,7 +47,8 @@ class AuthenticationModal extends React.Component {
             case "staff":
                 if (await this.activate(this.props.till.command)) {
                     await this.props.actions.till.activateStaff();
-                    this.props.mapTransactions();
+                    await this.props.mapTransactions();
+                    await this.loadStaffDebtors();
                 }
                 break;
             case "credit":
@@ -57,10 +58,38 @@ class AuthenticationModal extends React.Component {
                 }
                 break;
             default:
-                this.handleClose();
         }
 
         this.handleClose();
+    };
+
+    loadStaffDebtors = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+        axios.get('/debtors?stype=staff', { headers })
+            .then(async response => {
+                console.log(response.data);
+
+                toastr.success("Debtors Retrieved!", "Retrieve Debtors");
+                await this.props.actions.till.retrieveDebtors(response.data.debtors);
+                await this.props.actions.till.nextDebtor(response.data.next);
+                this.props.actions.modal.openDebtorModal();
+            })
+            .catch(error => {
+                console.log(error);
+
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    this.props.actions.till.retrieveDebtors();
+                    this.props.actions.modal.openDebtorModal();
+                    this.props.actions.till.nextDebtor(error.response.data.next);
+                    console.log("No debtors found.")
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     authUser = async () => {
@@ -153,7 +182,8 @@ function mapStateToProps(state) {
     return {
         modal: state.modal,
         till: state.till,
-        user: state.user
+        user: state.user,
+        auth: state.auth
     };
 }
 

@@ -10,7 +10,7 @@ import {
     DEACTIVATE_LAY_BYE,
     DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
-    DEACTIVATE_STAFF,
+    DEACTIVATE_STAFF, NEXT_DEBTOR,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
     RETRIEVE_DEBTORS,
@@ -131,4 +131,8 @@ export function retrieveDebtors(debtors = []) {
 
 export function setDebtor(debtor = {}) {
     return { type: SET_DEBTOR, debtor }
+}
+
+export function nextDebtor(next) {
+    return { type: NEXT_DEBTOR, next }
 }

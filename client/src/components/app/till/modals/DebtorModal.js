@@ -21,7 +21,7 @@ class DebtorModal extends React.Component {
             name: "",
             cell: "",
             email: "",
-            type: ""
+            type: "Staff"
         }
     };
 
@@ -29,15 +29,16 @@ class DebtorModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get('/debtors', { headers })
+        axios.get('/debtors?stype=Credit', { headers })
             .then(async response => {
                 console.log(response.data);
 
                 toastr.success("Debtors Retrieved!", "Retrieve Debtors");
                 await this.props.actions.till.retrieveDebtors(response.data.debtors);
+                await this.props.actions.till.nextDebtor(response.data.next);
                 this.setState({
                     debtor: {
-                        ...this.state.debtor, no: response.data.debtors.length + 1
+                        ...this.state.debtor, no: response.data.next
                     }
                 })
             })
@@ -48,6 +49,7 @@ class DebtorModal extends React.Component {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
                 } else if (error.response.status === 404) {
                     this.props.actions.till.retrieveDebtors();
+                    this.props.actions.till.nextDebtor(error.response.data.next);
                     console.log("No debtors found.")
                 } else {
                     toastr.error("Unknown error.");
@@ -56,8 +58,11 @@ class DebtorModal extends React.Component {
     }
 
     saveDebtor = async () => {
-        this.setState({ new: false });
-
+        this.setState({
+            debtor: {
+                ...this.state.debtor, no: this.props.till.next
+            }
+        });
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
@@ -65,6 +70,7 @@ class DebtorModal extends React.Component {
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor Saved!", "Save Debtor");
+                this.selectDebtor(response.data.debtor);
             })
             .catch(error => {
                 console.log(error);
@@ -87,8 +93,11 @@ class DebtorModal extends React.Component {
 
     selectDebtor = debtor => {
         this.props.actions.till.setDebtor(debtor);
-        this.props.actions.modal.openCompleteSale();
         this.handleClose();
+
+        if (!this.props.till.staff) {
+            this.props.actions.modal.openCompleteSale();
+        }
     };
 
     render() {
@@ -114,7 +123,7 @@ class DebtorModal extends React.Component {
                             <tbody>
                             {(!this.props.till.debtors || this.props.till.debtors.length === 0) &&
                             <tr>
-                                <td colSpan="4" className="text-center">There are no debtors to display!</td>
+                                <td colSpan="5" className="text-center">There are no debtors to display!</td>
                             </tr>
                             }
                             {this.props.till.debtors && this.props.till.debtors.map((item, index) => {

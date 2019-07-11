@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Settings;
 use App\ComboPrice;
 use App\Haddith;
 use App\Http\Controllers\Controller;
+use App\Models\Shop\TillDetails;
 use App\Reason;
 use App\Shop;
 use App\Till;
@@ -202,4 +203,21 @@ class SettingsController extends Controller
         $reasons = Reason::all();
         return response()->json(["reasons" => $reasons], $this->successStatus);
     }
+
+    /**
+     * Retrieves the active till number.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveTillNumber()
+    {
+        $details = TillDetails::query()->first();
+        if (!$details) {
+            return response()->json(['error' => 'The datasource containing the till number has not be setup.'],
+                $this->notFoundStatus);
+        }
+
+        return response()->json(["number" => $details['tillno']], $this->successStatus);
+    }
+
 }

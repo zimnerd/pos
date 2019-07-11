@@ -358,8 +358,6 @@ class TransactionController extends Controller
                 $debtorTransaction->crnref = $docNo;
                 $debtorTransaction->dts = new \DateTime();
 
-                $debtorTransaction->save();
-
                 /**
                  * @var Debtor $debtor
                  */
@@ -371,7 +369,13 @@ class TransactionController extends Controller
 
                 $debtor->balance = $debtor->balance + $totals["total"];
                 $debtor->current = $debtor->current + $totals["total"];
+
+                if ($debtor->stype === 'Staff') {
+                    $debtorTransaction->remarks = 'Staff Sale';
+                }
+
                 $debtor->save();
+                $debtorTransaction->save();
             }
 
             DB::commit();
