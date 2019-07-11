@@ -1,19 +1,23 @@
 import {
+    ACTIVATE_CREDIT,
     ACTIVATE_EXCHANGE,
     ACTIVATE_LAY_BYE,
     ACTIVATE_REFUND,
     ACTIVATE_RETURNS,
     ACTIVATE_STAFF,
+    DEACTIVATE_CREDIT,
     DEACTIVATE_EXCHANGE,
     DEACTIVATE_LAY_BYE,
     DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
-    DEACTIVATE_STAFF, RESET_COMPLETED_TRANSACTION,
+    DEACTIVATE_STAFF,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
+    RETRIEVE_DEBTORS,
     SET_AUTH_COMMAND,
     SET_CODE,
-    SET_COMBOS, SET_COMPLETED_TRANSACTION,
+    SET_COMBOS,
+    SET_COMPLETED_TRANSACTION, SET_DEBTOR,
     SET_REFUND,
     SET_TOTALS,
     SET_TRANSACTION_ID,
@@ -111,4 +115,20 @@ export function setRefund(refundData) {
 
 export function setCompletedTransaction(completedTransaction = {}) {
     return { type: SET_COMPLETED_TRANSACTION, completedTransaction }
+}
+
+export function activateCredit(credit = true) {
+    return { type: ACTIVATE_CREDIT, credit }
+}
+
+export function deactivateCredit(credit = false) {
+    return { type: DEACTIVATE_CREDIT, credit }
+}
+
+export function retrieveDebtors(debtors = []) {
+    return { type: RETRIEVE_DEBTORS, debtors }
+}
+
+export function setDebtor(debtor = {}) {
+    return { type: SET_DEBTOR, debtor }
 }

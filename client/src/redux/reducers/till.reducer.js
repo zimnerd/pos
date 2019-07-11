@@ -1,15 +1,16 @@
 import {
+    ACTIVATE_CREDIT,
     ACTIVATE_EXCHANGE,
     ACTIVATE_LAY_BYE, ACTIVATE_REFUND,
     ACTIVATE_RETURNS,
-    ACTIVATE_STAFF,
+    ACTIVATE_STAFF, DEACTIVATE_CREDIT,
     DEACTIVATE_EXCHANGE,
     DEACTIVATE_LAY_BYE, DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
     DEACTIVATE_STAFF, RESET_COMPLETED_TRANSACTION,
     RESET_TOTALS,
-    RESET_TRANSACTIONS,
-    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_COMPLETED_TRANSACTION, SET_REFUND,
+    RESET_TRANSACTIONS, RETRIEVE_DEBTORS,
+    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_COMPLETED_TRANSACTION, SET_DEBTOR, SET_REFUND,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS, VALIDATION_ERROR
@@ -59,6 +60,14 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, refundData: action.refundData };
         case SET_COMPLETED_TRANSACTION:
             return { ...state, completedTransaction: action.completedTransaction };
+        case ACTIVATE_CREDIT:
+            return { ...state, credit: action.credit };
+        case DEACTIVATE_CREDIT:
+            return { ...state, credit: action.credit };
+        case RETRIEVE_DEBTORS:
+            return { ...state, debtors: action.debtors };
+        case SET_DEBTOR:
+            return { ...state, debtor: action.debtor };
         default:
             return state;
     }

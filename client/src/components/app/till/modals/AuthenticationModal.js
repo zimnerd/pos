@@ -50,6 +50,12 @@ class AuthenticationModal extends React.Component {
                     this.props.mapTransactions();
                 }
                 break;
+            case "credit":
+                if (await this.activate(this.props.till.command)) {
+                    await this.props.actions.till.activateCredit();
+                    this.props.mapTransactions();
+                }
+                break;
             default:
                 this.handleClose();
         }

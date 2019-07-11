@@ -54,6 +54,15 @@ Route::group(["prefix" => "auth"], function () {
     Route::get('roles', 'Api\Authentication\AuthenticationController@retrieveRoles');
 });
 
+Route::group(["prefix" => "debtors"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('', 'Api\Transaction\DebtorController@retrieveDebtors');
+        Route::post('', 'Api\Transaction\DebtorController@saveDebtor');
+    });
+
+});
+
 Route::group(["prefix" => "transactions"], function () {
 
     Route::get('{id}/print', 'Api\Transaction\TransactionController@printReceipt');
@@ -76,6 +85,10 @@ Route::group(["prefix" => "transactions"], function () {
 
     Route::group(['middleware' => ['auth:api', 'scope:notes']], function () {
         Route::get('activate/exchange', 'Api\Transaction\TransactionController@activateExchange');
+    });
+
+    Route::group(['middleware' => ['auth:api', 'scope:sales']], function () {
+        Route::get('activate/credit', 'Api\Transaction\TransactionController@activateCreditSales');
     });
 
 });

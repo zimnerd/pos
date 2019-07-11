@@ -17,6 +17,10 @@ class Totals extends React.Component {
         this.props.actions.modal.openCompleteExchange();
     };
 
+    completeCredit = () => {
+        this.props.actions.modal.openDebtorModal();
+    };
+
     render() {
         return (
             <aside className="float-right">
@@ -32,6 +36,7 @@ class Totals extends React.Component {
                 }
                 {!this.props.till.refund &&
                 !this.props.till.exchange &&
+                !this.props.till.credit &&
                 <footer>
                     <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 114 })}>Cash/Card
                         (F3)
@@ -39,6 +44,7 @@ class Totals extends React.Component {
                 </footer>
                 }
                 {!this.props.till.exchange &&
+                !this.props.till.credit &&
                 this.props.till.refund &&
                 <footer>
                     <button className="btn btn-secondary" onClick={this.completeRefund}>
@@ -47,10 +53,20 @@ class Totals extends React.Component {
                 </footer>
                 }
                 {!this.props.till.refund &&
+                !this.props.till.credit &&
                 this.props.till.exchange &&
                 <footer>
                     <button className="btn btn-secondary" onClick={this.completeExchange}>
                         Complete Exchange
+                    </button>
+                </footer>
+                }
+                {!this.props.till.refund &&
+                !this.props.till.exchange &&
+                this.props.till.credit &&
+                <footer>
+                    <button className="btn btn-secondary" onClick={this.completeCredit}>
+                        Complete Credit Sale
                     </button>
                 </footer>
                 }

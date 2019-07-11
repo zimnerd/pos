@@ -33,6 +33,10 @@ class TransactionBadges extends React.Component {
         this.props.actions.setRefund();
     };
 
+    removeCredit = () => {
+        this.props.actions.deactivateCredit();
+    };
+
     render() {
         return (
             <section>
@@ -59,6 +63,11 @@ class TransactionBadges extends React.Component {
                 }
                 {this.props.till.refund &&
                 <Badge variant="dark">Refund <span onClick={this.removeRefund}><i
+                    className="fa fa-times"/></span>
+                </Badge>
+                }
+                {this.props.till.credit &&
+                <Badge variant="secondary">Credit <span onClick={this.removeCredit}><i
                     className="fa fa-times"/></span>
                 </Badge>
                 }

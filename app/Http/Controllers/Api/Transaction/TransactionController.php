@@ -7,8 +7,12 @@ use App\Colours;
 use App\DailyControl;
 use App\DailySummary;
 use App\DailyTransaction;
+use App\Debtor;
+use App\DebtorTransaction;
 use App\Handset;
 use App\Http\Controllers\Controller;
+use App\Laybye;
+use App\LaybyeTransaction;
 use App\Models\Transaction\StockTransaction;
 use App\Person;
 use App\Product;
@@ -77,12 +81,19 @@ class TransactionController extends Controller
             switch ($transaction["type"]) {
                 case "INV":
                     $docNo = $till['tillno'] . $till["InvNo"];
+                    if (isset($transaction['debtor'])) {
+                        $debtorNo = $transaction['debtor']['no'];
+                    }
                     break;
                 case "CRN":
                     $docNo = $till['tillno'] . $till["CrnNo"];
                     $refund = true;
+                    if (isset($transaction['debtor'])) {
+                        $debtorNo = $transaction['debtor']['no'];
+                    }
                     break;
                 case "L/B":
+                    $laybyeNo = 'LB'. $docNo;
                     $docNo = $till['tillno'] . $till["LbNo"];
                     break;
             }
@@ -274,8 +285,8 @@ class TransactionController extends Controller
             $summmary->OTRANNO = $docNo;
             $summmary->ODATE = \date("Y-m-d");
 
-            if (isset($transaction['debtor'])) {
-                $summmary->DEBTOR = $transaction['debtor'];
+            if (isset($debtorNo)) {
+                $summmary->DEBTOR = $debtorNo;
             } else {
                 $summmary->DEBTOR = "Cash";
             }
@@ -301,7 +312,67 @@ class TransactionController extends Controller
                 $person = $transaction['person'];
                 $request->replace($person);
             }
+
             $this->savePerson($request, $docNo, $transaction["type"]);
+
+            if ($transaction["type"] === "L/B") {
+                $laybye = new Laybye();
+                $laybye->no = $laybyeNo;
+
+                if (isset($person)) {
+                    $laybye->name = $person["name"];
+                }
+
+                $laybye->appDate = \date("Y-m-d");
+                $laybye->balance = $totals["total"] * -1;
+                $laybye->current = $totals["total"] * -1;
+
+                $laybye->save();
+
+                $laybyeTransaction = new LaybyeTransaction();
+
+                $laybyeTransaction->invNo = $laybyeNo;
+                $laybyeTransaction->invDate = \date("Y-m-d");
+                $laybyeTransaction->dueDate = \date("Y-m-d");
+                $laybyeTransaction->invAmt = $totals["total"];
+                $laybyeTransaction->type = $transaction["type"];
+                $laybyeTransaction->remarks = "Lay-Bye";
+                $laybyeTransaction->period = $shop['Period'];
+                $laybyeTransaction->vatPer = $shop['Period'];
+                $laybyeTransaction->crnref = $docNo;
+                $laybyeTransaction->dts = new \DateTime();
+
+                $laybyeTransaction->save();
+            }
+
+            if (isset($debtorNo)) {
+                $debtorTransaction = new DebtorTransaction();
+
+                $debtorTransaction->invNo = $debtorNo;
+                $debtorTransaction->invDate = \date("Y-m-d");
+                $debtorTransaction->dueDate = \date("Y-m-d");
+                $debtorTransaction->type = $transaction["type"];
+                $debtorTransaction->remarks = "Credit Sale";
+                $debtorTransaction->period = $shop['Period'];
+                $debtorTransaction->vatPer = $shop['Period'];
+                $debtorTransaction->crnref = $docNo;
+                $debtorTransaction->dts = new \DateTime();
+
+                $debtorTransaction->save();
+
+                /**
+                 * @var Debtor $debtor
+                 */
+                $debtor = Debtor::query()->where("no", $debtorNo)->first();
+                if (!$debtor) {
+                    DB::rollBack();
+                    return response()->json([], $this->notFoundStatus);
+                }
+
+                $debtor->balance = $debtor->balance + $totals["total"];
+                $debtor->current = $debtor->current + $totals["total"];
+                $debtor->save();
+            }
 
             DB::commit();
             return response()->json(["number" => $docNo], $this->createdStatus);
@@ -554,7 +625,7 @@ class TransactionController extends Controller
             $person->save();
 
             DB::commit();
-            return response()->json([], $this->createdStatus);
+            return response()->json(["person" => $person], $this->createdStatus);
         } catch (\PDOException $e) {
             Log::error($e->getMessage(), $e->getTrace());
             DB::rollBack();
@@ -679,6 +750,16 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function activateExchange()
+    {
+        return response()->json([], $this->successStatus);
+    }
+
+    /**
+     * Validates authentication for activating credit sales.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function activateCreditSales()
     {
         return response()->json([], $this->successStatus);
     }

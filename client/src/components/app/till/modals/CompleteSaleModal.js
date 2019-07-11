@@ -32,6 +32,20 @@ class CompleteSaleModal extends React.Component {
         this.props.actions.modal.closeCompleteSale();
     };
 
+    componentDidUpdate(): void {
+        if (this.props.till.debtor && !this.state.cell && !this.state.email && !this.state.name) {
+            this.setState({
+                cell: this.props.till.debtor.cell,
+                email: this.props.till.debtor.email,
+                name: this.props.till.debtor.name
+            });
+
+            this.state.cell = this.props.till.debtor.cell;
+            this.state.email = this.props.till.debtor.email;
+            this.state.name = this.props.till.debtor.name;
+        }
+    }
+
     changeMethod = event => {
         this.setState({
             method: event.target.value
@@ -105,8 +119,9 @@ class CompleteSaleModal extends React.Component {
             totals: this.props.till.totals,
             type: this.props.till.laybye ? "LBC" : "CRN",
             method: method,
-            stype: "Refund",
-            auth: ""
+            stype: this.props.till.debtor ? this.props.till.debtor.stype : "Refund",
+            auth: "",
+            debtor: this.props.till.debtor
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -126,7 +141,10 @@ class CompleteSaleModal extends React.Component {
                 this.printReceipt(response.data.number);
                 this.saveSettings(transaction.type);
 
-                this.props.actions.till.setCompletedTransaction({ type: transaction.type, number: response.data.number });
+                this.props.actions.till.setCompletedTransaction({
+                    type: transaction.type,
+                    number: response.data.number
+                });
                 this.props.actions.modal.openTransactionComplete();
             })
             .catch(error => {
@@ -177,9 +195,10 @@ class CompleteSaleModal extends React.Component {
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
             type: this.props.till.laybye ? "L/B" : "INV",
-            stype: this.props.till.laybye ? "Lay-Bye" : method,
+            stype: this.props.till.laybye ? "Lay-Bye" : this.props.till.debtor ? this.props.till.debtor.stype : method,
             method: method,
-            auth: ""
+            auth: "",
+            debtor: this.props.till.debtor
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -201,7 +220,10 @@ class CompleteSaleModal extends React.Component {
                 this.saveSettings(transaction.type);
                 this.handleClose();
 
-                await this.props.actions.till.setCompletedTransaction({ type: transaction.type, number: response.data.number });
+                await this.props.actions.till.setCompletedTransaction({
+                    type: transaction.type,
+                    number: response.data.number
+                });
                 this.props.actions.modal.openTransactionComplete();
 
                 this.props.actions.till.deactivateLayBye();
@@ -218,6 +240,8 @@ class CompleteSaleModal extends React.Component {
 
                 if (error.response.status === 401) {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 500) {
+                    toastr.error('Unknown Error');
                 } else {
                     toastr.error('The information you have supplied is invalid!', 'Validation');
                     this.props.actions.till.validationError(error.response.data.errors);
