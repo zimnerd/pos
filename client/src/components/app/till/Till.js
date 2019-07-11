@@ -272,6 +272,9 @@ class Till extends React.Component {
         };
         for (let transaction of this.props.till.transactions) {
             transaction.price = Number(transaction.price).toFixed(2);
+            if (transaction.hold) {
+                continue;
+            }
 
             this.mapHeldItems(transaction, totals);
             totals.items++;

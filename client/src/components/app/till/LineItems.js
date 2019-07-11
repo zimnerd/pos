@@ -98,12 +98,13 @@ class LineItems extends React.Component {
         await this.props.actions.till.setCode();
     };
 
-    holdItem = (index) => {
+    holdItem = async (index) => {
         let transactions = this.props.till.transactions;
         let item = transactions[index];
         item.hold = !item.hold;
 
-        this.props.actions.till.setTransactions(transactions);
+        await this.props.actions.till.setTransactions(transactions);
+        this.props.mapTransactions();
     };
 
     removeItem = async (index) => {
