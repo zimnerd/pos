@@ -8,12 +8,12 @@ import {
     DEACTIVATE_LAY_BYE,
     DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
-    DEACTIVATE_STAFF,
+    DEACTIVATE_STAFF, RESET_COMPLETED_TRANSACTION,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
     SET_AUTH_COMMAND,
     SET_CODE,
-    SET_COMBOS,
+    SET_COMBOS, SET_COMPLETED_TRANSACTION,
     SET_REFUND,
     SET_TOTALS,
     SET_TRANSACTION_ID,
@@ -107,4 +107,8 @@ export function deactivateRefund(refund = false) {
 
 export function setRefund(refundData) {
     return { type: SET_REFUND, refundData }
+}
+
+export function setCompletedTransaction(completedTransaction = {}) {
+    return { type: SET_COMPLETED_TRANSACTION, completedTransaction }
 }

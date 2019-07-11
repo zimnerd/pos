@@ -6,10 +6,10 @@ import {
     DEACTIVATE_EXCHANGE,
     DEACTIVATE_LAY_BYE, DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
-    DEACTIVATE_STAFF,
+    DEACTIVATE_STAFF, RESET_COMPLETED_TRANSACTION,
     RESET_TOTALS,
     RESET_TRANSACTIONS,
-    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_REFUND,
+    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_COMPLETED_TRANSACTION, SET_REFUND,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS, VALIDATION_ERROR
@@ -57,6 +57,9 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, refund: action.refund };
         case SET_REFUND:
             return { ...state, refundData: action.refundData };
+        case SET_COMPLETED_TRANSACTION:
+            debugger
+            return { ...state, completedTransaction: action.completedTransaction };
         default:
             return state;
     }

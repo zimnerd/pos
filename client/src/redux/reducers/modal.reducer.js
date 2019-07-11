@@ -13,7 +13,7 @@ import {
     CLOSE_REFUND_MODAL,
     CLOSE_RETRIEVE_HELD_MODAL,
     CLOSE_RETURNS_MODAL,
-    CLOSE_SALES_MODAL,
+    CLOSE_SALES_MODAL, CLOSE_TRANSACTION_COMPLETE,
     CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
@@ -29,7 +29,7 @@ import {
     OPEN_REFUND_MODAL,
     OPEN_RETRIEVE_HELD_MODAL,
     OPEN_RETURNS_MODAL,
-    OPEN_SALES_MODAL,
+    OPEN_SALES_MODAL, OPEN_TRANSACTION_COMPLETE,
     OPEN_TRANSACTION_MODAL
 } from "../constants/modal.constants";
 
@@ -103,6 +103,10 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, exchangeComplete: action.exchangeComplete };
         case CLOSE_COMPLETE_EXCHANGE_MODAL:
             return { ...state, exchangeComplete: action.exchangeComplete };
+        case OPEN_TRANSACTION_COMPLETE:
+            return { ...state, transactionComplete: action.transactionComplete };
+        case CLOSE_TRANSACTION_COMPLETE:
+            return { ...state, transactionComplete: action.transactionComplete };
         default:
             return state;
     }

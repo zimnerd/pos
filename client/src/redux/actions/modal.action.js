@@ -2,7 +2,8 @@ import {
     CLOSE_AUTH_MODAL,
     CLOSE_CARD_MODAL,
     CLOSE_CASH_MODAL,
-    CLOSE_COMBO_MODAL, CLOSE_COMPLETE_EXCHANGE_MODAL,
+    CLOSE_COMBO_MODAL,
+    CLOSE_COMPLETE_EXCHANGE_MODAL,
     CLOSE_COMPLETE_REFUND_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
@@ -14,11 +15,13 @@ import {
     CLOSE_RETRIEVE_HELD_MODAL,
     CLOSE_RETURNS_MODAL,
     CLOSE_SALES_MODAL,
+    CLOSE_TRANSACTION_COMPLETE,
     CLOSE_TRANSACTION_MODAL,
     OPEN_AUTH_MODAL,
     OPEN_CARD_MODAL,
     OPEN_CASH_MODAL,
-    OPEN_COMBO_MODAL, OPEN_COMPLETE_EXCHANGE_MODAL,
+    OPEN_COMBO_MODAL,
+    OPEN_COMPLETE_EXCHANGE_MODAL,
     OPEN_COMPLETE_REFUND_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
@@ -30,6 +33,7 @@ import {
     OPEN_RETRIEVE_HELD_MODAL,
     OPEN_RETURNS_MODAL,
     OPEN_SALES_MODAL,
+    OPEN_TRANSACTION_COMPLETE,
     OPEN_TRANSACTION_MODAL
 } from "../constants/modal.constants";
 
@@ -167,4 +171,12 @@ export function openCompleteExchange(exchangeComplete = true) {
 
 export function closeCompleteExchange(exchangeComplete = false) {
     return { type: CLOSE_COMPLETE_EXCHANGE_MODAL, exchangeComplete }
+}
+
+export function openTransactionComplete(transactionComplete = true) {
+    return { type: OPEN_TRANSACTION_COMPLETE, transactionComplete }
+}
+
+export function closeTransactionComplete(transactionComplete = false) {
+    return { type: CLOSE_TRANSACTION_COMPLETE, transactionComplete }
 }

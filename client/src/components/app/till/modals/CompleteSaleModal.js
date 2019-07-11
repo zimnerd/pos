@@ -102,7 +102,7 @@ class CompleteSaleModal extends React.Component {
         };
 
         axios.post(`/transactions`, transaction, { headers })
-            .then(response => {
+            .then(async response => {
                 console.log(response.data);
 
                 toastr.success("Transaction Completed!", "Create Transaction");
@@ -112,6 +112,9 @@ class CompleteSaleModal extends React.Component {
 
                 this.saveSettings(transaction.type);
                 this.handleClose();
+
+                await this.props.actions.till.setCompletedTransaction({ type: transaction.type, number: response.data.number });
+                this.props.actions.modal.openTransactionComplete();
 
                 this.props.actions.till.deactivateLayBye();
                 this.props.actions.till.deactivateReturns();
@@ -175,7 +178,6 @@ class CompleteSaleModal extends React.Component {
                 toastr.success("Till Details updated!", "Update Settings");
 
                 this.props.actions.settings.saveTill(response.data.till);
-                this.handleClose();
             })
             .catch(error => {
                 console.log(error);
