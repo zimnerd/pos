@@ -17,6 +17,14 @@ class SalesOptionsModal extends React.Component {
     };
 
     activateLayBye = () => {
+        for (let transaction of this.props.till.transactions) {
+            if (typeof transaction.serialno !== "undefined") {
+                toastr.error("You are unable to have handsets/airtime in a Lay-Bye sale.", "Invalid Selection");
+                this.handleClose();
+                return;
+            }
+        }
+
         this.props.actions.till.activateLayBye();
         this.handleClose();
     };

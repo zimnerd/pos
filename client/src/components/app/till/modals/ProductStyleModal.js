@@ -9,6 +9,7 @@ import * as tillActions from "../../../../redux/actions/till.action";
 import * as stockActions from "../../../../redux/actions/stock.action";
 
 import './ProductStyleModal.scss';
+import toastr from "toastr";
 
 class ProductStyleModal extends React.Component {
 
@@ -30,6 +31,12 @@ class ProductStyleModal extends React.Component {
         if (codes.length === 2) {
             product.code = codes[0];
             product.serialno = codes[1];
+        }
+
+        if (typeof product.serialno !== "undefined" && this.props.till.laybye) {
+            toastr.error("You are unable to have handsets/airtime in a Lay-Bye sale.", "Invalid Selection");
+            this.handleClose();
+            return;
         }
 
         transactions.push(product);
