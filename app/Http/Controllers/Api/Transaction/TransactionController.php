@@ -92,6 +92,12 @@ class TransactionController extends Controller
                 if (!isset($item['markdown'])) {
                     $item['markdown'] = false;
                 }
+                if (!isset($item['combo'])) {
+                    $item['combo'] = false;
+                }
+                if (!isset($item['isStaff'])) {
+                    $item['isStaff'] = false;
+                }
 
                 $dailyTransaction = new DailyTransaction();
                 $dailyTransaction->BRNO = $shop['BrNo'];
@@ -120,7 +126,7 @@ class TransactionController extends Controller
                 $dailyTransaction->BDATE = \date("Y-m-d");
                 $dailyTransaction->BTIME = \date("H:i:s");
 
-                $vat = $item['total'] / 115 * 100;
+                $vat = $item['total'] - ($item['total'] / 115 * 100);
                 $dailyTransaction->AMT = $item['total'];
                 $dailyTransaction->VATAMT = $vat;
                 $dailyTransaction->QTY = $item['qty'];
@@ -135,23 +141,17 @@ class TransactionController extends Controller
                 $dailyTransaction->SMAN = "1";
                 $dailyTransaction->UPDFLAG = 0;
 
-                $combo = isset($item['combo']);
-                $staff = isset($item['staff']);
 
-                $saleType = "";
-                if ($combo && $staff) {
-                    $saleType = $item['markdown'] ? 'M' :
-                        $item['combo'] ? 'D' :
-                            $item['staff'] ? 'S' : 'R';
-                } else if ($combo && !$staff) {
-                    $saleType = $item['markdown'] ? 'M' :
-                        $item['combo'] ? 'D' : 'R';
-                } else if (!$combo && $staff) {
-                    $saleType = $item['markdown'] ? 'M' :
-                        $item['staff'] ? 'S' : 'R';
+                if ($item['markdown'] === true) {
+                    $saleType = 'M';
+                } elseif ($item['combo'] === true) {
+                    $saleType = 'D';
+                } elseif ($item['isStaff'] === true) {
+                    $saleType = 'S';
                 } else {
-                    $saleType = $item['markdown'] ? 'M' : 'R';
+                    $saleType = 'R';
                 }
+
                 $dailyTransaction->LSLTYPE = $saleType;
 
                 $dailyTransaction->APPNO = 0;
@@ -243,6 +243,7 @@ class TransactionController extends Controller
                 $stockTransaction->BTYPE = $transaction["type"];
                 $stockTransaction->VATAMT = $vat;
                 $stockTransaction->DISCAMT = $item['subtotal'] - $item['total'];
+                $stockTransaction->AMT = $item['total'];
 
                 $stockTransaction->save();
             }
@@ -593,6 +594,73 @@ class TransactionController extends Controller
             DB::rollBack();
             return response()->json([], $this->errorStatus);
         }
+    }
+
+    /**
+     * Retrieve a refund
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveRefund($id)
+    {
+        $transactions = StockTransaction::query()
+            ->where('DLNO', $id)
+            ->get();
+
+        if (count($transactions) === 0) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $lineItems = array("type" => "", "branch" => "", "till" => "", "method" => "",
+            "transactions" => array(), "totals" => array("vat" => 0, "total" => 0, "qty" => 0));
+
+        $vat = 0;
+        $total = 0;
+        $qty = 0;
+
+        /**
+         * @var StockTransaction $item
+         */
+        foreach ($transactions as $item) {
+            $qty++;
+
+            $transaction = array();
+            $transaction['code'] = $item->STYLE;
+            $transaction['colour'] = $item->CLR;
+            $transaction['clrcode'] = $item->CLR;
+            $transaction['size'] = $item->SIZES;
+            $transaction['cost'] = $item->CP;
+            $transaction['type'] = $item->BTYPE;
+
+            /**
+             * @var Product $product
+             */
+            $product = Product::query()->where('code', $item->STYLE)->first();
+            $transaction['description'] = $product->descr;
+
+            $transaction['disc'] = $item->DISCAMT;
+            $transaction['markdown'] = $item->SLTYPE === 'M' ? true : false;
+            $transaction['isStaff'] = $item->SLTYPE === 'S' ? true : false;
+            $transaction['combo'] = $item->SLTYPE === 'D' ? true : false;
+            $transaction['price'] = $item->SP;
+            $transaction['qty'] = $item->QTY;
+            $transaction['subtotal'] = $item->QTY * $item->SP;
+            $transaction['total'] = $item->AMT;
+            $total += $item->AMT;
+            $vat += $item->VATAMT;
+
+            $lineItems["transactions"][] = $transaction;
+            $lineItems["type"] = $item->BTYPE;
+            $lineItems["branch"] = $item->BRNO;
+        }
+
+        $lineItems["totals"]["vat"] = $vat;
+        $lineItems["totals"]["qty"] = $qty;
+        $lineItems["totals"]["total"] = $total;
+
+        return response()->json(['lineItems' => $lineItems], $this->successStatus);
+
     }
 
     /**

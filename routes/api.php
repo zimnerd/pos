@@ -67,8 +67,7 @@ Route::group(["prefix" => "transactions"], function () {
         Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
 
         Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
-
-
+        Route::get('{id}/refunds', 'Api\Transaction\TransactionController@retrieveRefund');
     });
 
     Route::group(['middleware' => ['auth:api', 'scope:staff']], function () {

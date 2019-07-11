@@ -122,6 +122,13 @@ class LineItems extends React.Component {
         }
 
         this.props.actions.till.setCombos(newCombos);
+
+        if (transactions.length === 0) {
+            this.props.actions.till.resetTotals();
+            this.props.actions.till.resetTransactions();
+            this.props.actions.till.deactivateRefund();
+            this.props.actions.till.setRefund();
+        }
     };
     componentDidMount(){
         this.codeInput.focus();

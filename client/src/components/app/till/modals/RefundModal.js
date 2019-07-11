@@ -48,10 +48,10 @@ class RefundModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/transactions/${this.state.docNo}`, { headers })
+        axios.get(`/transactions/${this.state.docNo}/refunds`, { headers })
             .then(response => {
                 console.log(response.data);
-                toastr.success("Transaction found!", "Find Transaction");
+                toastr.success("Refund found!", "Find Refund");
 
                 this.mapHeldSales(response.data.lineItems.transactions);
                 this.props.actions.till.setTransactions(response.data.lineItems.transactions);

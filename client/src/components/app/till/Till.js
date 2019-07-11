@@ -122,7 +122,7 @@ class Till extends React.Component {
                 if (event.preventDefault) {
                     event.preventDefault();
                 }
-                
+
                 if (this.props.till.exchange) {
                     toastr.error('You are not allowed to complete a sale on an exchange!', 'Invalid Action');
                     return;
@@ -210,6 +210,7 @@ class Till extends React.Component {
                 transaction.price = transaction.retail;
                 transaction.subtotal = transaction.price * transaction.qty;
                 transaction.discStore = transaction.disc;
+                transaction.isStaff = true;
 
                 if (transaction.markdown) {
                     transaction.disc = (transaction.mdp / transaction.retail * 100).toFixed(2);
@@ -225,6 +226,7 @@ class Till extends React.Component {
                 transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
             } else {
                 transaction.combo = false;
+                transaction.isStaff = false;
 
                 if (transaction.markdown) {
                     transaction.price = transaction.mdp;

@@ -24,6 +24,7 @@ class CreateStockTransactionsTable extends Migration
             $table->string('REF');
             $table->decimal('VATAMT');
             $table->decimal('DISCAMT');
+            $table->decimal('AMT');
             $table->decimal('QTY');
             $table->decimal('QOH');
             $table->decimal('SP');

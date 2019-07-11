@@ -54,6 +54,7 @@ class StockTransaction extends Model
         'LBTAKEN',
         'SMAN',
         'SLTYPE',
+        'AMT',
         'VATAMT',
         'DISCAMT',
         'ASSNO'
