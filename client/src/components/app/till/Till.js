@@ -198,14 +198,26 @@ class Till extends React.Component {
         let comboIndex = -1;
         for (let x = 0, len = this.props.till.transactions.length; x < len; x++) {
             let transaction = this.props.till.transactions[x];
+            transaction.markdown = transaction.mdp > 0;
+
             if (this.props.till.staff) {
-                transaction.price = transaction.staff;
+                transaction.price = transaction.retail;
                 transaction.subtotal = transaction.price * transaction.qty;
-                transaction.total = transaction.subtotal;
                 transaction.discStore = transaction.disc;
-                transaction.disc = 0.00;
+
+                if (transaction.markdown) {
+                    transaction.disc = (transaction.mdp / transaction.retail * 100).toFixed(2);
+                } else {
+                    transaction.price = transaction.staff;
+                    transaction.disc = 0.00;
+                }
+
+                if (typeof transaction.discStore !== "undefined") {
+                    transaction.disc = transaction.discStore;
+                    delete transaction.discStore;
+                }
+                transaction.total = transaction.disc > 0 ? transaction.subtotal * transaction.disc / 100 : transaction.subtotal;
             } else {
-                transaction.markdown = transaction.mdp > 0;
                 transaction.combo = false;
 
                 if (transaction.markdown) {
