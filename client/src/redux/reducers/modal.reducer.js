@@ -8,7 +8,7 @@ import {
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
-    CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL, CLOSE_REASON_MODAL,
     CLOSE_REFUND_DETAILS_MODAL,
     CLOSE_REFUND_MODAL,
     CLOSE_RETRIEVE_HELD_MODAL,
@@ -24,7 +24,7 @@ import {
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
-    OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL, OPEN_REASON_MODAL,
     OPEN_REFUND_DETAILS_MODAL,
     OPEN_REFUND_MODAL,
     OPEN_RETRIEVE_HELD_MODAL,
@@ -107,6 +107,10 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, transactionComplete: action.transactionComplete };
         case CLOSE_TRANSACTION_COMPLETE:
             return { ...state, transactionComplete: action.transactionComplete };
+        case OPEN_REASON_MODAL:
+            return { ...state, refundReason: action.refundReason };
+        case CLOSE_REASON_MODAL:
+            return { ...state, refundReason: action.refundReason };
         default:
             return state;
     }

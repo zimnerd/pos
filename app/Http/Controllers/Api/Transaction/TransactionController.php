@@ -164,6 +164,14 @@ class TransactionController extends Controller
                 $dailyTransaction->AUSER = $transaction["auth"];
                 $dailyTransaction->FWCNO = null;
 
+                if (isset($item['rescode'])) {
+                    $dailyTransaction->RESCODE = $item['rescode'];
+                }
+
+                if (isset($item['comments'])) {
+                    $dailyTransaction->COMMENT = $item['comments'];
+                }
+
                 $count++;
                 $dailyTransaction->save();
 

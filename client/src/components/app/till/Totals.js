@@ -10,7 +10,7 @@ import './Totals.scss';
 class Totals extends React.Component {
 
     completeRefund = () => {
-        this.props.actions.modal.openCompleteSale();
+        this.props.actions.modal.openReasonModal();
     };
 
     completeExchange = () => {

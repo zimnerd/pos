@@ -1,8 +1,10 @@
 import {
     RETRIEVE_HADDITH,
+    RETRIEVE_REASONS,
     RETRIEVE_SHOP_DETAILS,
     RETRIEVE_TILL_DETAILS,
-    SAVE_TILL_DETAILS, SET_COMBOS
+    SAVE_TILL_DETAILS,
+    SET_COMBOS
 } from "../constants/settings.constants";
 
 export function retrieveShop(shop = {}) {
@@ -23,4 +25,8 @@ export function retrieveHaddith(haddith = {}) {
 
 export function setCombos(combos = []) {
     return { type: SET_COMBOS, combos };
+}
+
+export function retrieveReasons(reasons = []) {
+    return { type: RETRIEVE_REASONS, reasons };
 }

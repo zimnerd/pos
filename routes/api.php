@@ -46,6 +46,7 @@ Route::group(["prefix" => "settings"], function () {
     Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');
+    Route::get('reasons', 'Api\Settings\SettingsController@refundReasons');
 
 });
 
@@ -66,6 +67,7 @@ Route::group(["prefix" => "transactions"], function () {
         Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
 
         Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
+
 
     });
 

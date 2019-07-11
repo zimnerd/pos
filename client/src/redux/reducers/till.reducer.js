@@ -58,7 +58,6 @@ export default function tillReducer(state = { errors: [] }, action) {
         case SET_REFUND:
             return { ...state, refundData: action.refundData };
         case SET_COMPLETED_TRANSACTION:
-            debugger
             return { ...state, completedTransaction: action.completedTransaction };
         default:
             return state;

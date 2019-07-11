@@ -55,6 +55,18 @@ class App extends React.Component {
                 console.log(error);
                 toastr.error("Unknown error.");
             });
+
+        axios.get('/settings/reasons')
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Reasons Retrieved!", "Retrieve Reasons");
+                this.props.actions.settings.retrieveReasons(response.data.reasons);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
     }
 
     render() {

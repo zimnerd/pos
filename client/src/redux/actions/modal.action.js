@@ -9,7 +9,7 @@ import {
     CLOSE_CREDIT_MODAL,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
-    CLOSE_PRODUCT_STYLE_MODAL,
+    CLOSE_PRODUCT_STYLE_MODAL, CLOSE_REASON_MODAL,
     CLOSE_REFUND_DETAILS_MODAL,
     CLOSE_REFUND_MODAL,
     CLOSE_RETRIEVE_HELD_MODAL,
@@ -27,7 +27,7 @@ import {
     OPEN_CREDIT_MODAL,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
-    OPEN_PRODUCT_STYLE_MODAL,
+    OPEN_PRODUCT_STYLE_MODAL, OPEN_REASON_MODAL,
     OPEN_REFUND_DETAILS_MODAL,
     OPEN_REFUND_MODAL,
     OPEN_RETRIEVE_HELD_MODAL,
@@ -179,4 +179,12 @@ export function openTransactionComplete(transactionComplete = true) {
 
 export function closeTransactionComplete(transactionComplete = false) {
     return { type: CLOSE_TRANSACTION_COMPLETE, transactionComplete }
+}
+
+export function openReasonModal(refundReason = true) {
+    return { type: OPEN_REASON_MODAL, refundReason }
+}
+
+export function closeReasonModal(refundReason = false) {
+    return { type: CLOSE_REASON_MODAL, refundReason }
 }

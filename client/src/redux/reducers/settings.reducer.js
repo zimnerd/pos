@@ -1,8 +1,10 @@
 import {
     RETRIEVE_HADDITH,
+    RETRIEVE_REASONS,
     RETRIEVE_SHOP_DETAILS,
     RETRIEVE_TILL_DETAILS,
-    SAVE_TILL_DETAILS, SET_COMBOS
+    SAVE_TILL_DETAILS,
+    SET_COMBOS
 } from "../constants/settings.constants";
 
 export default function settingsReducer(state = { errors: [] }, action) {
@@ -17,6 +19,8 @@ export default function settingsReducer(state = { errors: [] }, action) {
             return { ...state, haddith: action.haddith };
         case SET_COMBOS:
             return { ...state, combos: action.combos };
+        case RETRIEVE_REASONS:
+            return { ...state, reasons: action.reasons };
         default:
             return state;
     }

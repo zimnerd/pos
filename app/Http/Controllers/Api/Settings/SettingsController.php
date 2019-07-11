@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Settings;
 use App\ComboPrice;
 use App\Haddith;
 use App\Http\Controllers\Controller;
+use App\Reason;
 use App\Shop;
 use App\Till;
 use Illuminate\Http\Request;
@@ -189,5 +190,16 @@ class SettingsController extends Controller
         }
 
         return response()->json(['combos' => $combos], $this->successStatus);
+    }
+
+    /**
+     * Retrieves the list of all refund reasons.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function refundReasons()
+    {
+        $reasons = Reason::all();
+        return response()->json(["reasons" => $reasons], $this->successStatus);
     }
 }
