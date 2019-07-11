@@ -217,6 +217,7 @@ class Till extends React.Component {
                     transaction.disc = (transaction.mdp / transaction.retail * 100).toFixed(2);
                 } else {
                     transaction.price = transaction.staff;
+                    transaction.subtotal = transaction.price * transaction.qty;
                     transaction.disc = 0.00;
                 }
 
