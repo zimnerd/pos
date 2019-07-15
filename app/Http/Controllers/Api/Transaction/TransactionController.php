@@ -360,26 +360,29 @@ class TransactionController extends Controller
 
                 $laybyeTransaction->save();
 
-                $depositTransaction = new LaybyeTransaction();
+                if ($transaction["tendered"] != 0) {
+                    $depositTransaction = new LaybyeTransaction();
 
-                $depositTransaction->invNo = $laybyeNo . "-DEP";
-                $depositTransaction->invDate = \date("Y-m-d");
-                $depositTransaction->dueDate = \date("Y-m-d");
-                $depositTransaction->invAmt = $transaction["tendered"];
-                $depositTransaction->type = $transaction["type"];
-                $depositTransaction->remarks = "Deposit";
-                $depositTransaction->period = $shop['Period'];
-                $depositTransaction->vatPer = $shop['Period'];
-                $depositTransaction->crnref = $docNo;
-                $depositTransaction->dts = new \DateTime();
+                    $depositTransaction->invNo = $laybyeNo . "-DEP";
+                    $depositTransaction->invDate = \date("Y-m-d");
+                    $depositTransaction->dueDate = \date("Y-m-d");
+                    $depositTransaction->invAmt = $transaction["tendered"];
+                    $depositTransaction->type = $transaction["type"];
+                    $depositTransaction->remarks = "Deposit";
+                    $depositTransaction->period = $shop['Period'];
+                    $depositTransaction->vatPer = $shop['Period'];
+                    $depositTransaction->crnref = $docNo;
+                    $depositTransaction->dts = new \DateTime();
 
-                $depositTransaction->save();
+                    $depositTransaction->save();
+                }
             }
 
             if (isset($debtorNo)) {
                 $debtorTransaction = new DebtorTransaction();
 
                 $debtorTransaction->invNo = $debtorNo;
+                $debtorTransaction->invAmt = $totals["total"] - $transaction["tendered"];
                 $debtorTransaction->invDate = \date("Y-m-d");
                 $debtorTransaction->dueDate = \date("Y-m-d");
                 $debtorTransaction->type = $transaction["type"];
@@ -398,8 +401,8 @@ class TransactionController extends Controller
                     return response()->json([], $this->notFoundStatus);
                 }
 
-                $debtor->balance = $debtor->balance + $totals["total"];
-                $debtor->current = $debtor->current + $totals["total"];
+                $debtor->balance = $debtor->balance + ($totals["total"] - $transaction["tendered"]);
+                $debtor->current = $debtor->current + ($totals["total"] - $transaction["tendered"]);
 
                 if ($debtor->stype === 'Staff') {
                     $debtorTransaction->remarks = 'Staff Sale';
@@ -407,6 +410,23 @@ class TransactionController extends Controller
 
                 $debtor->save();
                 $debtorTransaction->save();
+
+                if ($transaction["tendered"] != 0) {
+                    $depositTransaction = new DebtorTransaction();
+
+                    $depositTransaction->invNo = $debtorNo . "-DEP";
+                    $depositTransaction->invAmt = $transaction["tendered"];
+                    $depositTransaction->invDate = \date("Y-m-d");
+                    $depositTransaction->dueDate = \date("Y-m-d");
+                    $depositTransaction->type = $transaction["type"];
+                    $depositTransaction->remarks = "Credit Sale Deposit";
+                    $depositTransaction->period = $shop['Period'];
+                    $depositTransaction->vatPer = $shop['Period'];
+                    $depositTransaction->crnref = $docNo;
+                    $depositTransaction->dts = new \DateTime();
+
+                    $depositTransaction->save();
+                }
             }
 
             DB::commit();

@@ -23,6 +23,7 @@ class CreateDebtorsTable extends Migration
             $table->string('name');
             $table->string('cell');
             $table->string('email');
+            $table->string('idNo');
             $table->date('appDate');
             $table->decimal('balance');
             $table->decimal('current');

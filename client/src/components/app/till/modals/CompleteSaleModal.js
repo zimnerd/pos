@@ -14,7 +14,7 @@ import './CompleteSaleModal.scss';
 class CompleteSaleModal extends React.Component {
 
     state = {
-        method: "",
+        method: "Cash",
         tendered: 0.00,
         cash: 0.00,
         card: 0.00,
@@ -30,7 +30,7 @@ class CompleteSaleModal extends React.Component {
 
     handleClose = () => {
         this.setState({
-            method: "",
+            method: "Cash",
             tendered: 0.00,
             cash: 0.00,
             card: 0.00,
@@ -375,8 +375,8 @@ class CompleteSaleModal extends React.Component {
                     <Form>
                         <label>Total Invoice
                             Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
-                        {this.props.till.laybye &&
-                        <label>Deposit Amount: <span>{this.state.tendered.toFixed(2)}</span></label>
+                        {this.props.till.laybye || this.props.till.credit &&
+                        <label>Deposit Amount: <span>{Number(this.state.tendered).toFixed(2)}</span></label>
                         }
                         <div className="form-group">
                             <label>Payment Method:</label>

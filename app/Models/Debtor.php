@@ -44,6 +44,7 @@ class Debtor extends Model
         'name',
         'cell',
         'email',
+        'idNo',
         'appDate',
         'balance',
         'current'

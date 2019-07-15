@@ -17,6 +17,7 @@ class CreateDebtorTransactionsTable extends Migration
         Schema::create('debdet', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('invNo');
+            $table->string('invAmt');
             $table->date('invDate');
             $table->date('dueDate');
             $table->string('type');
