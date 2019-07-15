@@ -35,6 +35,7 @@ class TransactionController extends Controller
     public $successStatus = 200;
     public $createdStatus = 201;
     public $notFoundStatus = 404;
+    public $validationStatus = 422;
     public $errorStatus = 500;
 
     /**
@@ -650,6 +651,7 @@ class TransactionController extends Controller
             'invNo' => 'required',
             'invDate' => 'required',
             'idNo' => 'required',
+            'email' => 'required | email',
             'cell' => 'required | max:10 | min:10',
             'brNo' => 'required'
         ]);
@@ -679,6 +681,14 @@ class TransactionController extends Controller
      */
     public function retrieveRefund($id)
     {
+        $refund = Refund::query()
+            ->where('invNo', $id)
+            ->first();
+
+        if ($refund) {
+            return response()->json([], $this->validationStatus);
+        }
+
         $transactions = StockTransaction::query()
             ->where('DLNO', $id)
             ->get();
@@ -728,7 +738,11 @@ class TransactionController extends Controller
             $lineItems["transactions"][] = $transaction;
             $lineItems["type"] = $item->BTYPE;
             $lineItems["branch"] = $item->BRNO;
+            $lineItems["date"] = $item->BDATE;
         }
+
+        $person = Person::query()->where('docNo', $id)->first();
+        $lineItems["person"] = $person;
 
         $lineItems["totals"]["vat"] = $vat;
         $lineItems["totals"]["qty"] = $qty;

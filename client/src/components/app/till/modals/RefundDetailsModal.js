@@ -14,7 +14,9 @@ class RefundDetailsModal extends React.Component {
         invNo: "",
         invDate: "",
         idNo: "",
-        cell: ""
+        cell: "",
+        email: "",
+        updated: false
     };
 
     handleChange = event => {
@@ -33,12 +35,29 @@ class RefundDetailsModal extends React.Component {
             invDate: this.state.invDate,
             idNo: this.state.idNo,
             cell: this.state.cell,
+            email: this.state.email,
+            found: this.state.found,
             brNo: this.props.settings.shop.BrNo
         };
         this.props.actions.till.setRefund(refund);
         this.props.actions.till.activateRefund();
         this.props.actions.modal.closeRefundDetails();
     };
+
+    componentDidUpdate(): void {
+        if (this.props.till.refundData && !this.state.updated) {
+            this.setState({
+                invNo: this.props.till.refundData.invNo,
+                invDate: this.props.till.refundData.invDate,
+                idNo: this.props.till.refundData.idNo,
+                cell: this.props.till.refundData.cell,
+                email: this.props.till.refundData.email,
+                brNo: this.props.till.refundData.brNo,
+                found: this.props.till.refundData.found,
+                updated: true
+            });
+        }
+    }
 
     render() {
         return (
@@ -69,6 +88,11 @@ class RefundDetailsModal extends React.Component {
                             <input name="cell" type="text" className="form-control"
                                    value={this.state.cell} onChange={this.handleChange}/>
                         </div>
+                        <div className="form-group">
+                            <label>Email Address:</label>
+                            <input name="email" type="email" className="form-control"
+                                   value={this.state.email} onChange={this.handleChange}/>
+                        </div>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
@@ -89,7 +113,8 @@ function mapStateToProps(state) {
     return {
         auth: state.auth,
         modal: state.modal,
-        settings: state.settings
+        settings: state.settings,
+        till: state.till
     };
 }
 

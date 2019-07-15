@@ -40,6 +40,7 @@ class Person extends Model
         'docNo',
         'docType',
         'name',
+        'idNo',
         'email',
         'cell'
     ];

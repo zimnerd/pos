@@ -14,10 +14,11 @@ import './CompleteRefund.scss';
 class CompleteRefund extends React.Component {
 
     completeRefund = async () => {
-        if (this.props.till.refundData) {
+        if (this.props.till.refundData.found) {
             await this.saveRefund();
-        } else {
             await this.refundTransaction();
+        } else {
+            await this.saveRefund();
         }
 
         this.props.actions.till.deactivateRefund();
@@ -29,6 +30,7 @@ class CompleteRefund extends React.Component {
         this.props.actions.till.deactivateExchange();
         this.props.actions.till.deactivateStaff();
         this.props.actions.till.setCombos();
+        this.handleClose();
     };
 
     mapHeldSales = sales => {
@@ -48,7 +50,6 @@ class CompleteRefund extends React.Component {
     };
 
     refundTransaction = async () => {
-        this.handleClose();
         this.props.actions.till.resetTotals();
         let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
         let transaction = {

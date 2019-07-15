@@ -364,24 +364,28 @@ class CompleteSaleModal extends React.Component {
                             <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
                         </label>
                         }
-                        <div className="form-group">
-                            <label>Name:</label>
-                            <input type="text" className="form-control" name="name" value={this.state.name}
-                                   onChange={this.handleText} disabled={this.state.disabled}/>
-                        </div>
-                        <div className="form-group">
-                            <label>Cell Number:</label>
-                            <input type="text" className="form-control" name="cell" value={this.state.cell}
-                                   onChange={this.handleText} disabled={this.state.disabled}/>
-                            {this.props.auth.errors['person.cell'] && <p>{this.props.auth.errors['person.cell'][0]}</p>}
-                        </div>
-                        <div className="form-group">
-                            <label>Email Address:</label>
-                            <input type="email" className="form-control" name="email" value={this.state.email}
-                                   onChange={this.handleText} disabled={this.state.disabled}/>
-                            {this.props.auth.errors['person.email'] &&
-                            <p>{this.props.auth.errors['person.email'][0]}</p>}
-                        </div>
+                        {!this.props.till.refund &&
+                            <div>
+                                <div className="form-group">
+                                    <label>Name:</label>
+                                    <input type="text" className="form-control" name="name" value={this.state.name}
+                                           onChange={this.handleText} disabled={this.state.disabled}/>
+                                </div>
+                                <div className="form-group">
+                                    <label>Cell Number:</label>
+                                    <input type="text" className="form-control" name="cell" value={this.state.cell}
+                                           onChange={this.handleText} disabled={this.state.disabled}/>
+                                    {this.props.auth.errors['person.cell'] && <p>{this.props.auth.errors['person.cell'][0]}</p>}
+                                </div>
+                                <div className="form-group">
+                                    <label>Email Address:</label>
+                                    <input type="email" className="form-control" name="email" value={this.state.email}
+                                           onChange={this.handleText} disabled={this.state.disabled}/>
+                                    {this.props.auth.errors['person.email'] &&
+                                    <p>{this.props.auth.errors['person.email'][0]}</p>}
+                                </div>
+                            </div>
+                        }
                     </Form>
                     }
                 </Modal.Body>

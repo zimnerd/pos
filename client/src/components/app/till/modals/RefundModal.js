@@ -57,7 +57,23 @@ class RefundModal extends React.Component {
                 this.props.actions.till.setTransactions(response.data.lineItems.transactions);
                 this.props.actions.till.activateRefund();
                 this.checkLaybye(response.data.lineItems.transactions);
+                let refund = {
+                    invNo: this.state.docNo,
+                    invDate: response.data.lineItems.date,
+                    brNo: response.data.lineItems.branch,
+                    found: true
+                };
+
+                let person = response.data.lineItems.person;
+                if (person !== null) {
+                    refund.idNo = person.idNo;
+                    refund.cell = person.cell;
+                    refund.email = person.email;
+                }
+
+                this.props.actions.till.setRefund(refund);
                 this.handleClose();
+                this.props.actions.modal.openRefundDetails();
             })
             .catch(error => {
                 console.log(error);
@@ -67,6 +83,8 @@ class RefundModal extends React.Component {
                     toastr.error("Transaction could not be found!", "Find Transaction");
                     this.props.actions.modal.closeRefund();
                     this.props.actions.modal.openRefundDetails();
+                } else if (error.response.status === 422) {
+                    toastr.error("This document has already been refunded!", "Find Transaction");
                 } else {
                     toastr.error("Unknown error.");
                 }
