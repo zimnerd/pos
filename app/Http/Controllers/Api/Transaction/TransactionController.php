@@ -337,6 +337,9 @@ class TransactionController extends Controller
                     $laybye->idNo = $person["idNo"];
                     $laybye->cell = $person["cell"];
                     $laybye->email = $person["email"];
+                    $laybye->line1 = $person["line1"];
+                    $laybye->line2 = $person["line2"];
+                    $laybye->line3 = $person["line3"];
                 }
 
                 $laybye->appDate = \date("Y-m-d");

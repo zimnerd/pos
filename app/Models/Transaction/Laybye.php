@@ -42,6 +42,9 @@ class Laybye extends Model
         'email',
         'cell',
         'idNo',
+        'line1',
+        'line2',
+        'line3',
         'appDate',
         'balance',
         'current'

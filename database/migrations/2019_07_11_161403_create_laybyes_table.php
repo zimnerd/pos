@@ -21,6 +21,9 @@ class CreateLaybyesTable extends Migration
             $table->string('email')->nullable();
             $table->string('cell')->nullable();
             $table->string('idNo')->nullable();
+            $table->string('line1')->nullable();
+            $table->string('line2')->nullable();
+            $table->string('line3')->nullable();
             $table->date('appDate');
             $table->decimal('balance');
             $table->decimal('current');

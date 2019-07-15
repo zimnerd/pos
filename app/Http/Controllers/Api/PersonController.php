@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Laybye;
 use App\Person;
 
 class PersonController extends Controller
@@ -18,7 +19,7 @@ class PersonController extends Controller
      */
     public function retrievePerson($idNumber)
     {
-        $person = Person::query()
+        $person = Laybye::query()
             ->where("idNo", $idNumber)
             ->first();
 

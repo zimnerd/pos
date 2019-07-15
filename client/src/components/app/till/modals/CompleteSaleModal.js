@@ -23,6 +23,9 @@ class CompleteSaleModal extends React.Component {
         cell: "",
         name: "",
         idNo: "",
+        line1: "",
+        line2: "",
+        line3: "",
         disabled: false,
         allowZero: false,
         search: false
@@ -38,6 +41,9 @@ class CompleteSaleModal extends React.Component {
             cell: "",
             name: "",
             idNo: "",
+            line1: "",
+            line2: "",
+            line3: "",
             document: undefined,
             disabled: false
         });
@@ -202,7 +208,10 @@ class CompleteSaleModal extends React.Component {
                 name: this.state.name,
                 cell: this.state.cell,
                 email: this.state.email,
-                idNo: this.state.idNo
+                idNo: this.state.idNo,
+                line1: this.state.line1,
+                line2: this.state.line2,
+                line3: this.state.line3
             },
             shop: this.props.settings.shop,
             till: this.props.settings.till,
@@ -336,7 +345,10 @@ class CompleteSaleModal extends React.Component {
                         cell: response.data.person.cell,
                         email: response.data.person.email,
                         name: response.data.person.name,
-                        idNo: response.data.person.idNo
+                        idNo: response.data.person.idNo,
+                        line1: response.data.person.line1,
+                        line2: response.data.person.line2,
+                        line3: response.data.person.line3
                     });
                 })
                 .catch(error => {
@@ -375,7 +387,7 @@ class CompleteSaleModal extends React.Component {
                     <Form>
                         <label>Total Invoice
                             Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
-                        {this.props.till.laybye || this.props.till.credit &&
+                        {(this.props.till.laybye || this.props.till.credit) &&
                         <label>Deposit Amount: <span>{Number(this.state.tendered).toFixed(2)}</span></label>
                         }
                         <div className="form-group">
@@ -456,6 +468,17 @@ class CompleteSaleModal extends React.Component {
                                     {this.props.auth.errors['person.email'] &&
                                     <p>{this.props.auth.errors['person.email'][0]}</p>}
                                 </div>
+                                {this.props.till.laybye &&
+                                <div className="form-group">
+                                    <label>Address:</label>
+                                    <input type="line1" className="form-control" name="line1" value={this.state.line1}
+                                           onChange={this.handleText}/>
+                                    <input type="line2" className="form-control" name="line2" value={this.state.line2}
+                                           onChange={this.handleText}/>
+                                    <input type="line3" className="form-control" name="line3" value={this.state.line3}
+                                           onChange={this.handleText}/>
+                                </div>
+                                }
                             </div>
                         }
                     </Form>
