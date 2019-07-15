@@ -92,7 +92,7 @@ class ProductController extends Controller
                 $queryBuilder = Airtime::query();
                 $queryBuilder->where('code', $product->code)
                     ->whereNull('solddate')
-                    ->orderBy('receiveddate', 'asc');
+                    ->orderBy('receiveddate', 'desc');
                 $items[] = $queryBuilder->first();
             }
         }

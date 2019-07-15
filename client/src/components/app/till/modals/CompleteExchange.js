@@ -19,6 +19,7 @@ class CompleteExchange extends React.Component {
         this.props.actions.till.deactivateExchange();
         this.props.actions.till.setRefund();
 
+        this.props.actions.till.deactivateCredit();
         this.props.actions.till.deactivateLayBye();
         this.props.actions.till.deactivateReturns();
         this.props.actions.till.deactivateStaff();
@@ -54,7 +55,7 @@ class CompleteExchange extends React.Component {
             type: "CRN",
             method: "Cash",
             stype: "Exchng",
-            auth: ""
+            auth: this.props.auth.auth
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);

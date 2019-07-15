@@ -27,10 +27,12 @@ class ProductStyleModal extends React.Component {
             transactions = [];
         }
 
-        let codes = product.code.split(" ");
-        if (codes.length === 2) {
-            product.code = codes[0];
-            product.serialno = codes[1];
+        if (typeof product.serialCode !== "undefined") {
+            let codes = product.serialCode.split(" ");
+            if (codes.length === 2) {
+                product.code = codes[0];
+                product.serialno = codes[1];
+            }
         }
 
         if (typeof product.serialno !== "undefined" && this.props.till.laybye) {
@@ -83,7 +85,8 @@ class ProductStyleModal extends React.Component {
 
                 const product = {
                     description: this.props.stock.product.description,
-                    code: `${item.code} ${item.serialno}`,
+                    code: `${item.code}`,
+                    serialCode: `${item.code} ${item.serialno}`,
                     colour: colour.colour,
                     clrcode: colour.code,
                     size: size,
@@ -161,7 +164,8 @@ class ProductStyleModal extends React.Component {
 
                                     const product = {
                                         description: this.props.stock.product.description,
-                                        code: `${item.code} ${item.serialno}`,
+                                        code: `${item.code}`,
+                                        serialCode: `${item.code} ${item.serialno}`,
                                         colour: colour.colour,
                                         clrcode: colour.code,
                                         size: size,

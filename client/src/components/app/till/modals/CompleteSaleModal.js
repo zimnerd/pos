@@ -18,7 +18,11 @@ class CompleteSaleModal extends React.Component {
         tendered: 0.00,
         cash: 0.00,
         card: 0.00,
-        document: undefined
+        document: undefined,
+        email: "",
+        cell: "",
+        name: "",
+        disabled: false
     };
 
     handleClose = () => {
@@ -27,9 +31,14 @@ class CompleteSaleModal extends React.Component {
             tendered: 0.00,
             cash: 0.00,
             card: 0.00,
-            document: undefined
+            email: "",
+            cell: "",
+            name: "",
+            document: undefined,
+            disabled: false
         });
         this.props.actions.modal.closeCompleteSale();
+        this.props.actions.till.setDebtor();
     };
 
     componentDidUpdate(): void {
@@ -37,12 +46,9 @@ class CompleteSaleModal extends React.Component {
             this.setState({
                 cell: this.props.till.debtor.cell,
                 email: this.props.till.debtor.email,
-                name: this.props.till.debtor.name
+                name: this.props.till.debtor.name,
+                disabled: true
             });
-
-            this.state.cell = this.props.till.debtor.cell;
-            this.state.email = this.props.till.debtor.email;
-            this.state.name = this.props.till.debtor.name;
         }
     }
 
@@ -54,7 +60,7 @@ class CompleteSaleModal extends React.Component {
                 this.setState({
                     tendered: this.state.cash + this.state.card
                 });
-            } else {
+            } else if (this.state.method === "CC") {
                 this.setState({
                     tendered: this.props.till.totals.total.toFixed(2)
                 });
@@ -120,7 +126,7 @@ class CompleteSaleModal extends React.Component {
             type: this.props.till.laybye ? "LBC" : "CRN",
             method: method,
             stype: this.props.till.debtor ? this.props.till.debtor.stype : "Refund",
-            auth: "",
+            auth: this.props.auth.auth,
             debtor: this.props.till.debtor
         };
 
@@ -168,6 +174,7 @@ class CompleteSaleModal extends React.Component {
             this.props.actions.till.deactivateRefund();
             this.props.actions.till.setRefund();
 
+            this.props.actions.till.deactivateCredit();
             this.props.actions.till.deactivateLayBye();
             this.props.actions.till.deactivateReturns();
             this.props.actions.till.deactivateExchange();
@@ -197,7 +204,7 @@ class CompleteSaleModal extends React.Component {
             type: this.props.till.laybye ? "L/B" : "INV",
             stype: this.props.till.laybye ? "Lay-Bye" : this.props.till.debtor ? this.props.till.debtor.stype : method,
             method: method,
-            auth: "",
+            auth: this.props.auth.auth,
             debtor: this.props.till.debtor
         };
 
@@ -226,6 +233,8 @@ class CompleteSaleModal extends React.Component {
                 });
                 this.props.actions.modal.openTransactionComplete();
 
+                this.props.actions.till.setDebtor();
+                this.props.actions.till.deactivateCredit();
                 this.props.actions.till.deactivateLayBye();
                 this.props.actions.till.deactivateReturns();
                 this.props.actions.till.deactivateExchange();
@@ -358,18 +367,18 @@ class CompleteSaleModal extends React.Component {
                         <div className="form-group">
                             <label>Name:</label>
                             <input type="text" className="form-control" name="name" value={this.state.name}
-                                   onChange={this.handleText}/>
+                                   onChange={this.handleText} disabled={this.state.disabled}/>
                         </div>
                         <div className="form-group">
                             <label>Cell Number:</label>
                             <input type="text" className="form-control" name="cell" value={this.state.cell}
-                                   onChange={this.handleText}/>
+                                   onChange={this.handleText} disabled={this.state.disabled}/>
                             {this.props.auth.errors['person.cell'] && <p>{this.props.auth.errors['person.cell'][0]}</p>}
                         </div>
                         <div className="form-group">
                             <label>Email Address:</label>
                             <input type="email" className="form-control" name="email" value={this.state.email}
-                                   onChange={this.handleText}/>
+                                   onChange={this.handleText} disabled={this.state.disabled}/>
                             {this.props.auth.errors['person.email'] &&
                             <p>{this.props.auth.errors['person.email'][0]}</p>}
                         </div>

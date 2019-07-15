@@ -8,6 +8,7 @@ import * as modalActions from "../../../redux/actions/modal.action";
 import * as tillActions from "../../../redux/actions/till.action";
 import * as stockActions from "../../../redux/actions/stock.action";
 import * as settingsActions from "../../../redux/actions/settings.action";
+import * as authActions from "../../../redux/actions/auth.action";
 
 import './Till.scss';
 
@@ -48,6 +49,7 @@ class Till extends React.Component {
         super(props);
         this.props.actions.till.setTransactions();
         this.props.actions.till.setCombos();
+        this.props.actions.auth.setAuth();
     }
 
     componentDidMount = () => {
@@ -415,7 +417,8 @@ function mapDispatchToProps(dispatch) {
             modal: bindActionCreators(modalActions, dispatch),
             till: bindActionCreators(tillActions, dispatch),
             settings: bindActionCreators(settingsActions, dispatch),
-            stock: bindActionCreators(stockActions, dispatch)
+            stock: bindActionCreators(stockActions, dispatch),
+            auth: bindActionCreators(authActions, dispatch)
         }
     };
 }

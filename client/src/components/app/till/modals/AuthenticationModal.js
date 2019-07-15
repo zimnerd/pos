@@ -7,6 +7,7 @@ import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
+import * as authActions from "../../../../redux/actions/auth.action";
 
 import './AuthenticationModal.scss';
 
@@ -42,6 +43,7 @@ class AuthenticationModal extends React.Component {
                 if (await this.activate(this.props.till.command)) {
                     await this.props.actions.till.activateExchange();
                     this.props.mapTransactions();
+                    this.props.actions.auth.setAuth(this.state.username);
                 }
                 break;
             case "staff":
@@ -49,12 +51,14 @@ class AuthenticationModal extends React.Component {
                     await this.props.actions.till.activateStaff();
                     await this.props.mapTransactions();
                     await this.loadStaffDebtors();
+                    this.props.actions.auth.setAuth(this.state.username);
                 }
                 break;
             case "credit":
                 if (await this.activate(this.props.till.command)) {
                     await this.props.actions.till.activateCredit();
                     this.props.mapTransactions();
+                    this.props.actions.auth.setAuth(this.state.username);
                 }
                 break;
             default:
@@ -191,7 +195,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
-            till: bindActionCreators(tillActions, dispatch)
+            till: bindActionCreators(tillActions, dispatch),
+            auth: bindActionCreators(authActions, dispatch)
         }
     };
 }

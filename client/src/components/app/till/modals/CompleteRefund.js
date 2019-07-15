@@ -23,6 +23,7 @@ class CompleteRefund extends React.Component {
         this.props.actions.till.deactivateRefund();
         this.props.actions.till.setRefund();
 
+        this.props.actions.till.deactivateCredit();
         this.props.actions.till.deactivateLayBye();
         this.props.actions.till.deactivateReturns();
         this.props.actions.till.deactivateExchange();
@@ -58,7 +59,7 @@ class CompleteRefund extends React.Component {
             type: this.props.till.laybye ? "LBC" : "CRN",
             method: "Cash",
             stype: "Refund",
-            auth: ""
+            auth: this.props.auth.auth
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);

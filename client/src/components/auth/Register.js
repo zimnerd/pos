@@ -24,7 +24,11 @@ class Register extends React.Component {
         event.preventDefault();
         this.props.actions.errorReset();
 
-        axios.post('/user/register', this.state)
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.post('/user/register', this.state, { headers })
             .then(response => {
                 console.log(response);
                 toastr.success('You have been registered successfully!', 'Register User');

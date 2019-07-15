@@ -216,22 +216,22 @@ class TransactionController extends Controller
                     $queryBuilder->where('code', $dailyTransaction->STYLE)
                         ->where('serialno', $dailyTransaction->SERIALNO);
                     /**
-                     * @var Handset $item
+                     * @var Handset $serialObject
                      */
-                    $item = $queryBuilder->first();
+                    $serialObject = $queryBuilder->first();
 
-                    if (!$item) {
+                    if (!$serialObject) {
                         $queryBuilder = Airtime::query();
                         $queryBuilder->where('code', $dailyTransaction->STYLE)
                             ->where('serialno', $dailyTransaction->SERIALNO);
                         /**
-                         * @var Airtime $item
+                         * @var Airtime $serialObject
                          */
-                        $item = $queryBuilder->first();
+                        $serialObject = $queryBuilder->first();
                     }
 
-                    $item->solddate = new \DateTime();
-                    $item->save();
+                    $serialObject->solddate = new \DateTime();
+                    $serialObject->save();
                 }
 
                 $stockTransaction = new StockTransaction();

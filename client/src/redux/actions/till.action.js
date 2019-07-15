@@ -129,7 +129,7 @@ export function retrieveDebtors(debtors = []) {
     return { type: RETRIEVE_DEBTORS, debtors }
 }
 
-export function setDebtor(debtor = {}) {
+export function setDebtor(debtor = undefined) {
     return { type: SET_DEBTOR, debtor }
 }
 

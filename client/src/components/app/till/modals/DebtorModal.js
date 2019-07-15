@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, FormControl, Modal } from "react-bootstrap";
+import { Button, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import Form from "react-bootstrap/Form";
 import Table from "react-bootstrap/Table";
@@ -140,9 +140,6 @@ class DebtorModal extends React.Component {
                             }
                             </tbody>
                         </Table>
-                        <div className="text-center">
-                            <Button variant="secondary" onClick={() => this.setState({ new: true })}>Add New</Button>
-                        </div>
                     </Form>
                     }
                     {this.state.new &&

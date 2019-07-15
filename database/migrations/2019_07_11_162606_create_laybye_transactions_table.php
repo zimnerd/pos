@@ -17,6 +17,7 @@ class CreateLaybyeTransactionsTable extends Migration
         Schema::create('lbdet', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('invNo');
+            $table->decimal('invAmt');
             $table->string('cheqNo')->nullable();
             $table->date('invDate');
             $table->date('dueDate');

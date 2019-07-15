@@ -1,4 +1,11 @@
-import { ERROR_RESET, LOGIN_USER, LOGOUT_USER, RETRIEVE_ROLES, VALIDATION_ERROR } from "../constants/auth.contants";
+import {
+    ERROR_RESET,
+    LOGIN_USER,
+    LOGOUT_USER,
+    RETRIEVE_ROLES,
+    SET_AUTH,
+    VALIDATION_ERROR
+} from "../constants/auth.contants";
 
 export default function authReducer(state = { errors: [] }, action) {
     switch (action.type) {
@@ -12,6 +19,8 @@ export default function authReducer(state = { errors: [] }, action) {
             return { ...state, errors: action.errors };
         case RETRIEVE_ROLES:
             return { ...state, roles: action.roles };
+        case SET_AUTH:
+            return { ...state, auth: action.auth };
         default:
             return state;
     }

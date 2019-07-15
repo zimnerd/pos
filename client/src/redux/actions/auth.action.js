@@ -1,4 +1,11 @@
-import { ERROR_RESET, LOGIN_USER, LOGOUT_USER, RETRIEVE_ROLES, VALIDATION_ERROR } from "../constants/auth.contants";
+import {
+    ERROR_RESET,
+    LOGIN_USER,
+    LOGOUT_USER,
+    RETRIEVE_ROLES,
+    SET_AUTH,
+    VALIDATION_ERROR
+} from "../constants/auth.contants";
 
 export function loginUser(token) {
     return { type: LOGIN_USER, token };
@@ -18,4 +25,8 @@ export function errorReset(errors = []) {
 
 export function retrieveRoles(roles = []) {
     return { type: RETRIEVE_ROLES, roles };
+}
+
+export function setAuth(auth = "") {
+    return { type: SET_AUTH, auth };
 }
