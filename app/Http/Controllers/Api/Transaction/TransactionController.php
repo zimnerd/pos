@@ -47,16 +47,28 @@ class TransactionController extends Controller
      */
     public function createTransaction(Request $request)
     {
-        $this->validate($request, [
-            'shop' => 'required',
-            'till' => 'required',
-            'transactions' => 'required',
-            'totals' => 'required',
-            'person.email' => 'nullable | email',
-            'person.cell' => 'nullable | max:10 | min:10'
-        ]);
-
         $transaction = $request->all();
+        if ($transaction["type"] === "L/B") {
+            $this->validate($request, [
+                'shop' => 'required',
+                'till' => 'required',
+                'transactions' => 'required',
+                'totals' => 'required',
+                'person.name' => 'required',
+                'person.email' => 'required | email',
+                'person.cell' => 'required | max:10 | min:10',
+                'person.idNo' => 'required'
+            ]);
+        } else {
+            $this->validate($request, [
+                'shop' => 'required',
+                'till' => 'required',
+                'transactions' => 'required',
+                'totals' => 'required',
+                'person.email' => 'nullable | email',
+                'person.cell' => 'nullable | max:10 | min:10'
+            ]);
+        }
 
         try {
             DB::beginTransaction();
@@ -94,8 +106,8 @@ class TransactionController extends Controller
                     }
                     break;
                 case "L/B":
-                    $laybyeNo = 'LB'. $docNo;
                     $docNo = $till['tillno'] . $till["LbNo"];
+                    $laybyeNo = 'LB'. $docNo;
                     break;
             }
 
@@ -322,11 +334,14 @@ class TransactionController extends Controller
 
                 if (isset($person)) {
                     $laybye->name = $person["name"];
+                    $laybye->idNo = $person["idNo"];
+                    $laybye->cell = $person["cell"];
+                    $laybye->email = $person["email"];
                 }
 
                 $laybye->appDate = \date("Y-m-d");
-                $laybye->balance = $totals["total"] * -1;
-                $laybye->current = $totals["total"] * -1;
+                $laybye->balance = $totals["total"] - $transaction["tendered"];
+                $laybye->current = $totals["total"] - $transaction["tendered"];
 
                 $laybye->save();
 
@@ -335,7 +350,7 @@ class TransactionController extends Controller
                 $laybyeTransaction->invNo = $laybyeNo;
                 $laybyeTransaction->invDate = \date("Y-m-d");
                 $laybyeTransaction->dueDate = \date("Y-m-d");
-                $laybyeTransaction->invAmt = $totals["total"];
+                $laybyeTransaction->invAmt = $totals["total"] - $transaction["tendered"];
                 $laybyeTransaction->type = $transaction["type"];
                 $laybyeTransaction->remarks = "Lay-Bye";
                 $laybyeTransaction->period = $shop['Period'];
@@ -344,6 +359,21 @@ class TransactionController extends Controller
                 $laybyeTransaction->dts = new \DateTime();
 
                 $laybyeTransaction->save();
+
+                $depositTransaction = new LaybyeTransaction();
+
+                $depositTransaction->invNo = $laybyeNo . "-DEP";
+                $depositTransaction->invDate = \date("Y-m-d");
+                $depositTransaction->dueDate = \date("Y-m-d");
+                $depositTransaction->invAmt = $transaction["tendered"];
+                $depositTransaction->type = $transaction["type"];
+                $depositTransaction->remarks = "Deposit";
+                $depositTransaction->period = $shop['Period'];
+                $depositTransaction->vatPer = $shop['Period'];
+                $depositTransaction->crnref = $docNo;
+                $depositTransaction->dts = new \DateTime();
+
+                $depositTransaction->save();
             }
 
             if (isset($debtorNo)) {

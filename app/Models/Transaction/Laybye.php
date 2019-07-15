@@ -39,6 +39,9 @@ class Laybye extends Model
     public $fillable = [
         'no',
         'name',
+        'email',
+        'cell',
+        'idNo',
         'appDate',
         'balance',
         'current'

@@ -18,6 +18,9 @@ class CreateLaybyesTable extends Migration
             $table->bigIncrements('id');
             $table->string('no');
             $table->string('name')->nullable();
+            $table->string('email')->nullable();
+            $table->string('cell')->nullable();
+            $table->string('idNo')->nullable();
             $table->date('appDate');
             $table->decimal('balance');
             $table->decimal('current');

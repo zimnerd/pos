@@ -22,7 +22,10 @@ class CompleteSaleModal extends React.Component {
         email: "",
         cell: "",
         name: "",
-        disabled: false
+        idNo: "",
+        disabled: false,
+        allowZero: false,
+        search: false
     };
 
     handleClose = () => {
@@ -34,6 +37,7 @@ class CompleteSaleModal extends React.Component {
             email: "",
             cell: "",
             name: "",
+            idNo: "",
             document: undefined,
             disabled: false
         });
@@ -47,6 +51,7 @@ class CompleteSaleModal extends React.Component {
                 cell: this.props.till.debtor.cell,
                 email: this.props.till.debtor.email,
                 name: this.props.till.debtor.name,
+                idNo: this.props.till.debtor.idNo,
                 disabled: true
             });
         }
@@ -165,10 +170,11 @@ class CompleteSaleModal extends React.Component {
 
     completeSale = () => {
         if (this.props.till.refund) {
-            if (this.props.till.refundData) {
+            if (this.props.till.refundData.found) {
                 this.saveRefund();
-            } else {
                 this.refundTransaction();
+            } else {
+                this.saveRefund();
             }
 
             this.props.actions.till.deactivateRefund();
@@ -195,7 +201,8 @@ class CompleteSaleModal extends React.Component {
             person: {
                 name: this.state.name,
                 cell: this.state.cell,
-                email: this.state.email
+                email: this.state.email,
+                idNo: this.state.idNo
             },
             shop: this.props.settings.shop,
             till: this.props.settings.till,
@@ -205,7 +212,8 @@ class CompleteSaleModal extends React.Component {
             stype: this.props.till.laybye ? "Lay-Bye" : this.props.till.debtor ? this.props.till.debtor.stype : method,
             method: method,
             auth: this.props.auth.auth,
-            debtor: this.props.till.debtor
+            debtor: this.props.till.debtor,
+            tendered: this.state.tendered
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -312,6 +320,45 @@ class CompleteSaleModal extends React.Component {
             });
     };
 
+    findPerson = () => {
+        if (this.state.search) {
+            const headers = {
+                'Authorization': 'Bearer ' + this.props.auth.token
+            };
+
+            axios.get(`/people/${this.state.idNo}`, { headers })
+                .then(response => {
+                    console.log(response.data);
+
+                    toastr.success("Person found!", "Find Person");
+
+                    this.setState({
+                        cell: response.data.person.cell,
+                        email: response.data.person.email,
+                        name: response.data.person.name,
+                        idNo: response.data.person.idNo
+                    });
+                })
+                .catch(error => {
+                    console.log(error);
+                    if (error.response.status === 401) {
+                        toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                    } else if (error.response.status === 404) {
+                        toastr.error("A person was not found with the specified ID number.", "Find Person");
+                    } else {
+                        toastr.error("Unknown error.");
+                    }
+                });
+            this.setState({
+                search: false
+            });
+        } else {
+            this.setState({
+                search: true
+            });
+        }
+    };
+
     render() {
         return (
             <Modal show={this.props.modal.complete} onHide={this.handleClose}>
@@ -328,6 +375,9 @@ class CompleteSaleModal extends React.Component {
                     <Form>
                         <label>Total Invoice
                             Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
+                        {this.props.till.laybye &&
+                        <label>Deposit Amount: <span>{this.state.tendered.toFixed(2)}</span></label>
+                        }
                         <div className="form-group">
                             <label>Payment Method:</label>
                             <span>Cash</span>
@@ -364,12 +414,34 @@ class CompleteSaleModal extends React.Component {
                             <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
                         </label>
                         }
-                        {!this.props.till.refund &&
+
+                        {!this.props.till.refund && this.state.search &&
+                        <Form>
+                            <p>Enter an ID Number to search by: </p>
+                            <div className="form-group">
+                                <label>ID Number:</label>
+                                <input type="text" className="form-control" name="idNo" value={this.state.idNo}
+                                       onChange={this.handleText}/>
+                            </div>
+                            <Button onClick={this.findPerson}>Search</Button>
+                        </Form>
+                        }
+                        {!this.state.search && !this.props.till.refund &&
                             <div>
+                                {this.props.till.laybye &&
+                                <Button onClick={this.findPerson}><i className="fa fa-search"/></Button>
+                                }
                                 <div className="form-group">
                                     <label>Name:</label>
                                     <input type="text" className="form-control" name="name" value={this.state.name}
                                            onChange={this.handleText} disabled={this.state.disabled}/>
+                                    {this.props.auth.errors['person.name'] && <p>{this.props.auth.errors['person.name'][0]}</p>}
+                                </div>
+                                <div className="form-group">
+                                    <label>ID Number:</label>
+                                    <input type="text" className="form-control" name="idNo" value={this.state.idNo}
+                                           onChange={this.handleText} disabled={this.state.disabled}/>
+                                    {this.props.auth.errors['person.idNo'] && <p>{this.props.auth.errors['person.idNo'][0]}</p>}
                                 </div>
                                 <div className="form-group">
                                     <label>Cell Number:</label>
@@ -395,7 +467,7 @@ class CompleteSaleModal extends React.Component {
                     </Button>
                     {this.props.till.transactions &&
                     this.props.till.totals &&
-                    this.state.tendered >= this.props.till.totals.total &&
+                    (this.props.till.laybye || this.props.till.credit || this.state.tendered >= this.props.till.totals.total) &&
                     this.props.till.transactions.length > 0 &&
                     <Button variant="primary" onClick={this.completeSale}>
                         Update & Print

@@ -35,6 +35,14 @@ Route::group(["prefix" => "products"], function () {
 
 });
 
+Route::group(["prefix" => "people"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('{idNumber}', 'Api\PersonController@retrievePerson');
+    });
+
+});
+
 Route::group(["prefix" => "settings"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
