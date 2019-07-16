@@ -24,5 +24,6 @@ export const DEACTIVATE_CREDIT = "DEACTIVATE_CREDIT";
 export const RETRIEVE_DEBTORS = "RETRIEVE_DEBTORS";
 export const SET_DEBTOR = "SET_DEBTOR";
 export const NEXT_DEBTOR = "NEXT_DEBTOR";
+export const SET_SALES = "SET_SALES";
 
 

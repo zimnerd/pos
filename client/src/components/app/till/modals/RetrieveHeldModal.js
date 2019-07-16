@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Form, Modal } from "react-bootstrap";
+import { Button, Form, Modal, Table } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import axios from "axios";
@@ -16,6 +16,36 @@ class RetrieveHeldModal extends React.Component {
         number: ""
     };
 
+    componentDidMount = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/sales`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                let actualSales = [];
+                for (let key of Object.keys(response.data.lineItems)) {
+                    actualSales.push(response.data.lineItems[key]);
+                }
+
+                this.props.actions.till.setSales(actualSales);
+                toastr.success("Held transactions retrieved!", "Retrieve Held Transactions");
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    this.props.actions.till.setSales();
+                    console.log("No held sales found.")
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
     handleChange = event => {
         this.setState({
             number: event.target.value
@@ -26,50 +56,58 @@ class RetrieveHeldModal extends React.Component {
         this.props.actions.modal.closeRetrieveHeld();
     };
 
-    retrieve = () => {
-        const headers = {
-            'Authorization': 'Bearer ' + this.props.auth.token
+    selectSale = sale => {
+        this.props.actions.till.setTransactions(sale.transactions);
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0,
+            items: 0
         };
+        for (let x = 0, len = sale.transactions.length; x < len; x++) {
+            let saleItem = sale.transactions[x];
+            totals = this.props.mapLineItem(saleItem, totals);
+            totals.items++;
+        }
 
-        axios.get(`/transactions/hold/${this.state.number}`, { headers })
-            .then(response => {
-                console.log(response.data);
-                this.props.actions.till.setTransactions(response.data.lineItems.transactions);
-                this.handleClose();
-
-                toastr.success("Held transactions retrieved!", "Retrieve Held Transaction");
-            })
-            .catch(error => {
-                console.log(error);
-                if (error.response.status === 401) {
-                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
-                } else {
-                    toastr.error("Unknown error.");
-                }
-            });
+        this.props.actions.till.setTotals(totals);
+        this.handleClose();
     };
 
     render() {
         return (
             <Modal show={this.props.modal.retrieveHeld} onHide={this.handleClose}>
                 <Modal.Header closeButton>
-                    <Modal.Title>Retrieve Held Transaction</Modal.Title>
+                    <Modal.Title>Retrieve Held Transactions</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <div className="form-group">
-                            <label>Transaction Number:</label>
-                            <input type="text" className="form-control" onChange={this.handleChange}
-                                   value={this.state.number}/>
-                        </div>
+                        <p>Select a held transaction:</p>
+                        <Table>
+                            <thead>
+                            <tr>
+                                <th>Doc Num</th>
+                                <th>Type</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.props.till.sales && this.props.till.sales.map((item, index) => {
+                                return (
+                                    <tr key={index} onClick={() => this.selectSale(item)}>
+                                        <td>{item.docnum}</td>
+                                        <td>{item.type}</td>
+                                    </tr>
+                                )
+                            })
+                            }
+                            </tbody>
+                        </Table>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="secondary" onClick={this.handleClose}>
                         Close
-                    </Button>
-                    <Button variant="primary" onClick={this.retrieve}>
-                        Retrieve
                     </Button>
                 </Modal.Footer>
             </Modal>

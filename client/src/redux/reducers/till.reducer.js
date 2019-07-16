@@ -10,7 +10,7 @@ import {
     DEACTIVATE_STAFF, NEXT_DEBTOR, RESET_COMPLETED_TRANSACTION,
     RESET_TOTALS,
     RESET_TRANSACTIONS, RETRIEVE_DEBTORS,
-    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_COMPLETED_TRANSACTION, SET_DEBTOR, SET_REFUND,
+    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_COMPLETED_TRANSACTION, SET_DEBTOR, SET_REFUND, SET_SALES,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS, VALIDATION_ERROR
@@ -70,6 +70,8 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, debtor: action.debtor };
         case NEXT_DEBTOR:
             return { ...state, next: action.next };
+        case SET_SALES:
+            return { ...state, sales: action.sales };
         default:
             return state;
     }

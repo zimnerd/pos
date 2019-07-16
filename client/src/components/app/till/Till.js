@@ -388,7 +388,7 @@ class Till extends React.Component {
                 <OtherModal/>
                 <PaymentOptionsModal/>
                 <TransactionId/>
-                <RetrieveHeldModal/>
+                <RetrieveHeldModal mapLineItem={this.mapHeldItems}/>
                 <ComboModal/>
                 <RefundModal mapLineItem={this.mapHeldItems}/>
                 <RefundDetailsModal/>

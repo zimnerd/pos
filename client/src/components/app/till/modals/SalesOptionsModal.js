@@ -7,6 +7,7 @@ import toastr from "toastr";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
+import * as settingsActions from "../../../../redux/actions/settings.action";
 
 import './SalesOptionsModal.scss';
 
@@ -54,7 +55,7 @@ class SalesOptionsModal extends React.Component {
 
         this.props.actions.till.setTransactions();
 
-        axios.post(`/transactions/hold`, request, { headers })
+        axios.post(`/sales`, request, { headers })
             .then(response => {
                 console.log(response.data);
                 this.props.actions.till.setTransactionId(response.data.sale);
@@ -63,11 +64,64 @@ class SalesOptionsModal extends React.Component {
                 toastr.success("Transaction Held!", "Hold Transaction");
 
                 this.saveSettings();
+                this.loadSales();
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 401) {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
+    saveSettings = () => {
+        let till = this.props.settings.till;
+        till.InvNo = Number(till.InvNo) + 1;
+
+        axios.post(`/settings/till/${this.props.settings.number}`, till)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till Details updated!", "Update Settings");
+
+                this.props.actions.settings.saveTill(response.data.till);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
+    loadSales = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/sales`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                let actualSales = [];
+                for (let key of Object.keys(response.data.lineItems)) {
+                    actualSales.push(response.data.lineItems[key]);
+                }
+
+                this.props.actions.till.setSales(actualSales);
+                toastr.success("Held transactions retrieved!", "Retrieve Held Transactions");
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    this.props.actions.till.setSales();
+                    console.log("No held sales found.")
                 } else {
                     toastr.error("Unknown error.");
                 }
@@ -144,7 +198,8 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
-            till: bindActionCreators(tillActions, dispatch)
+            till: bindActionCreators(tillActions, dispatch),
+            settings: bindActionCreators(settingsActions, dispatch)
         }
     };
 }

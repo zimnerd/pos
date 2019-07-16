@@ -71,6 +71,17 @@ Route::group(["prefix" => "debtors"], function () {
 
 });
 
+
+Route::group(["prefix" => "sales"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('', 'Api\Transaction\SaleController@getSales');
+        Route::get('{id}', 'Api\Transaction\SaleController@retrieveSale');
+        Route::post('', 'Api\Transaction\SaleController@holdSale');
+    });
+
+});
+
 Route::group(["prefix" => "transactions"], function () {
 
     Route::get('{id}/print', 'Api\Transaction\TransactionController@printReceipt');
@@ -79,9 +90,6 @@ Route::group(["prefix" => "transactions"], function () {
 
         Route::post('', 'Api\Transaction\TransactionController@createTransaction');
         Route::get('{id}', 'Api\Transaction\TransactionController@retrieveTransaction');
-
-        Route::post('hold', 'Api\Transaction\TransactionController@holdSale');
-        Route::get('hold/{id}', 'Api\Transaction\TransactionController@retrieveSale');
 
         Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
         Route::get('{id}/refunds', 'Api\Transaction\TransactionController@retrieveRefund');
