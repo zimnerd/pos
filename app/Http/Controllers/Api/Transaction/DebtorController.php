@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Api\Transaction;
 
 use App\Debtor;
+use App\DebtorTransaction;
 use App\Http\Controllers\Controller;
+use App\Till;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Input;
 
@@ -30,6 +32,99 @@ class DebtorController extends Controller
         }
 
         return response()->json(['debtors' => $debtors, "next" => $count + 1], $this->successStatus);
+    }
+
+    /**
+     * Retrieves a debtor
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveDebtor($id)
+    {
+        $type = Input::get('stype');
+        $debtor = Debtor::query()
+            ->where('stype', $type)
+            ->where('no', $id)
+            ->first();
+
+        if (!$debtor) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        return response()->json(['debtor' => $debtor], $this->successStatus);
+    }
+
+    /**
+     * Pays the account of a debtor
+     *
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function payDebtor($id, Request $request)
+    {
+        $this->validate($request, [
+            'till' => 'required',
+            'shop' => 'required',
+            'account' => 'required'
+        ]);
+
+        /**
+         * @var Debtor $debtorValues
+         */
+        $debtorValues = $request->all();
+
+        $debtor = Debtor::query()
+            ->where('no', $id)
+            ->first();
+
+        if (!$debtor) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $account = $debtorValues['account'];
+
+        $debtor->current = $account['current'];
+        $debtor->balance = $account['balance'];
+        $debtor->save();
+
+        $till = $debtorValues['till'];
+
+        $tillInfo = Till::query()
+            ->where('tillno', $till['tillno'])
+            ->where('ColName', 'CrnNo')
+            ->first();
+
+        if (!$tillInfo) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $docNo = (string) (((int) $tillInfo->ColValue) + 1);
+
+        $tillInfo->ColValue = $docNo;
+        $tillInfo->save();
+
+        $docNo = '1' . $docNo;
+
+        $shop = $debtorValues['shop'];
+
+        $debtorTransaction = new DebtorTransaction();
+
+        $debtorTransaction->invNo = $docNo;
+        $debtorTransaction->invAmt = $debtorValues["tendered"];
+        $debtorTransaction->invDate = \date("Y-m-d");
+        $debtorTransaction->dueDate = \date("Y-m-d");
+        $debtorTransaction->type = "CRN";
+        $debtorTransaction->remarks = "Credit Payment";
+        $debtorTransaction->period = $shop['Period'];
+        $debtorTransaction->vatPer = $shop['Period'];
+        $debtorTransaction->crnref = $docNo;
+        $debtorTransaction->dts = new \DateTime();
+
+        $debtorTransaction->save();
+
+        return response()->json(['debtor' => $debtor], $this->successStatus);
     }
 
     /**

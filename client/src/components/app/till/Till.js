@@ -39,6 +39,8 @@ import TransactionCompleteModal from "./modals/TransactionCompleteModal";
 import RefundReasonModal from "./modals/RefundReasonModal";
 import DebtorModal from "./modals/DebtorModal";
 import LayByeCreditorModal from "./modals/LayByeCreditorModal";
+import ReceiptsModal from "./modals/ReceiptsModal";
+import ReceiptsPaymentModal from "./modals/receipts/ReceiptsPaymentModal";
 
 class Till extends React.Component {
 
@@ -156,7 +158,7 @@ class Till extends React.Component {
                 if (event.preventDefault) {
                     event.preventDefault();
                 }
-                this.openStyles(this.props.till.code);
+                this.props.actions.modal.openReceiptsModal();
                 break;
             case 122:
                 if (event.preventDefault) {
@@ -399,6 +401,8 @@ class Till extends React.Component {
                 <RefundReasonModal/>
                 <DebtorModal/>
                 <LayByeCreditorModal mapLineItem={this.mapHeldItems}/>
+                <ReceiptsModal/>
+                <ReceiptsPaymentModal/>
             </article>
         )
     }

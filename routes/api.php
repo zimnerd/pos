@@ -67,10 +67,21 @@ Route::group(["prefix" => "debtors"], function () {
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('', 'Api\Transaction\DebtorController@retrieveDebtors');
         Route::post('', 'Api\Transaction\DebtorController@saveDebtor');
+
+        Route::get('{id}', 'Api\Transaction\DebtorController@retrieveDebtor');
+        Route::post('{id}', 'Api\Transaction\DebtorController@payDebtor');
     });
 
 });
 
+Route::group(["prefix" => "laybyes"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('{id}', 'Api\Transaction\LaybyeController@retrieveLayBye');
+        Route::post('{id}', 'Api\Transaction\LaybyeController@payLayBye');
+    });
+
+});
 
 Route::group(["prefix" => "sales"], function () {
 

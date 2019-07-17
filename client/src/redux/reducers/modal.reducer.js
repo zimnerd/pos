@@ -7,12 +7,13 @@ import {
     CLOSE_COMPLETE_REFUND_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
-    CLOSE_DEBTOR_MODAL,
+    CLOSE_DEBTOR_MODAL, CLOSE_DEBTOR_RECEIPTS,
     CLOSE_LAY_BYE_CREDITOR,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
     CLOSE_PRODUCT_STYLE_MODAL,
     CLOSE_REASON_MODAL,
+    CLOSE_RECEIPTS_MODAL,
     CLOSE_REFUND_DETAILS_MODAL,
     CLOSE_REFUND_MODAL,
     CLOSE_RETRIEVE_HELD_MODAL,
@@ -28,12 +29,13 @@ import {
     OPEN_COMPLETE_REFUND_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
-    OPEN_DEBTOR_MODAL,
+    OPEN_DEBTOR_MODAL, OPEN_DEBTOR_RECEIPTS,
     OPEN_LAY_BYE_CREDITOR,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
     OPEN_PRODUCT_STYLE_MODAL,
     OPEN_REASON_MODAL,
+    OPEN_RECEIPTS_MODAL,
     OPEN_REFUND_DETAILS_MODAL,
     OPEN_REFUND_MODAL,
     OPEN_RETRIEVE_HELD_MODAL,
@@ -129,6 +131,14 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, creditor: action.creditor };
         case CLOSE_LAY_BYE_CREDITOR:
             return { ...state, creditor: action.creditor };
+        case OPEN_RECEIPTS_MODAL:
+            return { ...state, receipts: action.receipts };
+        case CLOSE_RECEIPTS_MODAL:
+            return { ...state, receipts: action.receipts };
+        case OPEN_DEBTOR_RECEIPTS:
+            return { ...state, debtorReceipts: action.debtorReceipts };
+        case CLOSE_DEBTOR_RECEIPTS:
+            return { ...state, debtorReceipts: action.debtorReceipts };
         default:
             return state;
     }
