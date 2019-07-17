@@ -129,16 +129,26 @@ class CompleteSaleModal extends React.Component {
         this.handleClose();
         this.props.actions.till.resetTotals();
         let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
+
+        let debtor;
+        if (this.props.till.laybye) {
+            debtor = {
+                no: this.props.till.refundData.invNo
+            };
+        } else {
+            debtor = this.props.till.debtor;
+        }
+
         let transaction = {
             shop: this.props.settings.shop,
             till: this.props.settings.till,
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
-            type: this.props.till.laybye ? "LBC" : "CRN",
+            type: "CRN",
             method: method,
             stype: this.props.till.debtor ? this.props.till.debtor.stype : "Refund",
             auth: this.props.auth.auth,
-            debtor: this.props.till.debtor,
+            debtor: debtor,
             tendered: this.state.tendered
         };
 

@@ -102,6 +102,7 @@ class TransactionController extends Controller
                     $refund = true;
                     if (isset($transaction['debtor'])) {
                         $debtorNo = $transaction['debtor']['no'];
+                        $laybyeNo = 'LB' . $debtorNo;
                     }
                     break;
                 case "L/B":
@@ -110,8 +111,8 @@ class TransactionController extends Controller
                     break;
                 case "LBC":
                     $docNo = $till['tillno'] . $till["LbNo"];
-                    $laybyeNo = 'LB' . $docNo;
                     if (isset($transaction['debtor'])) {
+                        $laybyeNo = $transaction['debtor']['no'];
                         $debtorNo = $transaction['debtor']['no'];
                         $itemDebtor = $transaction['debtor'];
                     }
@@ -274,7 +275,7 @@ class TransactionController extends Controller
                 $stockTransaction->VATAMT = $vat;
                 $stockTransaction->DISCAMT = $item['subtotal'] - $item['total'];
 
-                if ($transaction["type"] === "L/B") {
+                if ((isset($item['type']) && $item["type"] === "L/B") || $transaction["type"] === "L/B") {
                     $stockTransaction->AMT = $transaction['tendered'];
                 } else {
                     $stockTransaction->AMT = $item['total'];
@@ -343,8 +344,17 @@ class TransactionController extends Controller
 
             $this->savePerson($request, $docNo, $transaction["type"]);
 
-            if ($transaction["type"] === "L/B" || $transaction["type"] === "LBC") {
-                $laybye = new Laybye();
+            if (isset($laybyeNo)) {
+                if ($transaction["type"] === "LBC" || $transaction["type"] === "CRN") {
+                    $laybye = Laybye::query()->where("no", $laybyeNo)->first();
+                } else {
+                    $laybye = new Laybye();
+                }
+
+                if ($transaction["type"] === "CRN") {
+                    unset($debtorNo);
+                }
+
                 $laybye->no = $laybyeNo;
 
                 if (isset($person)) {
