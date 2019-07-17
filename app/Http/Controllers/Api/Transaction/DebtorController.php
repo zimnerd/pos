@@ -70,8 +70,11 @@ class DebtorController extends Controller
         $debtor = new Debtor($debtor);
         $debtor->paytype = "Cash";
         $debtor->appDate = \date('Y-m-d');
-        $debtor->balance = 0.0;
-        $debtor->current = 0.0;
+
+        if ($debtor->balance === null) {
+            $debtor->balance = 0.0;
+            $debtor->current = 0.0;
+        }
 
         $debtor->save();
 

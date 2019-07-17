@@ -6,7 +6,7 @@ import {
     CLOSE_COMPLETE_EXCHANGE_MODAL,
     CLOSE_COMPLETE_REFUND_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
-    CLOSE_CREDIT_MODAL, CLOSE_DEBTOR_MODAL,
+    CLOSE_CREDIT_MODAL, CLOSE_DEBTOR_MODAL, CLOSE_LAY_BYE_CREDITOR,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
     CLOSE_PRODUCT_STYLE_MODAL, CLOSE_REASON_MODAL,
@@ -24,7 +24,7 @@ import {
     OPEN_COMPLETE_EXCHANGE_MODAL,
     OPEN_COMPLETE_REFUND_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
-    OPEN_CREDIT_MODAL, OPEN_DEBTOR_MODAL,
+    OPEN_CREDIT_MODAL, OPEN_DEBTOR_MODAL, OPEN_LAY_BYE_CREDITOR,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
     OPEN_PRODUCT_STYLE_MODAL, OPEN_REASON_MODAL,
@@ -195,4 +195,12 @@ export function openDebtorModal(debtor = true) {
 
 export function closeDebtorModal(debtor = false) {
     return { type: CLOSE_DEBTOR_MODAL, debtor }
+}
+
+export function openLayByeCreditor(creditor = true) {
+    return { type: OPEN_LAY_BYE_CREDITOR, creditor }
+}
+
+export function closeLayByeCreditor(creditor = false) {
+    return { type: CLOSE_LAY_BYE_CREDITOR, creditor }
 }

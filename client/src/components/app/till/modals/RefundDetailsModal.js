@@ -26,6 +26,7 @@ class RefundDetailsModal extends React.Component {
     };
 
     handleClose = () => {
+        this.setState({ updated: false });
         this.props.actions.modal.closeRefundDetails();
     };
 

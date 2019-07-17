@@ -38,6 +38,7 @@ import CompleteExchange from "./modals/CompleteExchange";
 import TransactionCompleteModal from "./modals/TransactionCompleteModal";
 import RefundReasonModal from "./modals/RefundReasonModal";
 import DebtorModal from "./modals/DebtorModal";
+import LayByeCreditorModal from "./modals/LayByeCreditorModal";
 
 class Till extends React.Component {
 
@@ -397,6 +398,7 @@ class Till extends React.Component {
                 <TransactionCompleteModal/>
                 <RefundReasonModal/>
                 <DebtorModal/>
+                <LayByeCreditorModal mapLineItem={this.mapHeldItems}/>
             </article>
         )
     }

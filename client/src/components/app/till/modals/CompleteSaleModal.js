@@ -138,7 +138,8 @@ class CompleteSaleModal extends React.Component {
             method: method,
             stype: this.props.till.debtor ? this.props.till.debtor.stype : "Refund",
             auth: this.props.auth.auth,
-            debtor: this.props.till.debtor
+            debtor: this.props.till.debtor,
+            tendered: this.state.tendered
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -176,6 +177,12 @@ class CompleteSaleModal extends React.Component {
 
     completeSale = () => {
         if (this.props.till.refund) {
+            if (this.props.till.laybye && this.state.tendered < this.props.till.totals.total) {
+                this.props.actions.modal.openLayByeCreditor();
+                this.props.actions.modal.closeCompleteSale();
+                return;
+            }
+
             if (this.props.till.refundData.found) {
                 this.saveRefund();
                 this.refundTransaction();
@@ -387,7 +394,7 @@ class CompleteSaleModal extends React.Component {
                     <Form>
                         <label>Total Invoice
                             Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
-                        {(this.props.till.laybye || this.props.till.credit) &&
+                        {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
                         <label>Deposit Amount: <span>{Number(this.state.tendered).toFixed(2)}</span></label>
                         }
                         <div className="form-group">
