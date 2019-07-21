@@ -144,7 +144,7 @@ class CompleteSaleModal extends React.Component {
             till: this.props.settings.till,
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
-            type: "CRN",
+            type: this.props.till.laybye ? "LBC" : "CRN",
             method: method,
             stype: this.props.till.debtor ? this.props.till.debtor.stype : "Refund",
             auth: this.props.auth.auth,

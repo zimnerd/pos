@@ -2,18 +2,24 @@
 
 namespace App\Http\Controllers\Api\Transaction;
 
+use App\DailySummary;
 use App\Debtor;
 use App\DebtorTransaction;
 use App\Http\Controllers\Controller;
 use App\Till;
+use App\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\Log;
 
 class DebtorController extends Controller
 {
     public $successStatus = 200;
     public $createdStatus = 201;
     public $notFoundStatus = 404;
+    public $errorStatus = 500;
 
     /**
      * Retrieves all debtors
@@ -70,62 +76,119 @@ class DebtorController extends Controller
             'account' => 'required'
         ]);
 
-        /**
-         * @var Debtor $debtorValues
-         */
-        $debtorValues = $request->all();
+        try {
+            DB::beginTransaction();
 
-        $debtor = Debtor::query()
-            ->where('no', $id)
-            ->first();
+            /**
+             * @var User $user
+             */
+            $user = Auth::user();
 
-        if (!$debtor) {
-            return response()->json([], $this->notFoundStatus);
+            /**
+             * @var Debtor $debtorValues
+             */
+            $debtorValues = $request->all();
+
+            $debtor = Debtor::query()
+                ->where('no', $id)
+                ->first();
+
+            if (!$debtor) {
+                return response()->json([], $this->notFoundStatus);
+            }
+
+            $account = $debtorValues['account'];
+
+            $debtor->current = $account['current'];
+            $debtor->balance = $account['balance'];
+            $debtor->save();
+
+            $till = $debtorValues['till'];
+
+            $tillInfo = Till::query()
+                ->where('tillno', $till['tillno'])
+                ->where('ColName', 'CrnNo')
+                ->first();
+
+            if (!$tillInfo) {
+                return response()->json([], $this->notFoundStatus);
+            }
+
+            $docNo = (string)(((int)$tillInfo->ColValue) + 1);
+
+            $tillInfo->ColValue = $docNo;
+            $tillInfo->save();
+
+            $docNo = '1' . $docNo;
+
+            $shop = $debtorValues['shop'];
+
+            $tillInfo = Till::query()
+                ->where('tillno', $till['tillno'])
+                ->where('ColName', 'DepNo')
+                ->first();
+
+            if (!$tillInfo) {
+                return response()->json([], $this->notFoundStatus);
+            }
+
+            $depNo = (string)(((int)$tillInfo->ColValue) + 1);
+            $tillInfo->ColValue = $depNo;
+            $tillInfo->save();
+
+            $depNo = '1' . $depNo;
+
+            $debtorTransaction = new DebtorTransaction();
+
+            $debtorTransaction->accNo = $id;
+            $debtorTransaction->invNo = $docNo;
+            $debtorTransaction->invAmt = $debtorValues["tendered"];
+            $debtorTransaction->invDate = \date("Y-m-d");
+            $debtorTransaction->dueDate = \date("Y-m-d");
+            $debtorTransaction->type = "DEP";
+            $debtorTransaction->remarks = "Credit Payment";
+            $debtorTransaction->period = $shop['Period'];
+            $debtorTransaction->vatPer = $shop['Period'];
+            $debtorTransaction->crnref = $docNo;
+            $debtorTransaction->dts = new \DateTime();
+
+            $debtorTransaction->save();
+
+            $summmary = new DailySummary();
+            $summmary->BDATE = \date("Y-m-d");
+            $summmary->BRNO = $shop['BrNo'];
+            $summmary->BTYPE = "DEP";
+            $summmary->TRANNO = $depNo;
+            $summmary->TAXCODE = null;
+            $summmary->VATAMT = 0;
+            $summmary->AMT = $debtorValues["tendered"];
+            $summmary->GLCODE = 0;
+            $summmary->REMARKS = "Credit Payment";
+            $summmary->COB = $debtorValues["method"];
+            $summmary->STYPE = $debtorValues["method"];
+
+            $summmary->UPDFLAG = 0;
+            $summmary->TILLNO = $till['tillno'];
+            $summmary->DLNO = 0;
+            $summmary->UPDNO = 0;
+            $summmary->OTTYPE = "CRN";
+            $summmary->OTRANNO = $docNo;
+            $summmary->ODATE = \date("Y-m-d");
+            $summmary->DEBTOR = "Cash";
+
+            $summmary->BUSER = $user->username;
+            $summmary->PERIOD = $shop['Period'];
+            $summmary->CCQNUM = "";
+
+            $summmary->save();
+
+            DB::commit();
+            return response()->json(['debtor' => $debtor], $this->successStatus);
+        } catch (\Exception $e) {
+            Log::error($e->getMessage(), $e->getTrace());
+            DB::rollBack();
+            return response()->json([], $this->errorStatus);
         }
-
-        $account = $debtorValues['account'];
-
-        $debtor->current = $account['current'];
-        $debtor->balance = $account['balance'];
-        $debtor->save();
-
-        $till = $debtorValues['till'];
-
-        $tillInfo = Till::query()
-            ->where('tillno', $till['tillno'])
-            ->where('ColName', 'CrnNo')
-            ->first();
-
-        if (!$tillInfo) {
-            return response()->json([], $this->notFoundStatus);
-        }
-
-        $docNo = (string) (((int) $tillInfo->ColValue) + 1);
-
-        $tillInfo->ColValue = $docNo;
-        $tillInfo->save();
-
-        $docNo = '1' . $docNo;
-
-        $shop = $debtorValues['shop'];
-
-        $debtorTransaction = new DebtorTransaction();
-
-        $debtorTransaction->accNo = $id;
-        $debtorTransaction->invNo = $docNo;
-        $debtorTransaction->invAmt = $debtorValues["tendered"];
-        $debtorTransaction->invDate = \date("Y-m-d");
-        $debtorTransaction->dueDate = \date("Y-m-d");
-        $debtorTransaction->type = "CRN";
-        $debtorTransaction->remarks = "Credit Payment";
-        $debtorTransaction->period = $shop['Period'];
-        $debtorTransaction->vatPer = $shop['Period'];
-        $debtorTransaction->crnref = $docNo;
-        $debtorTransaction->dts = new \DateTime();
-
-        $debtorTransaction->save();
-
-        return response()->json(['debtor' => $debtor], $this->successStatus);
     }
 
     /**

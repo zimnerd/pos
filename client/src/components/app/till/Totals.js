@@ -6,11 +6,45 @@ import * as tillActions from "../../../redux/actions/till.action";
 import * as modalActions from "../../../redux/actions/modal.action";
 
 import './Totals.scss';
+import axios from "axios";
+import toastr from "toastr";
 
 class Totals extends React.Component {
 
     completeRefund = () => {
         this.props.actions.modal.openReasonModal();
+
+        if (this.props.till.laybye) {
+            const headers = {
+                'Authorization': 'Bearer ' + this.props.auth.token
+            };
+
+            axios.get(`/laybyes/${this.props.till.refundData.invNo}/transactions`, { headers })
+                .then(response => {
+                    console.log(response.data);
+                    toastr.success("Refund amount found!", "Find Refund Amount");
+
+                    let total = 0;
+                    for (let item of response.data.transactions) {
+                        total += Number(item.invAmt);
+                    }
+
+                    this.props.till.refundData.depAmt = total;
+                    this.props.actions.till.setRefund(this.props.till.refundData);
+                    this.props.till.totals.total = total;
+                    this.props.actions.till.setTotals(this.props.till.totals);
+                })
+                .catch(error => {
+                    console.log(error);
+                    if (error.response.status === 401) {
+                        toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                    } else if (error.response.status === 404) {
+                        toastr.error("Refund amount not found!", "Find Refund Amount");
+                    } else {
+                        toastr.error("Unknown error.");
+                    }
+                });
+        }
     };
 
     completeExchange = () => {
@@ -78,7 +112,8 @@ class Totals extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        till: state.till
+        till: state.till,
+        auth: state.auth
     };
 }
 

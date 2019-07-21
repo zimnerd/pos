@@ -25,12 +25,6 @@ class CreditNoteOptionsModal extends React.Component {
         this.handleClose();
     };
 
-    credit = () => {
-        this.props.actions.till.setAuthCommand("credit");
-        this.props.actions.modal.openAuthentication();
-        this.handleClose();
-    };
-
     render() {
         return (
             <Modal show={this.props.modal.credit} onHide={this.handleClose}>
@@ -52,14 +46,6 @@ class CreditNoteOptionsModal extends React.Component {
                         </Card.Header>
                         <Card.Body>
                             <Card.Title>Refund</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card onClick={this.credit}>
-                        <Card.Header>
-                            <span><i className="fa fa-credit-card"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Credit</Card.Title>
                         </Card.Body>
                     </Card>
                 </Modal.Body>

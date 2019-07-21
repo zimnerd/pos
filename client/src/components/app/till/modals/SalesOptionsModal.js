@@ -17,6 +17,12 @@ class SalesOptionsModal extends React.Component {
         this.props.actions.modal.closeSales();
     };
 
+    credit = () => {
+        this.props.actions.till.setAuthCommand("credit");
+        this.props.actions.modal.openAuthentication();
+        this.handleClose();
+    };
+
     activateLayBye = () => {
         for (let transaction of this.props.till.transactions) {
             if (typeof transaction.serialno !== "undefined") {
@@ -140,6 +146,14 @@ class SalesOptionsModal extends React.Component {
                     <Modal.Title>Sales Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <Card onClick={this.credit}>
+                        <Card.Header>
+                            <span><i className="fa fa-credit-card"/></span>
+                        </Card.Header>
+                        <Card.Body>
+                            <Card.Title>Credit</Card.Title>
+                        </Card.Body>
+                    </Card>
                     <Card onClick={this.activateLayBye}>
                         <Card.Header>
                             <span><i className="fa fa-hand-grab-o"/></span>

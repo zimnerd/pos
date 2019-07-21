@@ -77,6 +77,7 @@ Route::group(["prefix" => "debtors"], function () {
 Route::group(["prefix" => "laybyes"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('', 'Api\Transaction\LaybyeController@retrieveLayByes');
         Route::get('{id}', 'Api\Transaction\LaybyeController@retrieveLayBye');
         Route::post('{id}', 'Api\Transaction\LaybyeController@payLayBye');
     });

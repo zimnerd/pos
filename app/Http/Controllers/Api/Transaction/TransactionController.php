@@ -111,7 +111,7 @@ class TransactionController extends Controller
                     $laybyeNo = $docNo;
                     break;
                 case "LBC":
-                    $docNo = $till['tillno'] . $till["LbNo"];
+                    $docNo = $till['tillno'] . $till["CrnNo"];
                     if (isset($transaction['debtor'])) {
                         $laybyeNo = $transaction['debtor']['no'];
                         $debtorNo = $transaction['debtor']['no'];
@@ -279,60 +279,63 @@ class TransactionController extends Controller
                 $stockTransaction->BTYPE = $transaction["type"];
                 $stockTransaction->VATAMT = $vat;
                 $stockTransaction->DISCAMT = $item['subtotal'] - $item['total'];
-
-                if ((isset($item['type']) && $item["type"] === "L/B") || $transaction["type"] === "L/B") {
-                    $stockTransaction->AMT = $transaction['tendered'];
-                } else {
-                    $stockTransaction->AMT = $item['total'];
-                }
+                $stockTransaction->AMT = $item['total'];
 
                 $stockTransaction->save();
             }
 
-            $summmary = new DailySummary();
-            $summmary->BDATE = \date("Y-m-d");
-            $summmary->BRNO = $shop['BrNo'];
-            $summmary->BTYPE = $transaction["type"] !== "CRN" ? "DEP" : "PAY";
-            $summmary->TRANNO = $docNo;
-            $summmary->TAXCODE = null;
-            $summmary->VATAMT = $totals["vat"];
-            $summmary->AMT = $totals["total"];
-            $summmary->GLCODE = 0;
-            $summmary->REMARKS = "Sale";
-            $summmary->COB = $transaction["method"];
+            if (!($transaction["type"] === "LBC" && $transaction['tendered'] == 0)) {
+                $summmary = new DailySummary();
+                if ($transaction["type"] !== "CRN") {
+                    $summmary->BTYPE = "DEP";
+                    $summmary->TRANNO = $till['tillno'].$till["DepNo"];
+                } else {
+                    $summmary->BTYPE = "PAY";
+                    $summmary->TRANNO = $till['tillno'].$till["PayNo"];
+                }
 
-            if (isset($transaction['stype'])) {
-                $summmary->STYPE = $transaction['stype'];
-            } else {
-                $summmary->STYPE = $transaction["method"];
+                $summmary->BDATE = \date("Y-m-d");
+                $summmary->BRNO = $shop['BrNo'];
+                $summmary->TAXCODE = null;
+                $summmary->VATAMT = $totals["vat"];
+                $summmary->AMT = $totals["total"];
+                $summmary->GLCODE = 0;
+                $summmary->REMARKS = "Sale";
+                $summmary->COB = $transaction["method"];
+
+                if (isset($transaction['stype'])) {
+                    $summmary->STYPE = $transaction['stype'];
+                } else {
+                    $summmary->STYPE = $transaction["method"];
+                }
+
+                $summmary->UPDFLAG = 0;
+                $summmary->TILLNO = $till['tillno'];
+                $summmary->DLNO = 0;
+                $summmary->UPDNO = 0;
+                $summmary->OTTYPE = $transaction["type"];
+                $summmary->OTRANNO = $docNo;
+                $summmary->ODATE = \date("Y-m-d");
+
+                if (isset($debtorNo)) {
+                    $summmary->DEBTOR = $debtorNo;
+                } else {
+                    $summmary->DEBTOR = "Cash";
+                }
+
+                $summmary->BUSER = $user->username;
+                $summmary->AUSER = $transaction["auth"];
+                $summmary->PERIOD = $shop['Period'];
+                $summmary->CCQNUM = "";
+
+                if (isset($laybyeNo)) {
+                    $summmary->TRANNO = $depNo;
+                    $summmary->VATAMT = 0;
+                    $summmary->AMT = $transaction['tendered'];
+                }
+
+                $summmary->save();
             }
-
-            $summmary->UPDFLAG = 0;
-            $summmary->TILLNO = $till['tillno'];
-            $summmary->DLNO = 0;
-            $summmary->UPDNO = 0;
-            $summmary->OTTYPE = $transaction["type"];
-            $summmary->OTRANNO = $docNo;
-            $summmary->ODATE = \date("Y-m-d");
-
-            if (isset($debtorNo)) {
-                $summmary->DEBTOR = $debtorNo;
-            } else {
-                $summmary->DEBTOR = "Cash";
-            }
-
-            $summmary->BUSER = $user->username;
-            $summmary->AUSER = $transaction["auth"];
-            $summmary->PERIOD = $shop['Period'];
-            $summmary->CCQNUM = "";
-
-            if (isset($laybyeNo)) {
-                $summmary->TRANNO = $depNo;
-                $summmary->VATAMT = $depNo;
-                $summmary->AMT = $transaction['tendered'];
-            }
-
-            $summmary->save();
 
             if (!($transaction["type"] === "L/B" && $transaction['stype'] === "Refund")) {
                 $control = new DailyControl();
@@ -411,7 +414,7 @@ class TransactionController extends Controller
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
                     $depositTransaction->invAmt = $transaction["tendered"];
-                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "CRN" : "DEP";
+                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "PAY" : "DEP";
                     $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
                     $depositTransaction->period = $shop['Period'];
                     $depositTransaction->vatPer = $shop['Period'];
@@ -449,7 +452,7 @@ class TransactionController extends Controller
                 $debtorTransaction->invAmt = $totals["total"] - $transaction["tendered"];
                 $debtorTransaction->invDate = \date("Y-m-d");
                 $debtorTransaction->dueDate = \date("Y-m-d");
-                $debtorTransaction->type = $transaction["type"];
+                $debtorTransaction->type = $transaction["type"] === "LBC" ? "CRN" : $transaction["type"];
                 $debtorTransaction->remarks = "Credit Sale";
                 $debtorTransaction->period = $shop['Period'];
                 $debtorTransaction->vatPer = $shop['Period'];
@@ -465,8 +468,13 @@ class TransactionController extends Controller
                     return response()->json([], $this->notFoundStatus);
                 }
 
-                $debtor->balance = $debtor->balance + ($totals["total"] - $transaction["tendered"]);
-                $debtor->current = $debtor->current + ($totals["total"] - $transaction["tendered"]);
+                if ($transaction['type'] === "LBC") {
+                    $debtor->balance = $debtor->balance - ($totals["total"] - $transaction["tendered"]);
+                    $debtor->current = $debtor->current - ($totals["total"] - $transaction["tendered"]);
+                } else {
+                    $debtor->balance = $debtor->balance + ($totals["total"] - $transaction["tendered"]);
+                    $debtor->current = $debtor->current + ($totals["total"] - $transaction["tendered"]);
+                }
 
                 if ($debtor->stype === 'Staff') {
                     $debtorTransaction->remarks = 'Staff Sale';

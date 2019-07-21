@@ -98,7 +98,7 @@ class LayByeCreditorModal extends React.Component {
             stype: debtor.stype ? this.props.till.debtor.stype : "Refund",
             auth: this.props.auth.auth,
             debtor: debtor,
-            tendered: this.props.till.totals.total
+            tendered: 0
         };
 
         this.props.actions.till.resetTotals();
@@ -137,7 +137,7 @@ class LayByeCreditorModal extends React.Component {
 
     handleSuccess = async () => {
         let debtor = {
-            no: "LB" + this.props.till.refundData.invNo,
+            no: this.props.till.refundData.invNo,
             type: "DCS",
             name: "Lay-Bye Return Debtor",
             cell: this.props.till.refundData.cell,
