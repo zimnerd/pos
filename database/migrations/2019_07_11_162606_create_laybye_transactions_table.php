@@ -16,6 +16,7 @@ class CreateLaybyeTransactionsTable extends Migration
         Schema::dropIfExists('lbdet');
         Schema::create('lbdet', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('accNo');
             $table->string('invNo');
             $table->decimal('invAmt');
             $table->string('cheqNo')->nullable();

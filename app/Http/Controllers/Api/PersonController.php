@@ -20,7 +20,7 @@ class PersonController extends Controller
     public function retrievePerson($idNumber)
     {
         $person = Laybye::query()
-            ->where("idNo", $idNumber)
+            ->where("cell", $idNumber)
             ->first();
 
         if (!$person) {

@@ -36,6 +36,7 @@ class DebtorTransaction extends Model
     public $timestamps = true;
 
     public $fillable = [
+        'accNo',
         'invNo',
         'invAmt',
         'invDate',

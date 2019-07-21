@@ -36,6 +36,7 @@ class LaybyeTransaction extends Model
     public $timestamps = true;
 
     public $fillable = [
+        'accNo',
         'invNo',
         'cheqNo',
         'invDate',

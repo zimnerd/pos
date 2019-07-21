@@ -111,6 +111,7 @@ class DebtorController extends Controller
 
         $debtorTransaction = new DebtorTransaction();
 
+        $debtorTransaction->accNo = $id;
         $debtorTransaction->invNo = $docNo;
         $debtorTransaction->invAmt = $debtorValues["tendered"];
         $debtorTransaction->invDate = \date("Y-m-d");

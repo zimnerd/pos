@@ -90,6 +90,7 @@ class LaybyeController extends Controller
 
         $laybyeTransaction = new LaybyeTransaction();
 
+        $laybyeTransaction->accNo = $id;
         $laybyeTransaction->invNo = $docNo;
         $laybyeTransaction->invAmt = $laybyeValues["tendered"];
         $laybyeTransaction->invDate = \date("Y-m-d");

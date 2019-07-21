@@ -102,12 +102,12 @@ class TransactionController extends Controller
                     $refund = true;
                     if (isset($transaction['debtor'])) {
                         $debtorNo = $transaction['debtor']['no'];
-                        $laybyeNo = 'LB' . $debtorNo;
+                        $laybyeNo = $debtorNo;
                     }
                     break;
                 case "L/B":
                     $docNo = $till['tillno'] . $till["LbNo"];
-                    $laybyeNo = 'LB' . $docNo;
+                    $laybyeNo = $docNo;
                     break;
                 case "LBC":
                     $docNo = $till['tillno'] . $till["LbNo"];
@@ -150,6 +150,10 @@ class TransactionController extends Controller
                 $dailyTransaction->SUP = $transaction["method"];
 
                 if (isset($transaction['stype'])) {
+                    if ($transaction['stype'] === "Refund") {
+                        $refund = true;
+                    }
+
                     $dailyTransaction->STYPE = $transaction['stype'];
                 } else {
                     $dailyTransaction->STYPE = $transaction["method"];
@@ -376,7 +380,8 @@ class TransactionController extends Controller
                 if ($transaction['stype'] !== "Refund") {
                     $laybyeTransaction = new LaybyeTransaction();
 
-                    $laybyeTransaction->invNo = $laybyeNo;
+                    $laybyeTransaction->accNo = $laybyeNo;
+                    $laybyeTransaction->invNo = $docNo;
                     $laybyeTransaction->invDate = \date("Y-m-d");
                     $laybyeTransaction->dueDate = \date("Y-m-d");
                     $laybyeTransaction->invAmt = $totals["total"] - $transaction["tendered"];
@@ -393,7 +398,8 @@ class TransactionController extends Controller
                 if ($transaction["tendered"] != 0) {
                     $depositTransaction = new LaybyeTransaction();
 
-                    $depositTransaction->invNo = $laybyeNo . "-DEP";
+                    $depositTransaction->accNo = $laybyeNo;
+                    $depositTransaction->invNo = $docNo;
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
                     $depositTransaction->invAmt = $transaction["tendered"];
@@ -410,7 +416,8 @@ class TransactionController extends Controller
                 if (isset($itemDebtor)) {
                     $debtorTransaction = new DebtorTransaction();
 
-                    $debtorTransaction->invNo = $itemDebtor['no'];
+                    $debtorTransaction->accNo = $itemDebtor['no'];
+                    $debtorTransaction->invNo = $docNo;
                     $debtorTransaction->invAmt = $transaction["tendered"];
                     $debtorTransaction->invDate = \date("Y-m-d");
                     $debtorTransaction->dueDate = \date("Y-m-d");
@@ -429,7 +436,8 @@ class TransactionController extends Controller
             if (isset($debtorNo)) {
                 $debtorTransaction = new DebtorTransaction();
 
-                $debtorTransaction->invNo = $debtorNo;
+                $debtorTransaction->accNo = $debtorNo;
+                $debtorTransaction->invNo = $docNo;
                 $debtorTransaction->invAmt = $totals["total"] - $transaction["tendered"];
                 $debtorTransaction->invDate = \date("Y-m-d");
                 $debtorTransaction->dueDate = \date("Y-m-d");
@@ -462,7 +470,8 @@ class TransactionController extends Controller
                 if ($transaction["tendered"] != 0) {
                     $depositTransaction = new DebtorTransaction();
 
-                    $depositTransaction->invNo = $debtorNo . "-DEP";
+                    $debtorTransaction->accNo = $debtorNo;
+                    $debtorTransaction->invNo = $docNo;
                     $depositTransaction->invAmt = $transaction["tendered"];
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
@@ -665,7 +674,6 @@ class TransactionController extends Controller
 
             $refund = new Refund($data);
             $refund->save();
-
 
             DB::commit();
             return response()->json([], $this->createdStatus);

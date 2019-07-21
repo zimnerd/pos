@@ -16,6 +16,7 @@ class CreateDebtorTransactionsTable extends Migration
         Schema::dropIfExists('debdet');
         Schema::create('debdet', function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->string('accNo');
             $table->string('invNo');
             $table->string('invAmt');
             $table->date('invDate');
