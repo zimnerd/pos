@@ -27,7 +27,7 @@ class CashModal extends React.Component {
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
             type: this.props.till.laybye ? "L/B" : "INV",
-            stype: this.props.till.laybye ? "Lay-Bye" : "Cash",
+            stype: this.props.till.laybye ? "Laybye" : "Cash",
             method: "Cash",
             auth: ""
         };

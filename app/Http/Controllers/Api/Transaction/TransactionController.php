@@ -107,6 +107,7 @@ class TransactionController extends Controller
                     break;
                 case "L/B":
                     $docNo = $till['tillno'] . $till["LbNo"];
+                    $depNo = $till['tillno'] . $till["DepNo"];
                     $laybyeNo = $docNo;
                     break;
                 case "LBC":
@@ -324,6 +325,13 @@ class TransactionController extends Controller
             $summmary->AUSER = $transaction["auth"];
             $summmary->PERIOD = $shop['Period'];
             $summmary->CCQNUM = "";
+
+            if (isset($laybyeNo)) {
+                $summmary->TRANNO = $depNo;
+                $summmary->VATAMT = $depNo;
+                $summmary->AMT = $transaction['tendered'];
+            }
+
             $summmary->save();
 
             if (!($transaction["type"] === "L/B" && $transaction['stype'] === "Refund")) {
@@ -384,9 +392,9 @@ class TransactionController extends Controller
                     $laybyeTransaction->invNo = $docNo;
                     $laybyeTransaction->invDate = \date("Y-m-d");
                     $laybyeTransaction->dueDate = \date("Y-m-d");
-                    $laybyeTransaction->invAmt = $totals["total"] - $transaction["tendered"];
+                    $laybyeTransaction->invAmt = $totals["total"];
                     $laybyeTransaction->type = $transaction["type"];
-                    $laybyeTransaction->remarks = "Lay-Bye";
+                    $laybyeTransaction->remarks = "Laybye";
                     $laybyeTransaction->period = $shop['Period'];
                     $laybyeTransaction->vatPer = $shop['Period'];
                     $laybyeTransaction->crnref = $docNo;
@@ -399,11 +407,11 @@ class TransactionController extends Controller
                     $depositTransaction = new LaybyeTransaction();
 
                     $depositTransaction->accNo = $laybyeNo;
-                    $depositTransaction->invNo = $docNo;
+                    $depositTransaction->invNo = isset($depNo) ? $depNo : $docNo;
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
                     $depositTransaction->invAmt = $transaction["tendered"];
-                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "CRN" : $transaction["type"];
+                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "CRN" : "DEP";
                     $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
                     $depositTransaction->period = $shop['Period'];
                     $depositTransaction->vatPer = $shop['Period'];

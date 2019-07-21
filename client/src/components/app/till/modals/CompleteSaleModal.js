@@ -235,7 +235,7 @@ class CompleteSaleModal extends React.Component {
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
             type: this.props.till.laybye ? "L/B" : "INV",
-            stype: this.props.till.laybye ? "Lay-Bye" : this.props.till.debtor ? this.props.till.debtor.stype : method,
+            stype: this.props.till.laybye ? "Laybye" : this.props.till.debtor ? this.props.till.debtor.stype : method,
             method: method,
             auth: this.props.auth.auth,
             debtor: this.props.till.debtor,
@@ -319,8 +319,8 @@ class CompleteSaleModal extends React.Component {
 
     saveSettings = (type) => {
         let till = this.props.settings.till;
-        till.DepNo = Number(till.DepNo) + 1;
         if (type === "L/B") {
+            till.DepNo = Number(till.DepNo) + 1;
             till.LbNo = Number(till.LbNo) + 1;
         } else if (type === "CRN" || type === "LBC") {
             till.CrnNo = Number(till.CrnNo) + 1;
