@@ -257,6 +257,7 @@ class CompleteSaleModal extends React.Component {
                 this.props.actions.till.setTransactions(heldSales);
 
                 this.printReceipt(response.data.number);
+                this.printVouchers(transaction.transactions);
 
                 this.saveSettings(transaction.type);
                 this.handleClose();
@@ -290,6 +291,21 @@ class CompleteSaleModal extends React.Component {
                     this.props.actions.till.validationError(error.response.data.errors);
                 }
             });
+    };
+
+    printVouchers = transactions => {
+        for (let item of transactions) {
+            if (!item.serialno) {
+                continue;
+            }
+
+            let a = document.createElement('a');
+            a.href = `http://localhost:8000/api/airtime/${item.code}/print/${item.serialno}`;
+            a.target = '_blank';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
     };
 
     printReceipt = number => {
@@ -406,6 +422,9 @@ class CompleteSaleModal extends React.Component {
                             Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
                         {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
                         <label>Deposit Amount: <span>{Number(this.state.tendered).toFixed(2)}</span></label>
+                        }
+                        {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
+                        <label>Balance: <span>{(Number(this.props.till.totals.total) - Number(this.state.tendered)).toFixed(2)}</span></label>
                         }
                         <div className="form-group">
                             <label>Payment Method:</label>

@@ -94,6 +94,12 @@ Route::group(["prefix" => "sales"], function () {
 
 });
 
+Route::group(["prefix" => "airtime"], function () {
+
+    Route::get('{code}/print/{serialNo}', 'Api\Product\AirtimeController@printVoucher');
+
+});
+
 Route::group(["prefix" => "transactions"], function () {
 
     Route::get('{id}/print', 'Api\Transaction\TransactionController@printReceipt');

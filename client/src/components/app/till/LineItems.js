@@ -101,6 +101,12 @@ class LineItems extends React.Component {
     holdItem = async (index) => {
         let transactions = this.props.till.transactions;
         let item = transactions[index];
+
+        if (item.serialno) {
+            toastr.error("You cannot hold airtime/handsets!", "Validation");
+            return;
+        }
+
         item.hold = !item.hold;
 
         await this.props.actions.till.setTransactions(transactions);
