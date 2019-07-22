@@ -54,7 +54,7 @@ class TransactionController extends Controller
                 'transactions' => 'required',
                 'totals' => 'required',
                 'person.name' => 'required',
-                'person.email' => 'required | email',
+                'person.email' => 'nullable | email',
                 'person.cell' => 'required | max:10 | min:10',
                 'person.idNo' => 'required'
             ]);
@@ -362,8 +362,12 @@ class TransactionController extends Controller
             if (isset($laybyeNo)) {
                 if ($transaction["type"] === "LBC" || $transaction["type"] === "CRN") {
                     $laybye = Laybye::query()->where("no", $laybyeNo)->first();
+                    $laybye->balance = $laybye->balance - $totals["total"];
+                    $laybye->current = $laybye->current - $totals["total"];
                 } else {
                     $laybye = new Laybye();
+                    $laybye->balance = $transaction["tendered"];
+                    $laybye->current = $transaction["tendered"];
                 }
 
                 if ($transaction["type"] === "CRN") {
@@ -383,8 +387,6 @@ class TransactionController extends Controller
                 }
 
                 $laybye->appDate = \date("Y-m-d");
-                $laybye->balance = $totals["total"] - $transaction["tendered"];
-                $laybye->current = $totals["total"] - $transaction["tendered"];
 
                 $laybye->save();
 
@@ -422,14 +424,30 @@ class TransactionController extends Controller
                     $depositTransaction->dts = new \DateTime();
 
                     $depositTransaction->save();
+                } else {
+                    $depositTransaction = new LaybyeTransaction();
+
+                    $depositTransaction->accNo = $laybyeNo;
+                    $depositTransaction->invNo = isset($depNo) ? $depNo : $docNo;
+                    $depositTransaction->invDate = \date("Y-m-d");
+                    $depositTransaction->dueDate = \date("Y-m-d");
+                    $depositTransaction->invAmt = $totals["total"];
+                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "PAY" : "DEP";
+                    $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
+                    $depositTransaction->period = $shop['Period'];
+                    $depositTransaction->vatPer = $shop['Period'];
+                    $depositTransaction->crnref = $docNo;
+                    $depositTransaction->dts = new \DateTime();
+
+                    $depositTransaction->save();
                 }
 
                 if (isset($itemDebtor)) {
                     $debtorTransaction = new DebtorTransaction();
 
-                    $debtorTransaction->accNo = $itemDebtor['no'];
+                    $debtorTransaction->accNo = "LB".$itemDebtor['no'];
                     $debtorTransaction->invNo = $docNo;
-                    $debtorTransaction->invAmt = $transaction["tendered"];
+                    $debtorTransaction->invAmt = (float) number_format((float) $totals["total"], 2, '.', '');
                     $debtorTransaction->invDate = \date("Y-m-d");
                     $debtorTransaction->dueDate = \date("Y-m-d");
                     $debtorTransaction->type = "LBC";
@@ -440,6 +458,7 @@ class TransactionController extends Controller
                     $debtorTransaction->dts = new \DateTime();
 
                     $debtorTransaction->save();
+
                     unset($debtorNo);
                 }
             }
@@ -679,7 +698,7 @@ class TransactionController extends Controller
             'invNo' => 'required',
             'invDate' => 'required',
             'idNo' => 'required',
-            'email' => 'required | email',
+            'email' => 'nullable | email',
             'cell' => 'required | max:10 | min:10',
             'brNo' => 'required'
         ]);

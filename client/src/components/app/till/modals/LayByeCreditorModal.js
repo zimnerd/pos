@@ -64,6 +64,7 @@ class LayByeCreditorModal extends React.Component {
         till.DepNo = Number(till.DepNo) + 1;
         till.InvNo = Number(till.InvNo) + 1;
         till.LbNo = Number(till.LbNo) + 1;
+        till.CrnNo = Number(till.CrnNo) + 1;
 
         axios.post(`/settings/till/${this.props.settings.number}`, till)
             .then(response => {
@@ -139,12 +140,12 @@ class LayByeCreditorModal extends React.Component {
         let debtor = {
             no: this.props.till.refundData.invNo,
             type: "DCS",
-            name: "Lay-Bye Return Debtor",
+            name: "Laybye Return Debtor",
             cell: this.props.till.refundData.cell,
             email: this.props.till.refundData.email,
             idNo: this.props.till.refundData.idNo,
-            balance: this.props.till.totals.total,
-            current: this.props.till.totals.total
+            balance: this.props.till.totals.total * -1,
+            current: this.props.till.totals.total * -1
         };
 
         if (!await this.saveDebtor(debtor)) {

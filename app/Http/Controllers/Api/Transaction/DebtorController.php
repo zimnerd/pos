@@ -203,7 +203,6 @@ class DebtorController extends Controller
         $this->validate($request, [
             'name' => 'required',
             'cell' => 'required',
-            'email' => 'required',
             'type' => 'required'
         ]);
 
@@ -225,6 +224,9 @@ class DebtorController extends Controller
                 $debtor['stype'] = "DCS";
                 break;
         }
+
+        $debNo = "LB" . $debtor["no"];
+        $debtor["no"] = $debNo;
 
         $debtor = new Debtor($debtor);
         $debtor->paytype = "Cash";

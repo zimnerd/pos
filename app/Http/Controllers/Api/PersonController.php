@@ -14,13 +14,13 @@ class PersonController extends Controller
     /**
      * Retrieve a person
      *
-     * @param $idNumber
+     * @param $cell
      * @return \Illuminate\Http\Response
      */
-    public function retrievePerson($idNumber)
+    public function retrievePerson($cell)
     {
         $person = Laybye::query()
-            ->where("cell", $idNumber)
+            ->where("cell", $cell)
             ->first();
 
         if (!$person) {

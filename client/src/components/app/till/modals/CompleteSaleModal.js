@@ -15,9 +15,9 @@ class CompleteSaleModal extends React.Component {
 
     state = {
         method: "Cash",
-        tendered: 0.00,
-        cash: 0.00,
-        card: 0.00,
+        tendered: "0.00",
+        cash: "0.00",
+        card: "0.00",
         document: undefined,
         email: "",
         cell: "",
@@ -34,9 +34,9 @@ class CompleteSaleModal extends React.Component {
     handleClose = () => {
         this.setState({
             method: "Cash",
-            tendered: 0.00,
-            cash: 0.00,
-            card: 0.00,
+            tendered: "0.00",
+            cash: "0.00",
+            card: "0.00",
             email: "",
             cell: "",
             name: "",
@@ -81,7 +81,7 @@ class CompleteSaleModal extends React.Component {
 
     handleChange = event => {
         this.setState({
-            [event.target.name]: Number(event.target.value)
+            [event.target.name]: event.target.value
         }, () => {
             if (this.state.method === "Split") {
                 let card = this.props.till.totals.total.toFixed(2) - this.state.cash;
@@ -186,8 +186,12 @@ class CompleteSaleModal extends React.Component {
     };
 
     completeSale = () => {
+        this.setState({ tendered: Number(this.state.tendered) }, () => this.complete());
+    };
+
+    complete = () => {
         if (this.props.till.refund) {
-            if (this.props.till.laybye && this.state.tendered < this.props.till.totals.total) {
+            if (this.props.till.laybye && (this.state.tendered === 0.00 || this.state.tendered === 0)) {
                 this.props.actions.modal.openLayByeCreditor();
                 this.props.actions.modal.closeCompleteSale();
                 return;
@@ -389,7 +393,7 @@ class CompleteSaleModal extends React.Component {
                     if (error.response.status === 401) {
                         toastr.error("You are unauthorized to make this request.", "Unauthorized");
                     } else if (error.response.status === 404) {
-                        toastr.error("A person was not found with the specified ID number.", "Find Person");
+                        toastr.error("A person was not found with the specified cell number.", "Find Person");
                     } else {
                         toastr.error("Unknown error.");
                     }
@@ -408,7 +412,18 @@ class CompleteSaleModal extends React.Component {
         return (
             <Modal show={this.props.modal.complete} onHide={this.handleClose}>
                 <Modal.Header closeButton>
+                    {this.props.till.laybye && !this.props.till.refund &&
+                    <Modal.Title>Complete Laybye Sale</Modal.Title>
+                    }
+                    {this.props.till.laybye && this.props.till.refund &&
+                    <Modal.Title>Complete Laybye Refund</Modal.Title>
+                    }
+                    {!this.props.till.laybye && this.props.till.refund &&
+                    <Modal.Title>Complete Refund</Modal.Title>
+                    }
+                    {!this.props.till.laybye && !this.props.till.refund &&
                     <Modal.Title>Complete Sale</Modal.Title>
+                    }
                 </Modal.Header>
                 <Modal.Body>
                     {this.props.till.transactions &&
@@ -418,10 +433,15 @@ class CompleteSaleModal extends React.Component {
                     {this.props.till.transactions &&
                     this.props.till.transactions.length > 0 &&
                     <Form>
-                        <label>Total Invoice
+                        {!this.props.till.laybye &&
+                        <label> Total Invoice
                             Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
+                        }
                         {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
                         <label>Deposit Amount: <span>{Number(this.state.tendered).toFixed(2)}</span></label>
+                        }
+                        {this.props.till.laybye && this.props.till.refund &&
+                        <label>Deposit Amount: <span>{this.props.till.totals.total.toFixed(2)}</span></label>
                         }
                         {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
                         <label>Balance: <span>{(Number(this.props.till.totals.total) - Number(this.state.tendered)).toFixed(2)}</span></label>
@@ -431,13 +451,19 @@ class CompleteSaleModal extends React.Component {
                             <span>Cash</span>
                             <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
                                    name="method"/>
+                        </div>
+                        <div className="form-group">
                             <span>Card</span>
                             <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
                                    name="method"/>
+                        </div>
+                        {!this.props.till.refund &&
+                        <div className="form-group">
                             <span>Split Payment</span>
                             <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
                                    name="method"/>
                         </div>
+                        }
                         {
                             this.state.method === "Split" &&
                             <div className="form-group">
@@ -468,7 +494,7 @@ class CompleteSaleModal extends React.Component {
                             <p>Enter a Cell Number to search by: </p>
                             <div className="form-group">
                                 <label>Cell Number:</label>
-                                <input type="text" className="form-control" name="idNo" value={this.state.cell}
+                                <input type="text" className="form-control" name="cell" value={this.state.cell}
                                        onChange={this.handleText}/>
                             </div>
                             <Button onClick={this.findPerson}>Search</Button>

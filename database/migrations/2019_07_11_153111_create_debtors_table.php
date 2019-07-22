@@ -22,7 +22,7 @@ class CreateDebtorsTable extends Migration
             $table->string('stype');
             $table->string('name');
             $table->string('cell');
-            $table->string('email');
+            $table->string('email')->nullable();
             $table->string('idNo');
             $table->date('appDate');
             $table->decimal('balance');

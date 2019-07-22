@@ -38,7 +38,7 @@ Route::group(["prefix" => "products"], function () {
 Route::group(["prefix" => "people"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::get('{idNumber}', 'Api\PersonController@retrievePerson');
+        Route::get('{cell}', 'Api\PersonController@retrievePerson');
     });
 
 });
@@ -80,6 +80,8 @@ Route::group(["prefix" => "laybyes"], function () {
         Route::get('', 'Api\Transaction\LaybyeController@retrieveLayByes');
         Route::get('{id}', 'Api\Transaction\LaybyeController@retrieveLayBye');
         Route::post('{id}', 'Api\Transaction\LaybyeController@payLayBye');
+
+        Route::get('{id}/transactions', 'Api\Transaction\LaybyeController@retrieveLayByeTransactions');
     });
 
 });

@@ -313,7 +313,6 @@ class Till extends React.Component {
                 if (!combo) {
                     this.props.till.combos = this.props.till.combos.concat(response.data.combo);
                     this.props.actions.till.setCombos(this.props.till.combos);
-                    this.props.actions.modal.openCombo();
                 }
             })
             .catch(error => {
