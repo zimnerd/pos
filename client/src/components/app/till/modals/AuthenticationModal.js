@@ -30,6 +30,7 @@ class AuthenticationModal extends React.Component {
             password: ""
         });
         this.props.actions.modal.closeAuthentication();
+        this.props.actions.till.deactivateLayBye();
     };
 
     authenticate = async () => {
@@ -61,6 +62,20 @@ class AuthenticationModal extends React.Component {
                     this.props.actions.auth.setAuth(this.state.username);
                 }
                 break;
+            case "refund":
+                if (await this.activate(this.props.till.command)) {
+                    this.props.actions.modal.openRefund();
+                    this.props.actions.auth.setAuth(this.state.username);
+                    this.props.actions.modal.closeAuthentication();
+                } else {
+                    this.setState({
+                        username: "",
+                        password: ""
+                    });
+                    this.props.actions.till.deactivateLayBye();
+                    this.props.actions.modal.closeAuthentication();
+                }
+                return;
             default:
         }
 
@@ -142,7 +157,8 @@ class AuthenticationModal extends React.Component {
                     toastr.error("Unknown error.");
                 }
                 return false;
-            });};
+            });
+    };
 
     render() {
         return (

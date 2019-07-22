@@ -109,6 +109,8 @@ class CompleteSaleModal extends React.Component {
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund saved!", "Save Refund");
+
+                this.props.actions.till.setRefund();
             })
             .catch(error => {
                 console.log(error);

@@ -264,14 +264,14 @@ class TransactionController extends Controller
                 $stockTransaction->SIZES = $item['size'];
                 $stockTransaction->CLR = $item['clrcode'];
                 $stockTransaction->BRNO = $shop['BrNo'];
-                $stockTransaction->CSTREF = $shop['BrNo'];
+                $stockTransaction->CSTREF = null;
                 $stockTransaction->BDATE = \date("Y-m-d");
-                $stockTransaction->REF = "";
+                $stockTransaction->REF = $docNo;
                 $stockTransaction->QOH = $stock->QOH;
                 $stockTransaction->QTY = $item['qty'];
                 $stockTransaction->SP = $item['subtotal'];
                 $stockTransaction->CP = $item['cost'];
-                $stockTransaction->DLNO = $docNo;
+                $stockTransaction->DLNO = "0";
                 $stockTransaction->ASSNO = 0;
                 $stockTransaction->LBTAKEN = "";
                 $stockTransaction->SMAN = "";
@@ -328,7 +328,7 @@ class TransactionController extends Controller
                 $summmary->PERIOD = $shop['Period'];
                 $summmary->CCQNUM = "";
 
-                if (isset($laybyeNo)) {
+                if (isset($laybyeNo) && isset($depNo)) {
                     $summmary->TRANNO = $depNo;
                     $summmary->VATAMT = 0;
                     $summmary->AMT = $transaction['tendered'];
@@ -696,6 +696,7 @@ class TransactionController extends Controller
     {
         $this->validate($request, [
             'invNo' => 'required',
+            'invType' => 'required',
             'invDate' => 'required',
             'idNo' => 'required',
             'email' => 'nullable | email',
@@ -723,12 +724,18 @@ class TransactionController extends Controller
      * Retrieve a refund
      *
      * @param $id
+     * @param $type
      * @return \Illuminate\Http\Response
      */
-    public function retrieveRefund($id)
+    public function retrieveRefund($id, $type)
     {
+        if ($type === "LB") {
+            $type = "L/B";
+        }
+
         $refund = Refund::query()
             ->where('invNo', $id)
+            ->where('invType', $type)
             ->first();
 
         if ($refund) {
@@ -736,7 +743,8 @@ class TransactionController extends Controller
         }
 
         $transactions = StockTransaction::query()
-            ->where('DLNO', $id)
+            ->where('REF', $id)
+            ->where('BTYPE', $type)
             ->get();
 
         if (count($transactions) === 0) {
@@ -824,6 +832,16 @@ class TransactionController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function activateCreditSales()
+    {
+        return response()->json([], $this->successStatus);
+    }
+
+    /**
+     * Validates authentication for activating refunds.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function activateRefund()
     {
         return response()->json([], $this->successStatus);
     }

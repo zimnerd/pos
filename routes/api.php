@@ -112,7 +112,7 @@ Route::group(["prefix" => "transactions"], function () {
         Route::get('{id}', 'Api\Transaction\TransactionController@retrieveTransaction');
 
         Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
-        Route::get('{id}/refunds', 'Api\Transaction\TransactionController@retrieveRefund');
+        Route::get('{id}/refunds/{type}', 'Api\Transaction\TransactionController@retrieveRefund');
     });
 
     Route::group(['middleware' => ['auth:api', 'scope:staff']], function () {
@@ -125,6 +125,10 @@ Route::group(["prefix" => "transactions"], function () {
 
     Route::group(['middleware' => ['auth:api', 'scope:sales']], function () {
         Route::get('activate/credit', 'Api\Transaction\TransactionController@activateCreditSales');
+    });
+
+    Route::group(['middleware' => ['auth:api', 'scope:notes']], function () {
+        Route::get('activate/refund', 'Api\Transaction\TransactionController@activateRefund');
     });
 
 });

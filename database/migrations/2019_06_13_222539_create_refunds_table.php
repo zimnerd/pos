@@ -16,6 +16,7 @@ class CreateRefundsTable extends Migration
         Schema::dropIfExists('refunds');
         Schema::create('refunds', function (Blueprint $table) {
             $table->string('invNo')->primary();
+            $table->string('invType');
             $table->date('invDate');
             $table->string('idNo');
             $table->string('cell');

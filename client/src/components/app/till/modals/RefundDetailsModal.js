@@ -28,6 +28,7 @@ class RefundDetailsModal extends React.Component {
     handleClose = () => {
         this.setState({ updated: false });
         this.props.actions.modal.closeRefundDetails();
+        this.props.actions.till.deactivateLayBye();
     };
 
     handleContinue = () => {
@@ -43,6 +44,7 @@ class RefundDetailsModal extends React.Component {
         this.props.actions.till.setRefund(refund);
         this.props.actions.till.activateRefund();
         this.props.actions.modal.closeRefundDetails();
+        this.setState({ updated: false });
     };
 
     componentDidUpdate(): void {

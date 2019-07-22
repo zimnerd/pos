@@ -21,7 +21,15 @@ class CreditNoteOptionsModal extends React.Component {
     };
 
     refund = () => {
-        this.props.actions.modal.openRefund();
+        this.props.actions.till.setAuthCommand("refund");
+        this.props.actions.modal.openAuthentication();
+        this.handleClose();
+    };
+
+    laybyeRefund = () => {
+        this.props.actions.till.activateLayBye();
+        this.props.actions.till.setAuthCommand("refund");
+        this.props.actions.modal.openAuthentication();
         this.handleClose();
     };
 
@@ -46,6 +54,14 @@ class CreditNoteOptionsModal extends React.Component {
                         </Card.Header>
                         <Card.Body>
                             <Card.Title>Refund</Card.Title>
+                        </Card.Body>
+                    </Card>
+                    <Card onClick={this.laybyeRefund}>
+                        <Card.Header>
+                            <span><i className="fa fa-refresh"/></span>
+                        </Card.Header>
+                        <Card.Body>
+                            <Card.Title>Laybye Refund</Card.Title>
                         </Card.Body>
                     </Card>
                 </Modal.Body>

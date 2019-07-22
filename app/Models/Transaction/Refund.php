@@ -38,6 +38,7 @@ class Refund extends Model
 
     public $fillable = [
         'invNo',
+        'invType',
         'invDate',
         'idNo',
         'cell',

@@ -30,7 +30,7 @@ class CreateStockTransactionsTable extends Migration
             $table->decimal('SP');
             $table->decimal('CP');
             $table->string('BTYPE');
-            $table->string('CSTREF');
+            $table->string('CSTREF')->nullable();
             $table->integer('DLNO');
             $table->string('LBTAKEN')->nullable();
             $table->char('SLTYPE');

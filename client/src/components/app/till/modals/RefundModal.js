@@ -24,6 +24,7 @@ class RefundModal extends React.Component {
 
     handleClose = () => {
         this.props.actions.modal.closeRefund();
+        this.props.actions.till.deactivateLayBye();
     };
 
     mapHeldSales = sales => {
@@ -44,11 +45,17 @@ class RefundModal extends React.Component {
 
     findDocument = (e) => {
         e.preventDefault();
+
+        let type = "INV";
+        if (this.props.till.laybye) {
+            type = "LB";
+        }
+
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/transactions/${this.state.docNo}/refunds`, { headers })
+        axios.get(`/transactions/${this.state.docNo}/refunds/${type}`, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund found!", "Find Refund");
@@ -59,6 +66,7 @@ class RefundModal extends React.Component {
                 this.checkLaybye(response.data.lineItems.transactions);
                 let refund = {
                     invNo: this.state.docNo,
+                    invType: type === "LB" ? "L/B" : type,
                     invDate: response.data.lineItems.date,
                     brNo: response.data.lineItems.branch,
                     found: true
@@ -72,7 +80,7 @@ class RefundModal extends React.Component {
                 }
 
                 this.props.actions.till.setRefund(refund);
-                this.handleClose();
+                this.props.actions.modal.closeRefund();
                 this.props.actions.modal.openRefundDetails();
             })
             .catch(error => {
@@ -106,7 +114,12 @@ class RefundModal extends React.Component {
         return (
             <Modal show={this.props.modal.refund} onHide={this.handleClose}>
                 <Modal.Header closeButton>
+                    {this.props.till.laybye &&
+                    <Modal.Title>Laybye Refund</Modal.Title>
+                    }
+                    {!this.props.till.laybye &&
                     <Modal.Title>Refund</Modal.Title>
+                    }
                 </Modal.Header>
                 <Modal.Body>
                     <p>Enter the invoice number you would like a refund for:</p>
@@ -135,7 +148,8 @@ class RefundModal extends React.Component {
 function mapStateToProps(state) {
     return {
         auth: state.auth,
-        modal: state.modal
+        modal: state.modal,
+        till: state.till
     };
 }
 
