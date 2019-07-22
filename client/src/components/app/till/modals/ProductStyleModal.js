@@ -160,6 +160,10 @@ class ProductStyleModal extends React.Component {
                                 let size = item.SIZES;
                                 let indexVal = 0;
                                 for (let item of this.props.stock.product.items) {
+                                    if (item === null) {
+                                        continue;
+                                    }
+
                                     let price = Number(item.sp);
 
                                     const product = {
@@ -169,7 +173,7 @@ class ProductStyleModal extends React.Component {
                                         colour: colour.colour,
                                         clrcode: colour.code,
                                         size: size,
-                                        qoh: 1.00,
+                                        qoh: this.props.stock.product.info[0].QOH,
                                         disc: 0.00,
                                         cost: item.cp,
                                         staff: item.sp,
