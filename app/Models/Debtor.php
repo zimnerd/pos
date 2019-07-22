@@ -38,8 +38,6 @@ class Debtor extends Model
 
     public $fillable = [
         'no',
-        'trantype',
-        'paytype',
         'stype',
         'name',
         'cell',

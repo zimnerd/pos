@@ -491,8 +491,8 @@ class TransactionController extends Controller
                     $debtor->balance = $debtor->balance - ($totals["total"] - $transaction["tendered"]);
                     $debtor->current = $debtor->current - ($totals["total"] - $transaction["tendered"]);
                 } else {
-                    $debtor->balance = $debtor->balance + ($totals["total"] - $transaction["tendered"]);
-                    $debtor->current = $debtor->current + ($totals["total"] - $transaction["tendered"]);
+                    $debtor->balance = $debtor->balance + $totals["total"];
+                    $debtor->current = $debtor->current + $totals["total"];
                 }
 
                 if ($debtor->stype === 'Staff') {
@@ -502,7 +502,7 @@ class TransactionController extends Controller
                 $debtor->save();
                 $debtorTransaction->save();
 
-                if ($transaction["tendered"] != 0) {
+                if ($transaction["tendered"] != 0 && $debtor->stype !== 'Staff') {
                     $depositTransaction = new DebtorTransaction();
 
                     $debtorTransaction->accNo = $debtorNo;

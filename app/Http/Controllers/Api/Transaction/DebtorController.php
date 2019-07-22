@@ -212,15 +212,12 @@ class DebtorController extends Controller
         $debtor = $request->all();
         switch ($debtor['type']) {
             case "Credit":
-                $debtor['trantype'] = "INV";
                 $debtor['stype'] = "Credit";
                 break;
             case "Staff":
-                $debtor['trantype'] = "INV";
                 $debtor['stype'] = "Staff";
                 break;
             case "DCS":
-                $debtor['trantype'] = "DCS";
                 $debtor['stype'] = "DCS";
                 break;
         }
@@ -229,7 +226,6 @@ class DebtorController extends Controller
         $debtor["no"] = $debNo;
 
         $debtor = new Debtor($debtor);
-        $debtor->paytype = "Cash";
         $debtor->appDate = \date('Y-m-d');
 
         if ($debtor->balance === null) {

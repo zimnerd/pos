@@ -17,8 +17,6 @@ class CreateDebtorsTable extends Migration
         Schema::create('debmast', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('no');
-            $table->string('trantype');
-            $table->string('paytype');
             $table->string('stype');
             $table->string('name');
             $table->string('cell');
