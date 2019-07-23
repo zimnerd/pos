@@ -188,7 +188,11 @@ class CompleteSaleModal extends React.Component {
     };
 
     completeSale = () => {
-        this.setState({ tendered: Number(this.state.tendered) }, () => this.complete());
+        if (this.state.tendered > this.props.till.totals.total) {
+            this.setState({ tendered: Number(this.props.till.totals.total) }, () => this.complete());
+        } else {
+            this.setState({ tendered: Number(this.state.tendered) }, () => this.complete());
+        }
     };
 
     complete = () => {

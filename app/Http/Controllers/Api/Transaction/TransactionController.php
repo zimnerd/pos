@@ -286,7 +286,7 @@ class TransactionController extends Controller
 
             if (!($transaction["type"] === "LBC" && $transaction['tendered'] == 0)) {
                 $summmary = new DailySummary();
-                if ($transaction["type"] !== "CRN") {
+                if ($transaction["type"] !== "CRN" || $transaction["type"] === "LBC") {
                     $summmary->BTYPE = "DEP";
                     $summmary->TRANNO = $till['tillno'].$till["DepNo"];
                 } else {
@@ -424,6 +424,7 @@ class TransactionController extends Controller
                     $depositTransaction->dts = new \DateTime();
 
                     $depositTransaction->save();
+                    unset($itemDebtor);
                 } else {
                     $depositTransaction = new LaybyeTransaction();
 
@@ -431,7 +432,7 @@ class TransactionController extends Controller
                     $depositTransaction->invNo = isset($depNo) ? $depNo : $docNo;
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
-                    $depositTransaction->invAmt = $totals["total"];
+                    $depositTransaction->invAmt = $totals["total"] * -1;
                     $depositTransaction->type = $transaction['stype'] === "Refund" ? "PAY" : "DEP";
                     $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
                     $depositTransaction->period = $shop['Period'];
@@ -447,7 +448,7 @@ class TransactionController extends Controller
 
                     $debtorTransaction->accNo = "LB".$itemDebtor['no'];
                     $debtorTransaction->invNo = $docNo;
-                    $debtorTransaction->invAmt = (float) number_format((float) $totals["total"], 2, '.', '');
+                    $debtorTransaction->invAmt = (float) number_format((float) $totals["total"], 2, '.', '') * -1;
                     $debtorTransaction->invDate = \date("Y-m-d");
                     $debtorTransaction->dueDate = \date("Y-m-d");
                     $debtorTransaction->type = "LBC";
@@ -740,6 +741,16 @@ class TransactionController extends Controller
 
         if ($refund) {
             return response()->json([], $this->validationStatus);
+        }
+
+        if ($type === "LB") {
+            $laybye = Laybye::query()
+                ->where("accNo", $id)
+                ->first();
+
+            if ($laybye->balance <= 0) {
+                return response()->json([], $this->validationStatus);
+            }
         }
 
         $transactions = StockTransaction::query()
