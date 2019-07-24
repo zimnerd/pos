@@ -9,6 +9,7 @@ import toastr from "toastr";
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
 import * as settingsActions from "../../../../redux/actions/settings.action";
+import * as authActions from "../../../../redux/actions/auth.action";
 
 import './LayByeCreditorModal.scss';
 
@@ -169,6 +170,7 @@ class LayByeCreditorModal extends React.Component {
         this.props.actions.till.deactivateStaff();
         this.props.actions.till.setCombos();
         this.props.actions.modal.closeLayByeCreditor();
+        this.props.actions.auth.setAuth();
     };
 
     saveDebtor = async debtor => {
@@ -231,7 +233,8 @@ function mapDispatchToProps(dispatch) {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
             till: bindActionCreators(tillActions, dispatch),
-            settings: bindActionCreators(settingsActions, dispatch)
+            settings: bindActionCreators(settingsActions, dispatch),
+            auth: bindActionCreators(authActions, dispatch)
         }
     };
 }

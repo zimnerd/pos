@@ -362,12 +362,12 @@ class TransactionController extends Controller
             if (isset($laybyeNo)) {
                 if ($transaction["type"] === "LBC" || $transaction["type"] === "CRN") {
                     $laybye = Laybye::query()->where("no", $laybyeNo)->first();
-                    $laybye->balance = $laybye->balance - $totals["total"];
-                    $laybye->current = $laybye->current - $totals["total"];
+                    $laybye->balance = $laybye->balance - ($totals["total"] - $transaction["tendered"]);
+                    $laybye->current = $laybye->current - ($totals["total"] - $transaction["tendered"]);
                 } else {
                     $laybye = new Laybye();
-                    $laybye->balance = $transaction["tendered"];
-                    $laybye->current = $transaction["tendered"];
+                    $laybye->balance = $totals["total"] - $transaction["tendered"];
+                    $laybye->current = $totals["total"] - $transaction["tendered"];
                 }
 
                 if ($transaction["type"] === "CRN") {
@@ -425,6 +425,7 @@ class TransactionController extends Controller
 
                     $depositTransaction->save();
                     unset($itemDebtor);
+                    unset($debtorNo);
                 } else {
                     $depositTransaction = new LaybyeTransaction();
 
@@ -485,6 +486,7 @@ class TransactionController extends Controller
                 $debtor = Debtor::query()->where("no", $debtorNo)->first();
                 if (!$debtor) {
                     DB::rollBack();
+                    Log::info("Debtor was not found for the following accNo: " . $debtorNo);
                     return response()->json([], $this->notFoundStatus);
                 }
 

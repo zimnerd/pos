@@ -8,6 +8,7 @@ import toastr from "toastr";
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
 import * as settingsActions from "../../../../redux/actions/settings.action";
+import * as authActions from "../../../../redux/actions/auth.action";
 
 import './CompleteSaleModal.scss';
 
@@ -72,9 +73,15 @@ class CompleteSaleModal extends React.Component {
                     tendered: this.state.cash + this.state.card
                 });
             } else if (this.state.method === "CC") {
-                this.setState({
-                    tendered: this.props.till.totals.total.toFixed(2)
-                });
+                if (this.props.till.laybye && this.props.till.refund) {
+                    this.setState({
+                        tendered: this.props.till.refundData.depAmt.toFixed(2)
+                    });
+                } else {
+                    this.setState({
+                        tendered: this.props.till.totals.total.toFixed(2)
+                    });
+                }
             }
         });
     };
@@ -219,6 +226,7 @@ class CompleteSaleModal extends React.Component {
             this.props.actions.till.deactivateExchange();
             this.props.actions.till.deactivateStaff();
             this.props.actions.till.setCombos();
+            this.props.actions.auth.setAuth();
             return;
         }
 
@@ -286,6 +294,7 @@ class CompleteSaleModal extends React.Component {
                 this.props.actions.till.deactivateStaff();
                 this.props.actions.till.deactivateRefund();
                 this.props.actions.till.setCombos();
+                this.props.actions.auth.setAuth();
             })
             .catch(error => {
                 console.log(error);
@@ -447,7 +456,11 @@ class CompleteSaleModal extends React.Component {
                         <label>Deposit Amount: <span>{Number(this.state.tendered).toFixed(2)}</span></label>
                         }
                         {this.props.till.laybye && this.props.till.refund &&
-                        <label>Deposit Amount: <span>{this.props.till.totals.total.toFixed(2)}</span></label>
+                        <label> Total Invoice
+                            Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
+                        }
+                        {this.props.till.laybye && this.props.till.refund && this.props.till.refundData && this.props.till.refundData.depAmt &&
+                        <label>Deposit Amount: <span>{this.props.till.refundData.depAmt.toFixed(2)}</span></label>
                         }
                         {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
                         <label>Balance: <span>{(Number(this.props.till.totals.total) - Number(this.state.tendered)).toFixed(2)}</span></label>
@@ -590,7 +603,8 @@ function mapDispatchToProps(dispatch) {
         actions: {
             modal: bindActionCreators(modalActions, dispatch),
             till: bindActionCreators(tillActions, dispatch),
-            settings: bindActionCreators(settingsActions, dispatch)
+            settings: bindActionCreators(settingsActions, dispatch),
+            auth: bindActionCreators(authActions, dispatch)
         }
     };
 }

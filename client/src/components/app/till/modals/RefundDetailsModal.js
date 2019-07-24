@@ -35,6 +35,7 @@ class RefundDetailsModal extends React.Component {
         let refund = {
             invNo: this.state.invNo,
             invDate: this.state.invDate,
+            invType: this.props.till.refundData.invType,
             idNo: this.state.idNo,
             cell: this.state.cell,
             email: this.state.email,

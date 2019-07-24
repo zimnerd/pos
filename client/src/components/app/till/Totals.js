@@ -31,8 +31,6 @@ class Totals extends React.Component {
 
                     this.props.till.refundData.depAmt = total;
                     this.props.actions.till.setRefund(this.props.till.refundData);
-                    this.props.till.totals.total = total;
-                    this.props.actions.till.setTotals(this.props.till.totals);
                 })
                 .catch(error => {
                     console.log(error);

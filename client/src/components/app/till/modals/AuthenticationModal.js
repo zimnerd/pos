@@ -36,6 +36,10 @@ class AuthenticationModal extends React.Component {
     authenticate = async () => {
         let auth = await this.authUser();
         if (!auth) {
+            this.setState({
+                username: "",
+                password: ""
+            });
             return;
         }
 
@@ -66,6 +70,10 @@ class AuthenticationModal extends React.Component {
                 if (await this.activate(this.props.till.command)) {
                     this.props.actions.modal.openRefund();
                     this.props.actions.auth.setAuth(this.state.username);
+                    this.setState({
+                        username: "",
+                        password: ""
+                    });
                     this.props.actions.modal.closeAuthentication();
                 } else {
                     this.setState({
