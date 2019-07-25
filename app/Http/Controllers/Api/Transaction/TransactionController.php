@@ -355,7 +355,11 @@ class TransactionController extends Controller
 
             $request = new Request();
             if (!isset($transaction['person'])) {
-                $request->replace([]);
+                if (isset($itemDebtor)) {
+                    $request->replace($itemDebtor);
+                } else {
+                    $request->replace([]);
+                }
             } else {
                 /**
                  * @var mixed $person
@@ -431,7 +435,7 @@ class TransactionController extends Controller
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
                     $depositTransaction->invAmt = $transaction["tendered"];
-                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "PAY" : "DEP";
+                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "LBC" : "DEP";
                     $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
                     $depositTransaction->period = $shop['Period'];
                     $depositTransaction->vatPer = $shop['Period'];
@@ -464,7 +468,7 @@ class TransactionController extends Controller
 
                     $debtorTransaction->accNo = "LB".$itemDebtor['no'];
                     $debtorTransaction->invNo = $docNo;
-                    $debtorTransaction->invAmt = (float) number_format((float) $itemDebtor["balance"], 2, '.', '') * -1;
+                    $debtorTransaction->invAmt = (float) number_format((float) $itemDebtor["balance"], 2, '.', '');
                     $debtorTransaction->invDate = \date("Y-m-d");
                     $debtorTransaction->dueDate = \date("Y-m-d");
                     $debtorTransaction->type = "LBC";
@@ -674,8 +678,8 @@ class TransactionController extends Controller
      *
      * @param Request $request
      * @param $id
-     * @return \Illuminate\Http\Response
-     * @throws \Illuminate\Validation\ValidationException
+     * @param $docType
+     * @return Response
      */
     public function savePerson(Request $request, $id, $docType)
     {

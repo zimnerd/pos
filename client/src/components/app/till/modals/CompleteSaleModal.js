@@ -226,7 +226,10 @@ class CompleteSaleModal extends React.Component {
             this.props.actions.till.deactivateExchange();
             this.props.actions.till.deactivateStaff();
             this.props.actions.till.setCombos();
+            this.props.actions.till.setTransactions();
+            this.props.actions.till.resetTotals();
             this.props.actions.auth.setAuth();
+            this.handleClose();
             return;
         }
 
@@ -359,6 +362,7 @@ class CompleteSaleModal extends React.Component {
             till.LbNo = Number(till.LbNo) + 1;
         } else if (type === "CRN" || type === "LBC") {
             till.CrnNo = Number(till.CrnNo) + 1;
+            till.PayNo = Number(till.PayNo) + 1;
         } else {
             till.InvNo = Number(till.InvNo) + 1;
         }

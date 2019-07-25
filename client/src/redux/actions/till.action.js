@@ -109,7 +109,7 @@ export function deactivateRefund(refund = false) {
     return { type: DEACTIVATE_REFUND, refund }
 }
 
-export function setRefund(refundData) {
+export function setRefund(refundData = undefined) {
     return { type: SET_REFUND, refundData }
 }
 

@@ -23,6 +23,9 @@ class RefundModal extends React.Component {
     };
 
     handleClose = () => {
+        this.setState({
+            docNo: ""
+        });
         this.props.actions.modal.closeRefund();
         this.props.actions.till.deactivateLayBye();
     };
@@ -82,6 +85,9 @@ class RefundModal extends React.Component {
                 this.props.actions.till.setRefund(refund);
                 this.props.actions.modal.closeRefund();
                 this.props.actions.modal.openRefundDetails();
+                this.setState({
+                    docNo: ""
+                });
             })
             .catch(error => {
                 console.log(error);
@@ -96,6 +102,9 @@ class RefundModal extends React.Component {
                 } else {
                     toastr.error("Unknown error.");
                 }
+                this.setState({
+                    docNo: ""
+                });
             });
     };
 

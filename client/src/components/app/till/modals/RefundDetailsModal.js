@@ -11,7 +11,9 @@ import './RefundDetailsModal.scss';
 class RefundDetailsModal extends React.Component {
 
     state = {
+        brNo: "",
         invNo: "",
+        invType: "",
         invDate: "",
         idNo: "",
         cell: "",
@@ -26,7 +28,16 @@ class RefundDetailsModal extends React.Component {
     };
 
     handleClose = () => {
-        this.setState({ updated: false });
+        this.setState({
+            brNo: "",
+            invNo: "",
+            invDate: "",
+            invType: "",
+            idNo: "",
+            cell: "",
+            email: "",
+            updated: false
+        });
         this.props.actions.modal.closeRefundDetails();
         this.props.actions.till.deactivateLayBye();
     };
@@ -35,17 +46,26 @@ class RefundDetailsModal extends React.Component {
         let refund = {
             invNo: this.state.invNo,
             invDate: this.state.invDate,
-            invType: this.props.till.refundData.invType,
+            invType: this.props.till.refundData ? this.props.till.refundData.invType : this.state.invType,
             idNo: this.state.idNo,
             cell: this.state.cell,
             email: this.state.email,
             found: this.state.found,
-            brNo: this.props.settings.shop.BrNo
+            brNo: this.props.till.refundData ? this.props.settings.shop.BrNo : this.state.brNo
         };
         this.props.actions.till.setRefund(refund);
         this.props.actions.till.activateRefund();
         this.props.actions.modal.closeRefundDetails();
-        this.setState({ updated: false });
+        this.setState({
+            brNo: "",
+            invNo: "",
+            invDate: "",
+            invType: "",
+            idNo: "",
+            cell: "",
+            email: "",
+            updated: false
+        });
     };
 
     componentDidUpdate(): void {
@@ -77,6 +97,23 @@ class RefundDetailsModal extends React.Component {
                             <input name="invNo" type="text" className="form-control"
                                    value={this.state.invNo} onChange={this.handleChange}/>
                         </div>
+                        {this.props.till && !this.props.till.refundData &&
+                        <div className="form-group">
+                            <label>Invoice Type:</label>
+                            <select onChange={this.handleChange} className="form-control" name="invType">
+                                <option disabled selected>Select a type</option>
+                                <option value="INV">INV</option>
+                                <option value="L/B">L/B</option>
+                            </select>
+                        </div>
+                        }
+                        {this.props.till && !this.props.till.refundData &&
+                        <div className="form-group">
+                            <label>Branch Number:</label>
+                            <input name="brNo" type="text" className="form-control"
+                                   value={this.state.brNo} onChange={this.handleChange}/>
+                        </div>
+                        }
                         <div className="form-group">
                             <label>Invoice Date:</label>
                             <input name="invDate" type="date" className="form-control"
