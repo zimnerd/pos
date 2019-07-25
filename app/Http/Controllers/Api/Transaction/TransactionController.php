@@ -284,9 +284,16 @@ class TransactionController extends Controller
                 $stockTransaction->save();
             }
 
-            if (!($transaction["type"] === "LBC" && $transaction['tendered'] == 0)) {
+            if (isset($transaction["stype"])) {
+                $stype = $transaction["stype"];
+            } else {
+                $stype = "";
+            }
+
+            if (!(($transaction["type"] === "LBC" && $transaction['tendered'] == 0)
+                || ($transaction["type"] === "CRN" && $stype === "Exchng"))) {
                 $summmary = new DailySummary();
-                if ($transaction["type"] !== "CRN" || $transaction["type"] === "LBC") {
+                if ($transaction["type"] !== "CRN" && $transaction["type"] !== "LBC") {
                     $summmary->BTYPE = "DEP";
                     $summmary->TRANNO = $till['tillno'].$till["DepNo"];
                 } else {
@@ -298,7 +305,7 @@ class TransactionController extends Controller
                 $summmary->BRNO = $shop['BrNo'];
                 $summmary->TAXCODE = null;
                 $summmary->VATAMT = $totals["vat"];
-                $summmary->AMT = $totals["total"];
+                $summmary->AMT = $transaction["type"] === "LBC" ? $transaction['tendered'] : $totals["total"];
                 $summmary->GLCODE = 0;
                 $summmary->REMARKS = "Sale";
                 $summmary->COB = $transaction["method"];
@@ -362,9 +369,17 @@ class TransactionController extends Controller
             if (isset($laybyeNo)) {
                 if ($transaction["type"] === "LBC" || $transaction["type"] === "CRN") {
                     $laybye = Laybye::query()->where("no", $laybyeNo)->first();
-                    $laybye->balance = $laybye->balance - ($totals["total"] - $transaction["tendered"]);
-                    $laybye->current = $laybye->current - ($totals["total"] - $transaction["tendered"]);
+                    if ($transaction["tendered"] > 0) {
+                        $depAmt = 0;
+                        $laybye->balance = $laybye->balance - ($totals["total"] - $transaction["tendered"]);
+                        $laybye->current = $laybye->current - ($totals["total"] - $transaction["tendered"]);
+                    } else {
+                        $depAmt = $laybye->balance;
+                        $laybye->balance -= $laybye->balance;
+                        $laybye->current -= $laybye->current;
+                    }
                 } else {
+                    $depAmt = 0;
                     $laybye = new Laybye();
                     $laybye->balance = $totals["total"] - $transaction["tendered"];
                     $laybye->current = $totals["total"] - $transaction["tendered"];
@@ -433,7 +448,7 @@ class TransactionController extends Controller
                     $depositTransaction->invNo = isset($depNo) ? $depNo : $docNo;
                     $depositTransaction->invDate = \date("Y-m-d");
                     $depositTransaction->dueDate = \date("Y-m-d");
-                    $depositTransaction->invAmt = $totals["total"] * -1;
+                    $depositTransaction->invAmt = $depAmt;
                     $depositTransaction->type = $transaction['stype'] === "Refund" ? "PAY" : "DEP";
                     $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
                     $depositTransaction->period = $shop['Period'];
@@ -449,7 +464,7 @@ class TransactionController extends Controller
 
                     $debtorTransaction->accNo = "LB".$itemDebtor['no'];
                     $debtorTransaction->invNo = $docNo;
-                    $debtorTransaction->invAmt = (float) number_format((float) $totals["total"], 2, '.', '') * -1;
+                    $debtorTransaction->invAmt = (float) number_format((float) $itemDebtor["balance"], 2, '.', '') * -1;
                     $debtorTransaction->invDate = \date("Y-m-d");
                     $debtorTransaction->dueDate = \date("Y-m-d");
                     $debtorTransaction->type = "LBC";

@@ -145,8 +145,8 @@ class LayByeCreditorModal extends React.Component {
             cell: this.props.till.refundData.cell,
             email: this.props.till.refundData.email,
             idNo: this.props.till.refundData.idNo,
-            balance: this.props.till.totals.total * -1,
-            current: this.props.till.totals.total * -1
+            balance: this.props.till.refundData.depAmt * -1,
+            current: this.props.till.refundData.depAmt * -1
         };
 
         if (!await this.saveDebtor(debtor)) {
