@@ -290,7 +290,53 @@ class TransactionController extends Controller
                 $stype = "";
             }
 
-            if (!(($transaction["type"] === "LBC" && $transaction['tendered'] == 0)
+            if ($transaction["type"] === "LBC" && $transaction['tendered'] == 0) {
+                $summmary = new DailySummary();
+                $summmary->BTYPE = "LBC";
+                $summmary->TRANNO = $till['tillno'].$till["PayNo"];
+
+                $summmary->BDATE = \date("Y-m-d");
+                $summmary->BRNO = $shop['BrNo'];
+                $summmary->TAXCODE = null;
+                $summmary->VATAMT = $totals["vat"];
+                $summmary->AMT = $transaction["type"] === "LBC" ? $transaction['tendered'] : $totals["total"];
+                $summmary->GLCODE = 0;
+                $summmary->REMARKS = "Sale";
+                $summmary->COB = $transaction["method"];
+
+                if (isset($transaction['stype'])) {
+                    $summmary->STYPE = $transaction['stype'];
+                } else {
+                    $summmary->STYPE = $transaction["method"];
+                }
+
+                $summmary->UPDFLAG = 0;
+                $summmary->TILLNO = $till['tillno'];
+                $summmary->DLNO = 0;
+                $summmary->UPDNO = 0;
+                $summmary->OTTYPE = $transaction["type"];
+                $summmary->OTRANNO = $docNo;
+                $summmary->ODATE = \date("Y-m-d");
+
+                if (isset($debtorNo)) {
+                    $summmary->DEBTOR = $debtorNo;
+                } else {
+                    $summmary->DEBTOR = "Cash";
+                }
+
+                $summmary->BUSER = $user->username;
+                $summmary->AUSER = $transaction["auth"];
+                $summmary->PERIOD = $shop['Period'];
+                $summmary->CCQNUM = "";
+
+                if (isset($laybyeNo) && isset($depNo)) {
+                    $summmary->TRANNO = $depNo;
+                    $summmary->VATAMT = 0;
+                    $summmary->AMT = $transaction['tendered'];
+                }
+
+                $summmary->save();
+            } elseif (!(($transaction["type"] === "LBC" && $transaction['tendered'] == 0)
                 || ($transaction["type"] === "CRN" && $stype === "Exchng"))) {
                 $summmary = new DailySummary();
                 if ($transaction["type"] !== "CRN" && $transaction["type"] !== "LBC") {

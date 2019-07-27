@@ -66,6 +66,7 @@ class LayByeCreditorModal extends React.Component {
         till.InvNo = Number(till.InvNo) + 1;
         till.LbNo = Number(till.LbNo) + 1;
         till.CrnNo = Number(till.CrnNo) + 1;
+        till.PayNo = Number(till.PayNo) + 1;
 
         axios.post(`/settings/till/${this.props.settings.number}`, till)
             .then(response => {
