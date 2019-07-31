@@ -293,7 +293,7 @@ class TransactionController extends Controller
             if ($transaction["type"] === "LBC" && $transaction['tendered'] == 0) {
                 $summmary = new DailySummary();
                 $summmary->BTYPE = "LBC";
-                $summmary->TRANNO = $till['tillno'].$till["PayNo"];
+                $summmary->TRANNO = $till['tillno'] . $till["PayNo"];
 
                 $summmary->BDATE = \date("Y-m-d");
                 $summmary->BRNO = $shop['BrNo'];
@@ -337,14 +337,15 @@ class TransactionController extends Controller
 
                 $summmary->save();
             } elseif (!(($transaction["type"] === "LBC" && $transaction['tendered'] == 0)
-                || ($transaction["type"] === "CRN" && $stype === "Exchng"))) {
+                || ($transaction["type"] === "CRN" && $stype === "Exchng"))
+            ) {
                 $summmary = new DailySummary();
                 if ($transaction["type"] !== "CRN" && $transaction["type"] !== "LBC") {
                     $summmary->BTYPE = "DEP";
-                    $summmary->TRANNO = $till['tillno'].$till["DepNo"];
+                    $summmary->TRANNO = $till['tillno'] . $till["DepNo"];
                 } else {
                     $summmary->BTYPE = "PAY";
-                    $summmary->TRANNO = $till['tillno'].$till["PayNo"];
+                    $summmary->TRANNO = $till['tillno'] . $till["PayNo"];
                 }
 
                 $summmary->BDATE = \date("Y-m-d");
@@ -512,9 +513,9 @@ class TransactionController extends Controller
                 if (isset($itemDebtor)) {
                     $debtorTransaction = new DebtorTransaction();
 
-                    $debtorTransaction->accNo = "LB".$itemDebtor['no'];
+                    $debtorTransaction->accNo = "LB" . $itemDebtor['no'];
                     $debtorTransaction->invNo = $docNo;
-                    $debtorTransaction->invAmt = (float) number_format((float) $itemDebtor["balance"], 2, '.', '');
+                    $debtorTransaction->invAmt = (float)number_format((float)$itemDebtor["balance"], 2, '.', '');
                     $debtorTransaction->invDate = \date("Y-m-d");
                     $debtorTransaction->dueDate = \date("Y-m-d");
                     $debtorTransaction->type = "LBC";
@@ -638,8 +639,8 @@ class TransactionController extends Controller
             /**
              * @var Product $product
              */
-            $product = Product::query()->where('code', $item->STYLE)->get()[0];
-            $transaction['description'] = $product->DESCR;
+            $product = Product::query()->where('code', $item->STYLE)->first();
+            $transaction['description'] = $product->descr;
 
             $transaction['disc'] = $item->DISCAMT;
             $transaction['markdown'] = $item->LSLTYPE === 'M' ? true : false;
@@ -655,6 +656,9 @@ class TransactionController extends Controller
             $lineItems["type"] = $item->DOCTYPE;
             $lineItems["branch"] = $item->BRNO;
             $lineItems["till"] = $item->TILLNO;
+            $lineItems['stype'] = $item->STYPE;
+            $lineItems['rescode'] = $item->RESCODE;
+            $lineItems['comments'] = $item->COMMENTS;
         }
 
         $lineItems["totals"]["vat"] = $vat;
@@ -691,6 +695,42 @@ class TransactionController extends Controller
         $date = \date('Y-m-d');
         $time = \date("H:i:s");
 
+        switch ($transaction['type']) {
+            case "L/B":
+            case "INV":
+                $type = "Invoice";
+                break;
+            case "CRN":
+                $type = "Credit";
+                break;
+            default:
+                $type = "Invoice";
+        }
+
+        switch ($transaction['stype']) {
+            case "CC":
+                $method = "Card";
+                break;
+            case "Refund":
+                $method = "Refund";
+                $refundAmt = $totals['total'];
+                $originalDocNo = $id;
+                $reason = $transaction['rescode'];
+                $comments = $transaction['comments'];
+                break;
+            case "Laybye":
+                $method = "Laybye";
+                break;
+            case "Credit":
+                $method = "Credit";
+                break;
+            case "Exchng":
+                $method = "Exchng";
+                break;
+            default:
+                $method = "Cash";
+        }
+
         /**
          * @var SnappyPdf $snappy
          */
@@ -703,10 +743,14 @@ class TransactionController extends Controller
             "totals" => $totals,
             "branch" => $transaction['branch'],
             "till" => $transaction['till'],
-            "method" => $transaction['method'],
-            "type" => $transaction['type'],
-            "tendered" => 0,
-            "change" => $totals['total'] - 0
+            "method" => $method,
+            "type" => $type,
+            "tendered" => $totals['total'],
+            "change" => 0,
+            "refundAmt" => isset($refundAmt) ? $refundAmt : null,
+            "originalDocNo" => isset($originalDocNo) ? $originalDocNo : null,
+            "reason" => isset($reason) ? $reason : null,
+            "comments" => isset($comments) ? $comments : null
         ]);
         return new Response(
             $snappy->getOutputFromHtml($html),

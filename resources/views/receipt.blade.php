@@ -6,44 +6,52 @@
     <meta name="author" content="Fashion World"/>
     <meta name="subject" content="Receipt"/>
     <meta name="date" content="{{ 'now'|date('Y-m-d') }}"/>
+
+    <style type="text/css">
+        p {
+            margin: 0;
+        }
+    </style>
 </head>
-<body>
+<body style="width: 225px">
 <header>
     <header>
         <h4>Fashion World</h4>
     </header>
-    <section>
-        <span>Tax {{ $type }}</span>
-        <span>{{ $method }}</span>
+    <section style="text-align: right; display: flex; flex-wrap: wrap;">
+        <p>Tax {{ $type }}</p>
+        <p>{{ $method }}</p>
     </section>
     <footer>
         <article>
-            <address>
+            <address style="flex-wrap: wrap; display: flex;">
                 <p>Shop {{ $branch }}</p>
                 <p>Nelspruit Plaza</p>
-                <p>Tel: 2800000</p>
+                <p>1200     Tel: 2800000</p>
             </address>
+            <br/>
             <p>Vat Reg Number: 215165111</p>
         </article>
     </footer>
 </header>
+<br/>
 <main>
-    <header>
-        <span>{{ $transaction_id }}</span>
-        <span>{{ $date }}</span>
-        <span>{{ $time }}</span>
-        <span>{{ $branch }}</span>
-        <span style="float: right;">Till No: {{ $till }}</span>
+    <header style="display: flex;">
+        <p>{{ $transaction_id }}</p>
+        <p>{{ $date }}</p>
+        <p>{{ $time }}</p>
+        <p>{{ $branch }}</p>
+        <p style="float: right;">Till No: {{ $till }}</p>
     </header>
     <section>
         <table>
             <thead>
                 <tr>
-                    <th>Style</th>
-                    <th>Desc</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th>Value</th>
+                    <th style="border-bottom: 1px solid black">Style</th>
+                    <th style="border-bottom: 1px solid black">Desc</th>
+                    <th style="border-bottom: 1px solid black">Qty</th>
+                    <th style="border-bottom: 1px solid black">Price</th>
+                    <th style="border-bottom: 1px solid black">Value</th>
                 </tr>
             </thead>
             <tbody>
@@ -56,6 +64,9 @@
                     <td>{{ $transaction['total'] }}</td>
                 </tr>
             @endforeach
+            <tr>
+                <td colspan="5" style="border-bottom: 1px solid black"></td>
+            </tr>
             </tbody>
             <tfoot>
                 <tr>
@@ -67,29 +78,46 @@
                     <td colspan="4">{{ $totals['vat'] }}</td>
                 </tr>
                 <tr>
+                    <td rowspan="1" colspan="4"></td>
+                </tr>
+                <tr>
                     <td colspan="4">Total Value: </td>
                     <td colspan="4">{{ $totals['total'] }}</td>
+                </tr>
+                <tr>
+                    <td rowspan="1" colspan="4"></td>
+                </tr>
+                <tr>
+                    <td colspan="4">Amount Due: </td>
+                    <td colspan="4">{{ $totals['total'] }}</td>
+                </tr>
+                <tr>
+                    <td colspan="4">Payment Method: {{ $method }}</td>
+                    <td colspan="4">{{ $tendered }}</td>
+                </tr>
+                <tr>
+                    <td rowspan="1" colspan="4"></td>
+                </tr>
+                <tr>
+                    <td colspan="4">Change: </td>
+                    <td colspan="4">{{ $change }}</td>
                 </tr>
             </tfoot>
         </table>
     </section>
-    <footer>
-        <section style="display: flex">
-            <span>Amount Due: </span>
-            <span>{{ $totals['total'] }}</span>
-        </section>
-        <section style="display: flex">
-            <span>Payment Method: {{ $method }}</span>
-            <span>{{ $tendered }}</span>
-        </section>
-        <hr/>
-        <section style="display: flex">
-            <span>Change: </span>
-            <span>{{ $change }}</span>
-        </section>
-    </footer>
 </main>
 <footer>
+    @if ($refundAmt !== null)
+    <section style="display: flex; flex-wrap: wrap; margin-top: 15px; width: 100%">
+        <p>Refund Details:-</p>
+        <p>Refund Amount: <span style="margin-left: 50px">{{ $refundAmt }}</span></p>
+        <p>Org Doc No: <span style="margin-left: 50px">{{ $originalDocNo }}</span></p>
+        <p>Date: <span style="margin-left: 50px">{{ $date }}</span></p>
+        <p>Reason: <span style="margin-left: 50px">{{ $reason }}</span></p>
+        <p>Comments: <span style="margin-left: 50px">{{ $comments }}</span></p>
+    </section>
+    <br/>
+    @endif
     <h5 style="text-transform: uppercase">
         Refunds and exchanges accepted as per refund and exchange policy in store. Terms and conditions apply. No exchange
         on underwear, leggings and bodysuits
