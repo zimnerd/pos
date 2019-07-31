@@ -47,7 +47,7 @@ class SaleController extends Controller
             $stock = Stock::query()
                 ->where("STYLE", $sale['code'])
                 ->where("SIZES", $sale['size'])
-                ->where("CLR", $sale['colour'])
+                ->where("CLR", $sale['clrcode'])
                 ->first();
 
             if (!$stock) {
