@@ -64,6 +64,8 @@ class SalesOptionsModal extends React.Component {
         axios.post(`/sales`, request, { headers })
             .then(response => {
                 console.log(response.data);
+                this.props.actions.till.setTransactions();
+
                 this.props.actions.till.setTransactionId(response.data.sale);
                 this.props.actions.modal.openTransaction();
 
@@ -148,7 +150,7 @@ class SalesOptionsModal extends React.Component {
                 <Modal.Body>
                     <div className="d-flex">
                         <div className="col-4">
-                            <Card onClick={this.credit} className="bg-dark text-center">
+                            <Card onClick={this.credit} className="text-center">
                                 <Card.Header>
                                     <span><i className="fa fa-credit-card"/></span>
                                 </Card.Header>
@@ -158,7 +160,7 @@ class SalesOptionsModal extends React.Component {
                             </Card>
                         </div>
                         <div className="col-4">
-                            <Card onClick={this.activateLayBye} className="bg-dark text-center">
+                            <Card onClick={this.activateLayBye} className="text-center">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-grab-o"/></span>
                                 </Card.Header>
@@ -168,7 +170,7 @@ class SalesOptionsModal extends React.Component {
                             </Card>
                         </div>
                         <div className="col-4">
-                            <Card onClick={this.activateStaffPrice} className="bg-dark text-center">
+                            <Card onClick={this.activateStaffPrice} className="text-center">
                                 <Card.Header>
                                     <span><i className="fa fa-money"/></span>
                                 </Card.Header>
@@ -181,7 +183,7 @@ class SalesOptionsModal extends React.Component {
                     <hr/>
                     <div className="d-flex">
                         <div className="col-6">
-                            <Card onClick={this.holdSale} className="bg-dark text-center">
+                            <Card onClick={this.holdSale} className="text-center">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-left"/></span>
                                 </Card.Header>
@@ -191,7 +193,7 @@ class SalesOptionsModal extends React.Component {
                             </Card>
                         </div>
                         <div className="col-6">
-                            <Card onClick={this.retrieveSale} className="bg-dark text-center">
+                            <Card onClick={this.retrieveSale} className="text-center">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-right"/></span>
                                 </Card.Header>

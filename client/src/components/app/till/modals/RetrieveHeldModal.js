@@ -63,7 +63,9 @@ class RetrieveHeldModal extends React.Component {
             subtotal: 0,
             vat: 0,
             discount: 0,
-            items: 0
+            items: 0,
+            held: true,
+            heldNum: sale.docnum
         };
         for (let x = 0, len = sale.transactions.length; x < len; x++) {
             let saleItem = sale.transactions[x];
@@ -83,7 +85,7 @@ class RetrieveHeldModal extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                     <Form>
-                        <p>Select a held transaction:</p>
+                        <p className="text-center">Select a held transaction:</p>
                         <Table>
                             <thead>
                             <tr>
@@ -92,6 +94,11 @@ class RetrieveHeldModal extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
+                            {this.props.till.sales && this.props.till.sales.length === 0 &&
+                            <tr>
+                                <td colSpan="2" className="text-center">There are no held transactions.</td>
+                            </tr>
+                            }
                             {this.props.till.sales && this.props.till.sales.map((item, index) => {
                                 return (
                                     <tr key={index} onClick={() => this.selectSale(item)}>

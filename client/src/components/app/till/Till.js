@@ -134,6 +134,11 @@ class Till extends React.Component {
                     return;
                 }
 
+                if (this.props.till.refund) {
+                    toastr.error('You are not allowed to complete a sale on an refund!', 'Invalid Action');
+                    return;
+                }
+
                 this.props.actions.modal.openCompleteSale();
                 break;
             case 115:
@@ -366,7 +371,12 @@ class Till extends React.Component {
             <article>
                 <Header/>
                 <main className="d-flex till">
-                    <InformationBar/>
+                    <div className="col-4">
+                        <section className="widget text-center m-0 pt-0">
+                            <img src="/assets/logo_plain.png" alt="Till Logo"/>
+                        </section>
+                        <InformationBar/>
+                    </div>
                     <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions}
                                openStyles={this.openStyles} retrieveCombo={this.retrieveCombo}
                                createTransaction={this.createTransaction}/>

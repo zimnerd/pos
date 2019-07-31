@@ -20,6 +20,7 @@ class CreateSalesTable extends Migration
             $table->string('type');
             $table->string('code');
             $table->string('colour');
+            $table->string('clrcode');
             $table->decimal('cost');
             $table->string('description');
             $table->decimal('disc');

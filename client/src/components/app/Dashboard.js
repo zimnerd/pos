@@ -37,13 +37,13 @@ class Dashboard extends React.Component {
         return (
             <main>
                 <Header/>
-                <header className="col-4 text-center bg-dark widget widget-shadow names">
+                <header className="col-4 text-center widget widget-shadow names">
                     <h1>Welcome, {this.props.user.name}</h1>
                     <h4>@{this.props.user.username}</h4>
                     <h5 className="text-uppercase">{this.props.user.role && this.props.user.role.description}</h5>
                 </header>
                 <main className="container d-flex">
-                    <section className="col-6 card bg-dark text-center widget widget-shadow">
+                    <section className="col-6 card text-center widget widget-shadow">
                         <header className="card-img-top">
                             <span><i className="fa fa-sitemap"/></span>
                         </header>
@@ -53,7 +53,7 @@ class Dashboard extends React.Component {
                             <Link to="/app/stock" className="btn btn-success">Go now!</Link>
                         </main>
                     </section>
-                    <section className="col-6 card bg-dark text-center widget widget-shadow">
+                    <section className="col-6 card text-center widget widget-shadow">
                         <header className="card-img-top">
                             <span><i className="fa fa-money"/></span>
                         </header>
@@ -65,9 +65,9 @@ class Dashboard extends React.Component {
                     </section>
                 </main>
                 {this.props.user.role && this.props.user.role.description === 'Administrator' &&
-                <footer className="col-3 text-center widget widget-shadow bg-dark buttons">
+                <footer className="col-3 text-center widget widget-shadow buttons">
                     <p>Register a new user for the application</p>
-                    <Link to='/app/register' className='btn btn-secondary'>Register</Link>
+                    <Link to='/app/register' className='btn btn-primary'>Register</Link>
                 </footer>
                 }
             </main>

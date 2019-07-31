@@ -73,7 +73,7 @@ class StockInformation extends React.Component {
         return (
             <article>
                 <Header/>
-                <section className="container widget widget-shadow bg-dark stock">
+                <section className="container widget widget-shadow stock">
                     <header className="container text-center">
                         <h1>Stock Information</h1>
                         <hr/>
@@ -93,7 +93,7 @@ class StockInformation extends React.Component {
                                         onChange={this.handleChange}
                                     />
                                 </InputGroup>
-                                <DropdownButton id="limit" variant="secondary" title={this.state.limit} className="m-3">
+                                <DropdownButton id="limit" variant="primary" title={this.state.limit} className="m-3">
                                     <DropdownItem onClick={() => this.setLimit(5)}>5</DropdownItem>
                                     <DropdownItem onClick={() => this.setLimit(10)}>10</DropdownItem>
                                     <DropdownItem onClick={() => this.setLimit(15)}>15</DropdownItem>

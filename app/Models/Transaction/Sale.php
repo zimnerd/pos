@@ -41,6 +41,7 @@ class Sale extends Model
         'docnum',
         'type',
         'code',
+        'clrcode',
         'colour',
         'cost',
         'description',

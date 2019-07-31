@@ -1,13 +1,10 @@
 import React from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import { Tab, Tabs } from "react-bootstrap";
 
 import * as settingsActions from "../../../redux/actions/settings.action";
 
 import './InformationBar.scss';
-
-import Table from "react-bootstrap/Table";
 
 class InformationBar extends React.Component {
 
@@ -17,14 +14,14 @@ class InformationBar extends React.Component {
 
     render() {
         return (
-            <aside className="col-4 info">
+            <aside className="info">
                 {this.props.settings.haddith &&
-                <main className="bg-dark p-3 widget-shadow"
+                <main className="p-3 widget-shadow"
                       dangerouslySetInnerHTML={{ __html: this.props.settings.haddith.value }}>
                 </main>
                 }
                 {this.props.settings.combos.length > 0 &&
-                <footer className="bg-dark p-3 widget-shadow mt-3">
+                <footer className="p-3 widget-shadow mt-3">
                     {this.props.settings.combos && this.props.settings.combos.length > 0 &&
                     <section>
                         <header>

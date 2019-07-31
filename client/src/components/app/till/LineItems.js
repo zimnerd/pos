@@ -142,12 +142,12 @@ class LineItems extends React.Component {
 
     render() {
         return (
-            <section className="col-6 line-items widget-shadow bg-dark">
+            <section className="col-6 line-items widget-shadow">
                 <form className="d-flex">
                     <input ref={(input) => { this.codeInput = input; }}
                         onChange={this.handleChange} type="text" onFocus={this.reset}
                            placeholder="Enter product code" className="form-control" value={this.props.till.code}/>
-                    <button className="btn btn-secondary" onClick={this.enterProduct}>Enter</button>
+                    <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
                 </form>
                 <table className="table table-striped table-responsive">
                     <thead>

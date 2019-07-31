@@ -299,7 +299,7 @@ class TransactionController extends Controller
                 $summmary->BRNO = $shop['BrNo'];
                 $summmary->TAXCODE = null;
                 $summmary->VATAMT = $totals["vat"];
-                $summmary->AMT = $transaction["type"] === "LBC" ? $transaction['tendered'] : $totals["total"];
+                $summmary->AMT = $totals["total"];
                 $summmary->GLCODE = 0;
                 $summmary->REMARKS = "Sale";
                 $summmary->COB = $transaction["method"];

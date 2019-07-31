@@ -79,34 +79,39 @@ class Login extends React.Component {
 
     render() {
         return (
-            <section className="col-6 widget bg-dark widget-shadow">
-                <header>
-                    <h1 className="text-center">Login User</h1>
-                    <hr/>
-                </header>
-                <main>
-                    <form id='login-form'>
-                        <main onKeyDown={this.keyDown} className="p-3">
-                            <section className='form-group'>
-                                <label>Username:</label>
-                                <input id='username' name='username' className='form-control' type='text'
-                                       value={this.state.username}
-                                       onChange={this.handleChange} placeholder='Username' required/>
-                                {this.props.auth.errors['username'] && <p className="error">{this.props.auth.errors['username']}</p>}
-                            </section>
-                            <section className='form-group'>
-                                <label>Password:</label>
-                                <input id='password' name='password' className='form-control' type='password'
-                                       value={this.state.password}
-                                       onChange={this.handleChange} placeholder='Password' required/>
-                                {this.props.auth.errors['password'] && <p className="error">{this.props.auth.errors['password']}</p>}
-                            </section>
-                        </main>
-                        <footer className="pl-3 pr-3 pb-3 text-right">
-                            <button className='btn btn-secondary w-25 bg-secondary' onClick={this.onSubmit}>Login</button>
-                        </footer>
-                    </form>
-                </main>
+            <section>
+                <section className="p-5 widget text-center">
+                    <img src="/assets/logo_plain.png" alt="Login Logo"/>
+                </section>
+                <section className="col-6 widget widget-shadow no-top">
+                    <header>
+                        <h1 className="text-center">Login User</h1>
+                        <hr/>
+                    </header>
+                    <main>
+                        <form id='login-form'>
+                            <main onKeyDown={this.keyDown} className="p-3">
+                                <section className='form-group'>
+                                    <label>Username:</label>
+                                    <input id='username' name='username' className='form-control' type='text'
+                                           value={this.state.username}
+                                           onChange={this.handleChange} placeholder='Username' required/>
+                                    {this.props.auth.errors['username'] && <p className="error">{this.props.auth.errors['username']}</p>}
+                                </section>
+                                <section className='form-group'>
+                                    <label>Password:</label>
+                                    <input id='password' name='password' className='form-control' type='password'
+                                           value={this.state.password}
+                                           onChange={this.handleChange} placeholder='Password' required/>
+                                    {this.props.auth.errors['password'] && <p className="error">{this.props.auth.errors['password']}</p>}
+                                </section>
+                            </main>
+                            <footer className="pl-3 pr-3 pb-3 text-right">
+                                <button className='btn btn-primary w-25' onClick={this.onSubmit}>Login</button>
+                            </footer>
+                        </form>
+                    </main>
+                </section>
             </section>
         )
     }

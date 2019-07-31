@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\Transaction;
 
 use App\Http\Controllers\Controller;
 use App\Sale;
+use App\Stock;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -40,9 +41,27 @@ class SaleController extends Controller
                 $lineItem = $map[$sale->docnum];
             }
 
+            /**
+             * @var Stock $stock
+             */
+            $stock = Stock::query()
+                ->where("STYLE", $sale['code'])
+                ->where("SIZES", $sale['size'])
+                ->where("CLR", $sale['colour'])
+                ->first();
+
+            if (!$stock) {
+                continue;
+            }
+
+            if ($stock->QOH <= 0) {
+                continue;
+            }
+
             $transaction = array();
             $transaction['code'] = $sale->code;
             $transaction['colour'] = $sale->colour;
+            $transaction['clrcode'] = $sale->clrcode;
             $transaction['size'] = $sale->size;
             $transaction['cost'] = $sale->cost;
             $transaction['description'] = $sale->description;
@@ -88,6 +107,7 @@ class SaleController extends Controller
             $transaction = array();
             $transaction['code'] = $sale->code;
             $transaction['colour'] = $sale->colour;
+            $transaction['clrcode'] = $sale->clrcode;
             $transaction['size'] = $sale->size;
             $transaction['cost'] = $sale->cost;
             $transaction['description'] = $sale->description;
@@ -135,6 +155,7 @@ class SaleController extends Controller
                 $sale->type = $lineItems['type'];
                 $sale->code = $transaction['code'];
                 $sale->colour = $transaction['colour'];
+                $sale->clrcode = $transaction['clrcode'];
                 $sale->cost = $transaction['cost'];
                 $sale->description = $transaction['description'];
                 $sale->disc = $transaction['disc'];
@@ -155,6 +176,27 @@ class SaleController extends Controller
             DB::rollBack();
             return response()->json([], $this->errorStatus);
         }
+    }
+
+
+    /**
+     * Hold a sale
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function removeSale($id)
+    {
+        $sale = Sale::query()
+            ->where('docnum', $id)
+            ->first();
+
+        if (!$sale) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $sale->delete();
+        return response()->json([], $this->successStatus);
     }
 
 }

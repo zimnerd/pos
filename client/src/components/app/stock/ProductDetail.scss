@@ -2,22 +2,4 @@
 
 .widget.stock-info {
     margin-top: 2%;
-
-    .table {
-        color: $white;
-
-        &.table-striped tbody tr:nth-of-type(2n+1) {
-            background-color: rgba(0, 0, 0, 0.5);
-        }
-
-        tbody {
-
-            tr:hover {
-                color: $white;
-            }
-
-        }
-
-    }
-
 }

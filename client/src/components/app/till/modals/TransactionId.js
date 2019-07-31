@@ -20,12 +20,12 @@ class TransactionId extends React.Component {
                     <Modal.Title>Held Transaction Number</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>To retrieve this transaction, please use the following
+                    <p className="text-center">To retrieve this transaction, please use the following
                         number:
-                        {this.props.till &&
-                        <strong>{this.props.till.held}</strong>
-                        }
                     </p>
+                    {this.props.till &&
+                    <h4 className="text-center">{this.props.till.held}</h4>
+                    }
                 </Modal.Body>
                 <Modal.Footer>
                     <Button variant="danger" onClick={this.handleClose}>

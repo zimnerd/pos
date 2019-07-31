@@ -16,25 +16,11 @@ code {
 }
 
 .modal {
-    color: $white;
-
-    .close > span {
-        color: $white;
-    }
-
-    .modal-footer,
-    .modal-header {
-        background-color: $dark;
-        border-color: $dark;
-    }
 
     .modal-body {
-        padding: 10%;
-        background-color: $dark_opaque;
-        border-color: $dark_opaque;
+        padding: 5%;
 
         .table {
-            color: $white;
             max-height: 250px;
         }
 
@@ -45,6 +31,8 @@ code {
         margin-top: 5%;
         margin-right: 15px;
         border: none;
+        border-radius: 15px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, .5);
 
         &:hover {
             box-shadow: 0 5px 20px rgba(0, 0, 0, .5);
@@ -57,7 +45,7 @@ code {
     }
 
     hr {
-        border-color: $white;
+        border-color: $black;
     }
 
 }
@@ -118,8 +106,4 @@ code {
     background-color: $blue;
     opacity: 1;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
-}
-
-.col-white {
-    color: $white;
 }

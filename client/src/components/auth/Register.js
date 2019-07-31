@@ -115,7 +115,7 @@ class Register extends React.Component {
         return (
             <section>
                 <Header/>
-                <section className="col-6 widget bg-dark widget-shadow register">
+                <section className="col-6 widget widget-shadow register">
                     <header>
                         <h1 className="text-center">Register User</h1>
                         <hr/>
@@ -142,7 +142,6 @@ class Register extends React.Component {
                                         <label>Role:</label>
                                         <select id='role' name='role' placeholder='Role'
                                                 value={this.state.role}
-                                            // defaultValue='Role'
                                                 onChange={this.handleChange} className='form-control' required>
                                             {this.props.auth.roles &&
                                             this.props.auth.roles.map((item, index) => {
@@ -180,7 +179,7 @@ class Register extends React.Component {
                                 </div>
                             </main>
                             <footer className="text-right">
-                                <button className='btn btn-secondary' onClick={this.onSubmit}>Register</button>
+                                <button className='btn btn-primary' onClick={this.onSubmit}>Register</button>
                                 <Link to='/app/dashboard' className='btn btn-danger float-left'>Back</Link>
                             </footer>
                         </form>

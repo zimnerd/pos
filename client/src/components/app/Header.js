@@ -15,10 +15,10 @@ class Header extends React.Component {
 
     render() {
         return (
-            <header className="bg-dark p-2">
+            <header className="p-2 shadow">
                 <Link to="/" onClick={this.logout()} className="btn btn-danger">Sign Out</Link>
                 <button className="btn float-right " onClick={this.props.history.goBack}>
-                    <span className="col-white"><i className="fa fa-arrow-left"/></span>
+                    <span><i className="fa fa-arrow-left"/></span>
                 </button>
             </header>
         )

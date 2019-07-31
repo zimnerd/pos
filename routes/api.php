@@ -92,6 +92,7 @@ Route::group(["prefix" => "sales"], function () {
         Route::get('', 'Api\Transaction\SaleController@getSales');
         Route::get('{id}', 'Api\Transaction\SaleController@retrieveSale');
         Route::post('', 'Api\Transaction\SaleController@holdSale');
+        Route::delete('{id}', 'Api\Transaction\SaleController@removeSale');
     });
 
 });

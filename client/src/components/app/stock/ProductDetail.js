@@ -40,7 +40,7 @@ class ProductDetail extends React.Component {
         return (
             <article>
                 <Header/>
-                <section className="container widget widget-shadow bg-dark stock-info">
+                <section className="container widget widget-shadow stock-info">
                     {this.props.stock.product &&
                     <header className="text-center">
                         <h1>{this.props.stock.product.description}</h1>

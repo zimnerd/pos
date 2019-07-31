@@ -56,7 +56,7 @@ class Totals extends React.Component {
     render() {
         return (
             <aside className="totals">
-                <main className="widget-shadow bg-dark">
+                <main className="widget-shadow">
                 {this.props.till.totals &&
                     <div>
                         <label className="d-flex total">Items: <span className="value">{this.props.till.totals.items}</span></label>
@@ -80,7 +80,7 @@ class Totals extends React.Component {
                 !this.props.till.credit &&
                 this.props.till.refund &&
                 <footer>
-                    <button className="btn btn-secondary" onClick={this.completeRefund}>
+                    <button className="btn btn-primary" onClick={this.completeRefund}>
                         Complete Refund
                     </button>
                 </footer>
@@ -89,7 +89,7 @@ class Totals extends React.Component {
                 !this.props.till.credit &&
                 this.props.till.exchange &&
                 <footer>
-                    <button className="btn btn-secondary" onClick={this.completeExchange}>
+                    <button className="btn btn-primary" onClick={this.completeExchange}>
                         Complete Exchange
                     </button>
                 </footer>
@@ -98,7 +98,7 @@ class Totals extends React.Component {
                 !this.props.till.exchange &&
                 this.props.till.credit &&
                 <footer>
-                    <button className="btn btn-secondary" onClick={this.completeCredit}>
+                    <button className="btn btn-primary" onClick={this.completeCredit}>
                         Complete Credit Sale
                     </button>
                 </footer>

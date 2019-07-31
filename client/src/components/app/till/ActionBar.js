@@ -33,7 +33,7 @@ class ActionBar extends React.Component {
                         </section>
                     </section>
                 </main>
-                <footer className="till-text bg-dark w-100">
+                <footer className="till-text w-100">
                     <span>Till number {this.props.settings.number} logged in as {this.props.user.username}</span>
                 </footer>
             </article>
