@@ -540,7 +540,7 @@ class CompleteSaleModal extends React.Component {
                         <div className="form-group">
                             <label>Amount Tendered:</label>
                             <input type="text" className="form-control" value={this.state.tendered}
-                                   name="tendered"
+                                   name="tendered" onFocus={() => this.setState({ tendered: 0.00 })}
                                    disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                         </div>
                         {this.state.tendered > this.props.till.totals.total &&

@@ -115,6 +115,7 @@ class TransactionController extends Controller
                     if (isset($transaction['debtor'])) {
                         $laybyeNo = $transaction['debtor']['no'];
                         $debtorNo = $transaction['debtor']['no'];
+                        $balance = $transaction['debtor']['balance'];
                         $itemDebtor = $transaction['debtor'];
                     }
                     break;
@@ -299,7 +300,7 @@ class TransactionController extends Controller
                 $summmary->BRNO = $shop['BrNo'];
                 $summmary->TAXCODE = null;
                 $summmary->VATAMT = $totals["vat"];
-                $summmary->AMT = $totals["total"];
+                $summmary->AMT = $balance;
                 $summmary->GLCODE = 0;
                 $summmary->REMARKS = "Sale";
                 $summmary->COB = $transaction["method"];
