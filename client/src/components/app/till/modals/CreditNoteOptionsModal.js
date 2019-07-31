@@ -35,38 +35,44 @@ class CreditNoteOptionsModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.modal.credit} onHide={this.handleClose}>
+            <Modal size="lg" show={this.props.modal.credit} onHide={this.handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Credit Note Options</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <Card onClick={this.activateExchange}>
-                        <Card.Header>
-                            <span><i className="fa fa-exchange"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Exchange</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card onClick={this.refund}>
-                        <Card.Header>
-                            <span><i className="fa fa-refresh"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Refund</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card onClick={this.laybyeRefund}>
-                        <Card.Header>
-                            <span><i className="fa fa-refresh"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Laybye Refund</Card.Title>
-                        </Card.Body>
-                    </Card>
+                <Modal.Body className="d-flex">
+                    <div className="col-4">
+                        <Card onClick={this.activateExchange} className="bg-dark text-center">
+                            <Card.Header>
+                                <span><i className="fa fa-exchange"/></span>
+                            </Card.Header>
+                            <Card.Body>
+                                <Card.Title>Exchange</Card.Title>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                    <div className="col-4">
+                        <Card onClick={this.refund} className="bg-dark text-center">
+                            <Card.Header>
+                                <span><i className="fa fa-refresh"/></span>
+                            </Card.Header>
+                            <Card.Body>
+                                <Card.Title>Refund</Card.Title>
+                            </Card.Body>
+                        </Card>
+                    </div>
+                    <div className="col-4">
+                        <Card onClick={this.laybyeRefund} className="bg-dark text-center">
+                            <Card.Header>
+                                <span><i className="fa fa-refresh"/></span>
+                            </Card.Header>
+                            <Card.Body>
+                                <Card.Title>Laybye Refund</Card.Title>
+                            </Card.Body>
+                        </Card>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

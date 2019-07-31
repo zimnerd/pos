@@ -137,6 +137,15 @@ class ReceiptsPaymentModal extends React.Component {
         } else {
             this.setState({
                 [e.target.name]: e.target.value
+            }, () => {
+                if (this.state.method === "Split") {
+                    let card = Number(this.state.account.balance).toFixed(2) - this.state.cash;
+                    this.setState({
+                        cash: this.state.cash,
+                        card: card,
+                        tendered: Number(Number(this.state.cash) + Number(card)).toFixed(2)
+                    });
+                }
             });
         }
     };
@@ -212,7 +221,7 @@ class ReceiptsPaymentModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.modal.debtorReceipts} onHide={this.handleClose}>
+            <Modal size="lg" show={this.props.modal.debtorReceipts} onHide={this.handleClose} className="debtor-receipts">
                 <Modal.Header closeButton>
                     <Modal.Title>Debtor Receipts</Modal.Title>
                 </Modal.Header>
@@ -230,7 +239,7 @@ class ReceiptsPaymentModal extends React.Component {
                             </select>
                         </div>
                         {this.state.accounts &&
-                        <Table>
+                        <table className="table table-responsive table-striped">
                             <thead>
                             <tr>
                                 <th>Acc Num</th>
@@ -242,7 +251,7 @@ class ReceiptsPaymentModal extends React.Component {
                             <tbody>
                             {this.state.accounts.length === 0 &&
                                 <tr>
-                                    <td colSpan="4">There are no accounts to display!</td>
+                                    <td colSpan="4" className="text-center">There are no accounts to display!</td>
                                 </tr>
                             }
                             {this.state.accounts.map((item, index) => {
@@ -252,12 +261,12 @@ class ReceiptsPaymentModal extends React.Component {
                                         <td>{item.name}</td>
                                         <td>{item.email}</td>
                                         <td>{item.cell}</td>
-                                   t </tr>
+                                   </tr>
                                 )
                             })
                             }
                             </tbody>
-                        </Table>
+                        </table>
                         }
                         {this.state.account &&
                         <div>
@@ -267,31 +276,38 @@ class ReceiptsPaymentModal extends React.Component {
                                        value={this.state.account.balance}/>
                             </div>
                             <hr/>
-                            <div className="form-group">
+                            <div className="p-1 payment-method">
                                 <label>Payment Method:</label>
-                                <span>Cash</span>
-                                <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
-                                       name="method"/>
-                                <span>Card</span>
-                                <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
-                                       name="method"/>
-                                <span>Split Payment</span>
-                                <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
-                                       name="method"/>
-                            </div>
-                            {
-                                this.state.method === "Split" &&
-                                <div className="form-group">
-                                    <label>Cash Amount:</label>
-                                    <input type="text" className="form-control" name="cash"
-                                           value={this.state.cash}
-                                           onChange={this.handleChange}/>
-                                    <label>Card Amount:</label>
-                                    <input type="text" className="form-control" name="card"
-                                           value={this.state.card}
-                                           onChange={this.handleChange}/>
+                                <div className="form-group d-flex">
+                                    <span>Cash</span>
+                                    <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
+                                           name="method"/>
                                 </div>
-                            }
+                                <div className="form-group d-flex">
+                                    <span>Card</span>
+                                    <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
+                                           name="method"/>
+                                </div>
+                                <div className="form-group d-flex">
+                                    <span>Split Payment</span>
+                                    <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
+                                           name="method"/>
+                                </div>
+                                {
+                                    this.state.method === "Split" &&
+                                    <div className="form-group">
+                                        <label>Cash Amount:</label>
+                                        <input type="text" className="form-control" name="cash"
+                                               value={this.state.cash}
+                                               onChange={this.handleChange}/>
+                                        <label>Card Amount:</label>
+                                        <input type="text" className="form-control" name="card"
+                                               value={this.state.card}
+                                               onChange={this.handleChange}/>
+                                    </div>
+                                }
+                            </div>
+                            <hr/>
                             <div className="form-group">
                                 <label>Amount Tendered:</label>
                                 <input type="text" className="form-control" value={this.state.tendered}
@@ -299,7 +315,7 @@ class ReceiptsPaymentModal extends React.Component {
                                        disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                             </div>
                             {this.state.tendered > this.state.account.balance &&
-                            <label>Change:
+                            <label className="value">Change:
                                 <span>{(this.state.tendered - this.state.account.balance).toFixed(2)}</span>
                             </label>
                             }
@@ -315,11 +331,11 @@ class ReceiptsPaymentModal extends React.Component {
                 </Modal.Body>
                 <Modal.Footer>
                     {this.state.account &&
-                    <Button variant="primary" onClick={this.continue}>
+                    <Button variant="success" onClick={this.continue}>
                         Capture
                     </Button>
                     }
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

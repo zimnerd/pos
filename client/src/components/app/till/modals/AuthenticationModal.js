@@ -170,7 +170,7 @@ class AuthenticationModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.modal.auth} onHide={this.handleClose}>
+            <Modal show={this.props.modal.auth} onHide={this.handleClose} className="auth-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>Authenticate</Modal.Title>
                 </Modal.Header>
@@ -196,7 +196,7 @@ class AuthenticationModal extends React.Component {
                     <Button variant="danger" onClick={this.handleClose}>
                         Cancel
                     </Button>
-                    <Button variant="primary" onClick={this.authenticate}>
+                    <Button variant="success" onClick={this.authenticate}>
                         Authenticate
                     </Button>
                 </Modal.Footer>

@@ -1,13 +1,13 @@
 import React from 'react';
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import axios from "axios";
+import toastr from "toastr";
 
 import * as tillActions from "../../../redux/actions/till.action";
 import * as modalActions from "../../../redux/actions/modal.action";
 
 import './Totals.scss';
-import axios from "axios";
-import toastr from "toastr";
 
 class Totals extends React.Component {
 
@@ -55,22 +55,23 @@ class Totals extends React.Component {
 
     render() {
         return (
-            <aside className="float-right">
+            <aside className="totals">
+                <main className="widget-shadow bg-dark">
                 {this.props.till.totals &&
-                <main>
-                    <label>Items: <span>{this.props.till.totals.items}</span></label>
-                    <label>Subtotal: <span>{(this.props.till.totals.subtotal).toFixed(2)}</span></label>
-                    <label>Discount: <span>{(this.props.till.totals.discount).toFixed(2)}</span></label>
-                    <label>Tax Total: <span>{(this.props.till.totals.vat).toFixed(2)}</span></label>
+                    <div>
+                        <label className="d-flex total">Items: <span className="value">{this.props.till.totals.items}</span></label>
+                        <label className="d-flex total">Subtotal: <span className="value">{(this.props.till.totals.subtotal).toFixed(2)}</span></label>
+                        <label className="d-flex total">Discount: <span className="value">{(this.props.till.totals.discount).toFixed(2)}</span></label>
+                        <label className="d-flex total">Tax Total: <span className="value">{(this.props.till.totals.vat).toFixed(2)}</span></label>
 
-                    <h3>{(this.props.till.totals.total).toFixed(2)}</h3>
-                </main>
+                        <h3 className="sale-total">{(this.props.till.totals.total).toFixed(2)}</h3>
+                    </div>
                 }
                 {!this.props.till.refund &&
                 !this.props.till.exchange &&
                 !this.props.till.credit &&
                 <footer>
-                    <button className="btn btn-primary" onClick={() => this.props.openModal({ keyCode: 114 })}>Cash/Card
+                    <button className="btn btn-success" onClick={() => this.props.openModal({ keyCode: 114 })}>Cash/Card
                         (F3)
                     </button>
                 </footer>
@@ -102,6 +103,7 @@ class Totals extends React.Component {
                     </button>
                 </footer>
                 }
+                </main>
             </aside>
         )
     }

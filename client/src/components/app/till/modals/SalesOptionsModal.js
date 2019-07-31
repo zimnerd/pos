@@ -141,55 +141,69 @@ class SalesOptionsModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.modal.sales} onHide={this.handleClose}>
+            <Modal size="lg" show={this.props.modal.sales} onHide={this.handleClose}>
                 <Modal.Header closeButton>
                     <Modal.Title>Sales Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Card onClick={this.credit}>
-                        <Card.Header>
-                            <span><i className="fa fa-credit-card"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Credit</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card onClick={this.activateLayBye}>
-                        <Card.Header>
-                            <span><i className="fa fa-hand-grab-o"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>New Lay-Bye</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card onClick={this.activateStaffPrice}>
-                        <Card.Header>
-                            <span><i className="fa fa-money"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Staff Price</Card.Title>
-                        </Card.Body>
-                    </Card>
+                    <div className="d-flex">
+                        <div className="col-4">
+                            <Card onClick={this.credit} className="bg-dark text-center">
+                                <Card.Header>
+                                    <span><i className="fa fa-credit-card"/></span>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>Credit</Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        <div className="col-4">
+                            <Card onClick={this.activateLayBye} className="bg-dark text-center">
+                                <Card.Header>
+                                    <span><i className="fa fa-hand-grab-o"/></span>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>New Lay-Bye</Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        <div className="col-4">
+                            <Card onClick={this.activateStaffPrice} className="bg-dark text-center">
+                                <Card.Header>
+                                    <span><i className="fa fa-money"/></span>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>Staff Price</Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                    </div>
                     <hr/>
-                    <Card onClick={this.holdSale}>
-                        <Card.Header>
-                            <span><i className="fa fa-hand-o-left"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Hold Sale</Card.Title>
-                        </Card.Body>
-                    </Card>
-                    <Card onClick={this.retrieveSale}>
-                        <Card.Header>
-                            <span><i className="fa fa-hand-o-right"/></span>
-                        </Card.Header>
-                        <Card.Body>
-                            <Card.Title>Retrieve Sale</Card.Title>
-                        </Card.Body>
-                    </Card>
+                    <div className="d-flex">
+                        <div className="col-6">
+                            <Card onClick={this.holdSale} className="bg-dark text-center">
+                                <Card.Header>
+                                    <span><i className="fa fa-hand-o-left"/></span>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>Hold Sale</Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        <div className="col-6">
+                            <Card onClick={this.retrieveSale} className="bg-dark text-center">
+                                <Card.Header>
+                                    <span><i className="fa fa-hand-o-right"/></span>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>Retrieve Sale</Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

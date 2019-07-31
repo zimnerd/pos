@@ -1,0 +1,25 @@
+@import "../../../colours";
+
+.actions {
+    bottom: 0;
+
+    .card {
+        border-color: rgba(0, 0, 0, 0.2);
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        padding: 5%;
+        color: $white;
+
+        &.bg-light {
+            color: $black;
+        }
+
+    }
+
+}
+
+.till-text {
+    bottom: 0;
+    position: fixed;
+    padding: 15px;
+    color: $white;
+}

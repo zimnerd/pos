@@ -1,0 +1,22 @@
+.widget {
+
+    &.names {
+        margin-top: 3%;
+    }
+
+    &.buttons {
+        margin-top: 3%;
+    }
+
+    &.card {
+        margin-top: 5%;
+        margin-right: 15px;
+        border: none;
+
+        .fa {
+            font-size: 75px;
+        }
+
+    }
+
+}

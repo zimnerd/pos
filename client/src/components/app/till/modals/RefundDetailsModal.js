@@ -91,56 +91,60 @@ class RefundDetailsModal extends React.Component {
                 </Modal.Header>
                 <Modal.Body>
                     <p>Enter the details of the invoice to refund:</p>
-                    <Form>
-                        <div className="form-group">
-                            <label>Invoice Number:</label>
-                            <input name="invNo" type="text" className="form-control"
-                                   value={this.state.invNo} onChange={this.handleChange}/>
+                    <Form className="d-flex">
+                        <div className="col-6">
+                            <div className="form-group">
+                                <label>Invoice Number:</label>
+                                <input name="invNo" type="text" className="form-control"
+                                       value={this.state.invNo} onChange={this.handleChange}/>
+                            </div>
+                            {this.props.till && !this.props.till.refundData &&
+                            <div className="form-group">
+                                <label>Invoice Type:</label>
+                                <select onChange={this.handleChange} className="form-control" name="invType">
+                                    <option disabled selected>Select a type</option>
+                                    <option value="INV">INV</option>
+                                    <option value="L/B">L/B</option>
+                                </select>
+                            </div>
+                            }
+                            {this.props.till && !this.props.till.refundData &&
+                            <div className="form-group">
+                                <label>Branch Number:</label>
+                                <input name="brNo" type="text" className="form-control"
+                                       value={this.state.brNo} onChange={this.handleChange}/>
+                            </div>
+                            }
+                            <div className="form-group">
+                                <label>Email Address:</label>
+                                <input name="email" type="email" className="form-control"
+                                       value={this.state.email} onChange={this.handleChange}/>
+                            </div>
                         </div>
-                        {this.props.till && !this.props.till.refundData &&
-                        <div className="form-group">
-                            <label>Invoice Type:</label>
-                            <select onChange={this.handleChange} className="form-control" name="invType">
-                                <option disabled selected>Select a type</option>
-                                <option value="INV">INV</option>
-                                <option value="L/B">L/B</option>
-                            </select>
-                        </div>
-                        }
-                        {this.props.till && !this.props.till.refundData &&
-                        <div className="form-group">
-                            <label>Branch Number:</label>
-                            <input name="brNo" type="text" className="form-control"
-                                   value={this.state.brNo} onChange={this.handleChange}/>
-                        </div>
-                        }
-                        <div className="form-group">
-                            <label>Invoice Date:</label>
-                            <input name="invDate" type="date" className="form-control"
-                                   value={this.state.invDate} onChange={this.handleChange}/>
-                        </div>
-                        <div className="form-group">
-                            <label>ID Number:</label>
-                            <input name="idNo" type="text" className="form-control"
-                                   value={this.state.idNo} onChange={this.handleChange}/>
-                        </div>
-                        <div className="form-group">
-                            <label>Cell Number:</label>
-                            <input name="cell" type="text" className="form-control"
-                                   value={this.state.cell} onChange={this.handleChange}/>
-                        </div>
-                        <div className="form-group">
-                            <label>Email Address:</label>
-                            <input name="email" type="email" className="form-control"
-                                   value={this.state.email} onChange={this.handleChange}/>
+                        <div className="col-6">
+                            <div className="form-group">
+                                <label>Invoice Date:</label>
+                                <input name="invDate" type="date" className="form-control"
+                                       value={this.state.invDate} onChange={this.handleChange}/>
+                            </div>
+                            <div className="form-group">
+                                <label>ID Number:</label>
+                                <input name="idNo" type="text" className="form-control"
+                                       value={this.state.idNo} onChange={this.handleChange}/>
+                            </div>
+                            <div className="form-group">
+                                <label>Cell Number:</label>
+                                <input name="cell" type="text" className="form-control"
+                                       value={this.state.cell} onChange={this.handleChange}/>
+                            </div>
                         </div>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.handleContinue}>
+                    <Button variant="success" onClick={this.handleContinue}>
                         Continue
                     </Button>
                 </Modal.Footer>

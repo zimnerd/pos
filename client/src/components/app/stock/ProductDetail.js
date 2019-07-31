@@ -38,70 +38,72 @@ class ProductDetail extends React.Component {
 
     render() {
         return (
-            <article className="container">
+            <article>
                 <Header/>
-                {this.props.stock.product &&
-                <header className="text-center">
-                    <h1>{this.props.stock.product.description}</h1>
-                </header>
-                }
-                <main>
-                    <Table striped>
-                        <thead>
-                        <tr>
-                            <th>Code</th>
-                            <th>Colour</th>
-                            <th>Size</th>
-                            <th>Quantity on Hand</th>
-                            <th>Unit Price</th>
-                            <th>Status</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {this.props.stock.product &&
-                        this.props.stock.product.info.map((item, index) => {
-                            let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
-                            let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
+                <section className="container widget widget-shadow bg-dark stock-info">
+                    {this.props.stock.product &&
+                    <header className="text-center">
+                        <h1>{this.props.stock.product.description}</h1>
+                    </header>
+                    }
+                    <main className="mt-5">
+                        <Table striped>
+                            <thead>
+                            <tr>
+                                <th>Code</th>
+                                <th>Colour</th>
+                                <th>Size</th>
+                                <th>Quantity on Hand</th>
+                                <th>Unit Price</th>
+                                <th>Status</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.props.stock.product &&
+                            this.props.stock.product.info.map((item, index) => {
+                                let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
+                                let price = this.props.stock.product.prices.find(price => price.sizes === item.SIZES);
 
-                            if (typeof price === "undefined") {
-                                let values = [];
-                                let size = item.SIZES;
-                                for (let item of this.props.stock.product.items) {
-                                    let price = Number(item.sp);
-                                    let value = (
-                                        <tr key={index}>
-                                            <td>{`${item.code} ${item.serialno}`}</td>
-                                            <td>{`${colour.colour}`}</td>
-                                            <td>{`${size}`}</td>
-                                            <td>1.00</td>
-                                            <td>{`${price.toFixed(2)}`}</td>
-                                            <td/>
-                                        </tr>
-                                    );
+                                if (typeof price === "undefined") {
+                                    let values = [];
+                                    let size = item.SIZES;
+                                    for (let item of this.props.stock.product.items) {
+                                        let price = Number(item.sp);
+                                        let value = (
+                                            <tr key={index}>
+                                                <td>{`${item.code} ${item.serialno}`}</td>
+                                                <td>{`${colour.colour}`}</td>
+                                                <td>{`${size}`}</td>
+                                                <td>1.00</td>
+                                                <td>{`${price.toFixed(2)}`}</td>
+                                                <td/>
+                                            </tr>
+                                        );
 
-                                    values.push(value);
+                                        values.push(value);
+                                    }
+
+                                    return values;
                                 }
 
-                                return values;
+                                let markdown = price.mdp > 0;
+                                let priceValue = markdown ? price.mdp : price.rp;
+                                return (
+                                    <tr key={index}>
+                                        <td>{`${item.STYLE} ${item.SIZES} ${item.CLR}`}</td>
+                                        <td>{`${colour.colour}`}</td>
+                                        <td>{`${item.SIZES}`}</td>
+                                        <td>{`${item.QOH}`}</td>
+                                        <td>{`${priceValue}`}</td>
+                                        <td>{markdown && <span className="badge badge-danger">Markdown</span>}</td>
+                                    </tr>
+                                )
+                            })
                             }
-
-                            let markdown = price.mdp > 0;
-                            let priceValue = markdown ? price.mdp : price.rp;
-                            return (
-                                <tr key={index}>
-                                    <td>{`${item.STYLE} ${item.SIZES} ${item.CLR}`}</td>
-                                    <td>{`${colour.colour}`}</td>
-                                    <td>{`${item.SIZES}`}</td>
-                                    <td>{`${item.QOH}`}</td>
-                                    <td>{`${priceValue}`}</td>
-                                    <td>{markdown && <span className="badge badge-danger">Markdown</span>}</td>
-                                </tr>
-                            )
-                        })
-                        }
-                        </tbody>
-                    </Table>
-                </main>
+                            </tbody>
+                        </Table>
+                    </main>
+                </section>
             </article>
         )
     }

@@ -2,11 +2,11 @@ import React from 'react';
 import { Button, Card, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import { withRouter } from "react-router-dom";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 
 import './OtherModal.scss';
-import { withRouter } from "react-router-dom";
 
 class OtherModal extends React.Component {
 
@@ -21,7 +21,7 @@ class OtherModal extends React.Component {
                     <Modal.Title>Other Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Card onClick={() => this.props.history.push("/app/stock")}>
+                    <Card className="bg-dark text-center" onClick={() => this.props.history.push("/app/stock")}>
                         <Card.Header>
                             <span><i className="fa fa-search"/></span>
                         </Card.Header>
@@ -31,7 +31,7 @@ class OtherModal extends React.Component {
                     </Card>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

@@ -2,20 +2,20 @@ import React from 'react';
 import { connect } from "react-redux";
 import { DropdownButton, DropdownItem, Form, FormControl, InputGroup, Table } from "react-bootstrap";
 import ReactPaginate from 'react-paginate';
+import { bindActionCreators } from "redux";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import toastr from "toastr";
 
 import * as stockActions from "../../../redux/actions/stock.action";
 
 import './StockInformation.scss';
-import { bindActionCreators } from "redux";
-import { Link } from "react-router-dom";
 import Header from "../Header";
 
 class StockInformation extends React.Component {
 
     state = {
-        limit: 25,
+        limit: 5,
         search: undefined,
         page: undefined,
         items: [],
@@ -71,74 +71,81 @@ class StockInformation extends React.Component {
 
     render() {
         return (
-            <article className="container">
+            <article>
                 <Header/>
-                <header className="text-center">
-                    <h1>Stock Information</h1>
-                </header>
-                <main>
-                    <Form>
-                        <InputGroup className="mb-3">
-                            <InputGroup.Prepend onClick={this.retrieveProducts}>
-                                <InputGroup.Text id="search-addon"><span><i
-                                    className="fa fa-search"/></span></InputGroup.Text>
-                            </InputGroup.Prepend>
-                            <FormControl
-                                placeholder="Search for a product"
-                                aria-describedby="search-addon"
-                                value={this.state.search}
-                                onChange={this.handleChange}
-                            />
-                        </InputGroup>
-                        <DropdownButton id="limit" title={this.state.limit} className="mb-3">
-                            <DropdownItem onClick={() => this.setLimit(10)}>10</DropdownItem>
-                            <DropdownItem onClick={() => this.setLimit(25)}>25</DropdownItem>
-                            <DropdownItem onClick={() => this.setLimit(50)}>50</DropdownItem>
-                        </DropdownButton>
-                        <Table striped hover>
-                            <thead>
-                            <tr>
-                                <th>Code</th>
-                                <th>Description</th>
-                                <th/>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {
-                                this.props.stock.page && this.props.stock.page.data.map((item, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>{item.code}</td>
-                                            <td>{item.descr}</td>
-                                            <td>
-                                                <Link to={'stock/' + item.code} className="btn btn-success">
-                                                    View
-                                                </Link>
-                                            </td>
-                                        </tr>
-                                    )
-                                })
-                            }
-                            </tbody>
-                        </Table>
-                        {
-                            this.props.stock.page &&
-                            <ReactPaginate
-                                previousLabel={'previous'}
-                                nextLabel={'next'}
-                                breakLabel={'...'}
-                                pageCount={this.props.stock.page.last_page}
-                                // marginPagesDisplayed={2}
-                                // pageRangeDisplayed={5}
-                                onPageChange={this.handlePageClick}
-                                // containerClassName={'pagination'}
-                                // subContainerClassName={'pages pagination'}
-                                // activeClassName={'active'}
-                            />
-                        }
-
-                    </Form>
-                </main>
+                <section className="container widget widget-shadow bg-dark stock">
+                    <header className="container text-center">
+                        <h1>Stock Information</h1>
+                        <hr/>
+                    </header>
+                    <main>
+                        <Form>
+                            <div className="d-flex">
+                                <InputGroup className="m-3">
+                                    <InputGroup.Prepend onClick={this.retrieveProducts}>
+                                        <InputGroup.Text id="search-addon"><span><i
+                                            className="fa fa-search"/></span></InputGroup.Text>
+                                    </InputGroup.Prepend>
+                                    <FormControl
+                                        placeholder="Search for a product"
+                                        aria-describedby="search-addon"
+                                        value={this.state.search}
+                                        onChange={this.handleChange}
+                                    />
+                                </InputGroup>
+                                <DropdownButton id="limit" variant="secondary" title={this.state.limit} className="m-3">
+                                    <DropdownItem onClick={() => this.setLimit(5)}>5</DropdownItem>
+                                    <DropdownItem onClick={() => this.setLimit(10)}>10</DropdownItem>
+                                    <DropdownItem onClick={() => this.setLimit(15)}>15</DropdownItem>
+                                </DropdownButton>
+                            </div>
+                            <Table striped hover>
+                                <thead>
+                                <tr>
+                                    <th>Code</th>
+                                    <th>Description</th>
+                                    <th/>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {
+                                    this.props.stock.page && this.props.stock.page.data.map((item, index) => {
+                                        return (
+                                            <tr key={index}>
+                                                <td>{item.code}</td>
+                                                <td>{item.descr}</td>
+                                                <td>
+                                                    <Link to={'stock/' + item.code} className="btn btn-success">
+                                                        View
+                                                    </Link>
+                                                </td>
+                                            </tr>
+                                        )
+                                    })
+                                }
+                                </tbody>
+                            </Table>
+                            <div className="paging">
+                                {
+                                    this.props.stock.page &&
+                                    <ReactPaginate
+                                        previousLabel={'previous'}
+                                        nextLabel={'next'}
+                                        breakLabel={'...'}
+                                        pageCount={this.props.stock.page.last_page}
+                                        onPageChange={this.handlePageClick}
+                                        breakClassName={'break-me'}
+                                        marginPagesDisplayed={2}
+                                        pageRangeDisplayed={5}
+                                        containerClassName={'pagination'}
+                                        subContainerClassName={'pages pagination'}
+                                        activeClassName={'active'}
+                                    />
+                                }
+                            </div>
+                        </Form>
+                    </main>
+                </section>
             </article>
         )
     }

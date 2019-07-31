@@ -91,10 +91,10 @@ class ReturnsModal extends React.Component {
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.activateReturn}>
+                    <Button variant="success" onClick={this.activateReturn}>
                         Continue
                     </Button>
                 </Modal.Footer>

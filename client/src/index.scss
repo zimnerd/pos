@@ -15,6 +15,63 @@ code {
     monospace;
 }
 
+.modal {
+    color: $white;
+
+    .close > span {
+        color: $white;
+    }
+
+    .modal-footer,
+    .modal-header {
+        background-color: $dark;
+        border-color: $dark;
+    }
+
+    .modal-body {
+        padding: 10%;
+        background-color: $dark_opaque;
+        border-color: $dark_opaque;
+
+        .table {
+            color: $white;
+            max-height: 250px;
+        }
+
+    }
+
+    .card {
+        cursor: pointer;
+        margin-top: 5%;
+        margin-right: 15px;
+        border: none;
+
+        &:hover {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, .5);
+        }
+
+        .fa {
+            font-size: 75px;
+        }
+
+    }
+
+    hr {
+        border-color: $white;
+    }
+
+}
+
+#react-paginate ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+#react-paginate li {
+    display: inline-block;
+}
+
 #toast-container > .toast-success {
     background-color: $green;
     opacity: 1;
@@ -61,4 +118,8 @@ code {
     background-color: $blue;
     opacity: 1;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.col-white {
+    color: $white;
 }

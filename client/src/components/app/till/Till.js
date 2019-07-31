@@ -365,15 +365,20 @@ class Till extends React.Component {
         return (
             <article>
                 <Header/>
-                <main className="d-flex">
+                <main className="d-flex till">
                     <InformationBar/>
-                    <TransactionBadges mapTransactions={this.mapTransactions}/>
                     <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions}
                                openStyles={this.openStyles} retrieveCombo={this.retrieveCombo}
                                createTransaction={this.createTransaction}/>
-                    <Totals openModal={this.openModal}/>
+                    <div className="col-2">
+                        {(this.props.till.laybye || this.props.till.refund || this.props.till.exchange
+                            || this.props.till.staff || this.props.till.credit || this.props.till.returns) &&
+                        <TransactionBadges mapTransactions={this.mapTransactions}/>
+                        }
+                        <Totals openModal={this.openModal}/>
+                    </div>
                 </main>
-                <footer>
+                <footer className="footer">
                     <ActionBar openModal={this.openModal}/>
                 </footer>
 

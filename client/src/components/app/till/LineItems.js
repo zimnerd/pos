@@ -142,14 +142,14 @@ class LineItems extends React.Component {
 
     render() {
         return (
-            <section>
+            <section className="col-6 line-items widget-shadow bg-dark">
                 <form className="d-flex">
                     <input ref={(input) => { this.codeInput = input; }}
                         onChange={this.handleChange} type="text" onFocus={this.reset}
                            placeholder="Enter product code" className="form-control" value={this.props.till.code}/>
-                    <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
+                    <button className="btn btn-secondary" onClick={this.enterProduct}>Enter</button>
                 </form>
-                <table className="table table-striped">
+                <table className="table table-striped table-responsive">
                     <thead>
                     <tr>
                         <th>Code</th>
@@ -173,7 +173,7 @@ class LineItems extends React.Component {
                         this.props.till && this.props.till.transactions.map((item, index) =>
                             <tr key={index}>
                                 <td>{item.code}</td>
-                                <td>
+                                <td className="description d-flex flex-wrap">
                                     <span>{item.description}</span>
                                     <small>{item.size + ", " + item.colour}</small>
                                     {item.markdown &&

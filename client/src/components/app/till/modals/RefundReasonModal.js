@@ -48,18 +48,18 @@ class RefundReasonModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.modal.refundReason} onHide={this.handleClose}>
+            <Modal show={this.props.modal.refundReason} onHide={this.handleClose} className="refund-reason">
                 <Modal.Header closeButton>
                     <Modal.Title>Refund Reason</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <div className="form-group">de
-                        <p>Select the reason for refund:</p>
+                    <p>Select the reason for refund:</p>
+                    <div className="form-group reasons d-flex flex-wrap">
                         {this.props.settings.reasons && this.props.settings.reasons.map((item, index) => {
                             return (
-                                <div key={index}>
+                                <div key={index} className={index % 2 === 0 ? "ml-2" : "ml-5"}>
                                     <span>{item.descr}</span>
-                                    <input type="radio" className="form-control" value={item.resno}
+                                    <input type="radio" className="form-c   ontrol" value={item.resno}
                                            onChange={this.changeReason}
                                            name="reason"/>
                                 </div>
@@ -69,14 +69,14 @@ class RefundReasonModal extends React.Component {
                     </div>
                     <Form onSubmit={this.assignReason}>
                         <p>Enter your comments below:</p>
-                        <textarea onChange={this.handleChange} name="comments"/>
+                        <textarea className="w-100" onChange={this.handleChange} name="comments" rows="5"/>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.assignReason}>
+                    <Button variant="success" onClick={this.assignReason}>
                         Continue
                     </Button>
                 </Modal.Footer>

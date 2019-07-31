@@ -175,7 +175,7 @@ class DebtorModal extends React.Component {
                     }
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

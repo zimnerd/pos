@@ -1,0 +1,29 @@
+@import "../../../colours";
+
+.info {
+
+    .widget-shadow {
+        text-align: center;
+        padding: 15px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, .5);
+        color: $white;
+    }
+
+    hr {
+        border-color: $white;
+    }
+
+    .table {
+        margin-top: 15px;
+        color: $white;
+        max-height: 200px;
+        height: 200px;
+
+        &.table-striped tbody tr:nth-of-type(2n+1) {
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+    }
+
+}

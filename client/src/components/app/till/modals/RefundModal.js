@@ -135,16 +135,16 @@ class RefundModal extends React.Component {
                     <Form onSubmit={this.findDocument}>
                         <div className="form-group">
                             <label>Invoice Number:</label>
-                            <input name="invoice" type="text" className="form-control"
+                            <input name="invoice" type="text" className="form-control" placeholder="Invoice Number"
                                    value={this.state.docNo} onChange={this.handleChange}/>
                         </div>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
-                    <Button variant="primary" onClick={this.findDocument}>
+                    <Button variant="success" onClick={this.findDocument}>
                         Continue
                     </Button>
                 </Modal.Footer>

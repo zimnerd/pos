@@ -26,7 +26,7 @@ class ReceiptsModal extends React.Component {
                     <Modal.Title>Receipt Options</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <Card onClick={this.openDebtor}>
+                    <Card onClick={this.openDebtor} className="bg-dark text-center">
                         <Card.Header>
                             <span><i className="fa fa-money"/></span>
                         </Card.Header>
@@ -36,7 +36,7 @@ class ReceiptsModal extends React.Component {
                     </Card>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={this.handleClose}>
+                    <Button variant="danger" onClick={this.handleClose}>
                         Close
                     </Button>
                 </Modal.Footer>

@@ -17,49 +17,49 @@ class InformationBar extends React.Component {
 
     render() {
         return (
-            <aside className="float-left">
+            <aside className="col-4 info">
                 {this.props.settings.haddith &&
-                <main style={{ width: '300px' }}
+                <main className="bg-dark p-3 widget-shadow"
                       dangerouslySetInnerHTML={{ __html: this.props.settings.haddith.value }}>
                 </main>
                 }
-                <footer>
-                    <Tabs
-                        id="controlled-tab-example"
-                        activeKey={this.state.key}
-                        onSelect={key => this.setState({ key })}
-                    >
-                        {this.props.settings.combos && this.props.settings.combos.length > 0 &&
-                        <Tab eventKey="combos" title="Combos">
-                            <Table striped>
-                                <thead>
-                                <tr>
-                                    <th/>
-                                    <th>Style</th>
-                                    <th>Description</th>
-                                    <th>Qty</th>
-                                    <th>Price</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {this.props.settings.combos.map((item, index) => {
-                                    return (
-                                        <tr key={index}>
-                                            <td>{index + 1}.</td>
-                                            <td>{item.style}</td>
-                                            <td>{item.description}</td>
-                                            <td>{item.qty}</td>
-                                            <td>{item.rp}</td>
-                                        </tr>
-                                    )
-                                })
-                                }
-                                </tbody>
-                            </Table>
-                        </Tab>
-                        }
-                    </Tabs>
+                {this.props.settings.combos.length > 0 &&
+                <footer className="bg-dark p-3 widget-shadow mt-3">
+                    {this.props.settings.combos && this.props.settings.combos.length > 0 &&
+                    <section>
+                        <header>
+                            <h3 className="tex">Combos</h3>
+                            <hr/>
+                        </header>
+                        <table className="table table-striped table-responsive">
+                            <thead>
+                            <tr>
+                                <th/>
+                                <th>Style</th>
+                                <th>Description</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {this.props.settings.combos.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td>{index + 1}.</td>
+                                        <td>{item.style}</td>
+                                        <td>{item.description}</td>
+                                        <td>{item.qty}</td>
+                                        <td>{item.rp}</td>
+                                    </tr>
+                                )
+                            })
+                            }
+                            </tbody>
+                        </table>
+                    </section>
+                    }
                 </footer>
+                }
             </aside>
         )
     }
