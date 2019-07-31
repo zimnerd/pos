@@ -205,7 +205,7 @@ class CompleteSaleModal extends React.Component {
         }
     };
 
-    complete = () => {
+    complete = async () => {
         if (this.props.till.refund) {
             if (this.props.till.laybye && (this.state.tendered === 0.00 || this.state.tendered === 0)) {
                 this.props.actions.modal.openLayByeCreditor();
@@ -221,7 +221,7 @@ class CompleteSaleModal extends React.Component {
             }
 
             this.props.actions.till.deactivateRefund();
-            this.props.actions.till.setRefund();
+            await this.props.actions.till.setRefund();
 
             this.props.actions.till.deactivateCredit();
             this.props.actions.till.deactivateLayBye();
@@ -240,6 +240,9 @@ class CompleteSaleModal extends React.Component {
         if (method === "Split") {
             method = this.state.cash >= this.state.card ? "Cash" : "CC";
         }
+
+        let held = this.props.till.totals.held;
+        let heldNum = this.props.till.totals.heldNum;
 
         this.props.actions.till.resetTotals();
         let allTransactions = this.props.till.transactions;
@@ -277,8 +280,8 @@ class CompleteSaleModal extends React.Component {
             .then(async response => {
                 console.log(response.data);
 
-                if (this.props.till.totals.held) {
-                    this.removeSale(this.props.till.totals.heldNum);
+                if (held) {
+                    this.removeSale(heldNum);
                 }
 
                 toastr.success("Transaction Completed!", "Create Transaction");
@@ -322,6 +325,36 @@ class CompleteSaleModal extends React.Component {
             });
     };
 
+    loadSales = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/sales`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                let actualSales = [];
+                for (let key of Object.keys(response.data.lineItems)) {
+                    actualSales.push(response.data.lineItems[key]);
+                }
+
+                this.props.actions.till.setSales(actualSales);
+                toastr.success("Held transactions retrieved!", "Retrieve Held Transactions");
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    this.props.actions.till.setSales();
+                    console.log("No held sales found.")
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
     removeSale = saleNum => {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
@@ -331,11 +364,14 @@ class CompleteSaleModal extends React.Component {
             .then(response => {
                 console.log(response.data);
                 toastr.success("Held Sale removed!", "Remove Held Sale");
+                this.loadSales();
             })
             .catch(error => {
                 console.log(error);
                 if (error.response.status === 401) {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error("Held Sale was not found!", "Remove Held Sale");
                 } else {
                     toastr.error("Unknown error.");
                 }
@@ -456,7 +492,7 @@ class CompleteSaleModal extends React.Component {
 
     render() {
         return (
-            <Modal show={this.props.modal.complete} onHide={this.handleClose} className="complete-sale">
+            <Modal size="lg" show={this.props.modal.complete} onHide={this.handleClose} className="complete-sale">
                 <Modal.Header closeButton>
                     {this.props.till.laybye && !this.props.till.refund &&
                     <Modal.Title>Complete Laybye Sale</Modal.Title>
@@ -478,8 +514,8 @@ class CompleteSaleModal extends React.Component {
                     }
                     {this.props.till.transactions &&
                     this.props.till.transactions.length > 0 &&
-                    <Form>
-                        <div className="d-flex">
+                    <Form className="d-flex">
+                        <div className="col-6">
                             {!this.props.till.laybye &&
                             <label className="value"> Total Invoice
                                 Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>
@@ -500,119 +536,109 @@ class CompleteSaleModal extends React.Component {
                             <label
                                 className="value">Balance: <span>{(Number(this.props.till.totals.total) - Number(this.state.tendered)).toFixed(2)}</span></label>
                             }
-                        </div>
-                        <hr className="mt-0"/>
-                        <label>Payment Method:</label>
-                        <div className="p-1 payment-method">
-                            <br/>
-                            <div className="form-group d-flex m-2">
-                                <span>Cash</span>
-                                <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
-                                       name="method"/>
-                            </div>
-                            <div className="form-group d-flex m-2">
-                                <span>Card</span>
-                                <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
-                                       name="method"/>
-                            </div>
-                            {!this.props.till.refund &&
-                            <div className="form-group d-flex m-2">
-                                <span>Split Payment</span>
-                                <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
-                                       name="method"/>
-                            </div>
+                            <hr/>
+                            <label>Payment Method:</label>
+                            <select onChange={this.handleChange} className="form-control" name="method">
+                                <option value="CC">Card</option>
+                                <option value="Cash">Cash</option>
+                                <option value="Split">Split Payment</option>
+                            </select>
+                            {
+                                this.state.method === "Split" &&
+                                <div className="form-group">
+                                    <label>Cash Amount:</label>
+                                    <input type="text" className="form-control" name="cash"
+                                           value={this.state.cash}
+                                           onChange={this.handleChange}/>
+                                    <label>Card Amount:</label>
+                                    <input type="text" className="form-control" name="card"
+                                           value={this.state.card}
+                                           onChange={this.handleChange}/>
+                                </div>
                             }
-                        </div>
-                        {
-                            this.state.method === "Split" &&
+                            <hr/>
                             <div className="form-group">
-                                <label>Cash Amount:</label>
-                                <input type="text" className="form-control" name="cash"
-                                       value={this.state.cash}
-                                       onChange={this.handleChange}/>
-                                <label>Card Amount:</label>
-                                <input type="text" className="form-control" name="card"
-                                       value={this.state.card}
-                                       onChange={this.handleChange}/>
+                                <label>Amount Tendered:</label>
+                                <input type="text" className="form-control" value={this.state.tendered}
+                                       autoComplete="false"
+                                       name="tendered" onFocus={() => this.setState({ tendered: 0.00 })}
+                                       disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                             </div>
-                        }
-                        <hr className="mt-0"/>
-                        <div className="form-group">
-                            <label>Amount Tendered:</label>
-                            <input type="text" className="form-control" value={this.state.tendered}
-                                   name="tendered" onFocus={() => this.setState({ tendered: 0.00 })}
-                                   disabled={this.state.method === "Split"} onChange={this.handleChange}/>
-                        </div>
-                        {this.state.tendered > this.props.till.totals.total &&
-                        <label className="value">Change:
-                            <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
-                        </label>
-                        }
-                        <hr/>
-
-                        {!this.props.till.refund && this.state.search &&
-                        <Form>
-                            <p>Enter a Cell Number to search by: </p>
-                            <div className="form-group">
-                                <label>Cell Number:</label>
-                                <input type="text" className="form-control" name="cell" value={this.state.cell}
-                                       onChange={this.handleText}/>
-                            </div>
-                            <Button onClick={this.findPerson}>Search</Button>
-                        </Form>
-                        }
-                        {!this.state.search && !this.props.till.refund &&
-                        <div>
-                            {this.props.till.laybye &&
+                            {this.state.tendered > this.props.till.totals.total &&
+                            <label className="value">Change:
+                                <span>{(this.state.tendered - this.props.till.totals.total).toFixed(2)}</span>
+                            </label>
+                            }
+                            {this.props.till.laybye && !this.props.till.refund &&
                             <Button onClick={this.findPerson}><i className="fa fa-search"/></Button>
                             }
-                            <div className="d-flex flex-wrap">
-                                <div className="form-group col-6">
-                                    <label>Name:</label>
-                                    <input type="text" className="form-control" name="name" value={this.state.name}
-                                           onChange={this.handleText} disabled={this.state.disabled}/>
-                                    {this.props.auth.errors['person.name'] &&
-                                    <p className="error">{this.props.auth.errors['person.name'][0]}</p>}
-                                </div>
-                                {this.props.till.laybye &&
-                                <div className="form-group col-6">
-                                    <label>ID Number:</label>
-                                    <input type="text" className="form-control" name="idNo" value={this.state.idNo}
-                                           onChange={this.handleText} disabled={this.state.disabled}/>
-                                    {this.props.auth.errors['person.idNo'] &&
-                                    <p className="error">{this.props.auth.errors['person.idNo'][0]}</p>}
-                                </div>
-                                }
-                                <div className="form-group col-6">
+                        </div>
+                        <div className="col-6">
+                            {!this.props.till.refund && this.state.search &&
+                            <Form>
+                                <p>Enter a Cell Number to search by: </p>
+                                <div className="form-group">
                                     <label>Cell Number:</label>
                                     <input type="text" className="form-control" name="cell" value={this.state.cell}
-                                           onChange={this.handleText} disabled={this.state.disabled}/>
-                                    {this.props.auth.errors['person.cell'] &&
-                                    <p className="error">{this.props.auth.errors['person.cell'][0]}</p>}
+                                           onChange={this.handleText}/>
                                 </div>
-                                <div className="form-group col-6">
-                                    <label>Email Address:</label>
-                                    <input type="email" className="form-control" name="email" value={this.state.email}
-                                           onChange={this.handleText} disabled={this.state.disabled}/>
-                                    {this.props.auth.errors['person.email'] &&
-                                    <p className="error">{this.props.auth.errors['person.email'][0]}</p>}
-                                </div>
-                                {this.props.till.laybye &&
-                                <div className="form-group col-8 mb-0">
-                                    <label>Address:</label>
-                                    <div className="d-flex">
-                                        <input type="line1" className="form-control col-6 mb-0 mr-2" name="line1" value={this.state.line1}
-                                               onChange={this.handleText}/>
-                                        <input type="line2" className="form-control col-6 mb-0 mr-2" name="line2" value={this.state.line2}
-                                               onChange={this.handleText}/>
-                                        <input type="line3" className="form-control col-6 mb-0 mr-2" name="line3" value={this.state.line3}
-                                               onChange={this.handleText}/>
+                                <Button onClick={this.findPerson}>Search</Button>
+                            </Form>
+                            }
+                            {!this.state.search && !this.props.till.refund &&
+                            <div>
+                                <div className="d-flex flex-wrap">
+                                    <div className="form-group">
+                                        <label>Name:</label>
+                                        <input type="text" className="form-control" name="name" value={this.state.name}
+                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                        {this.props.auth.errors['person.name'] &&
+                                        <p className="error">{this.props.auth.errors['person.name'][0]}</p>}
                                     </div>
+                                    {this.props.till.laybye &&
+                                    <div className="form-group">
+                                        <label>ID Number:</label>
+                                        <input type="text" className="form-control" name="idNo" value={this.state.idNo}
+                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                        {this.props.auth.errors['person.idNo'] &&
+                                        <p className="error">{this.props.auth.errors['person.idNo'][0]}</p>}
+                                    </div>
+                                    }
+                                    <div className="form-group">
+                                        <label>Cell Number:</label>
+                                        <input type="text" className="form-control" name="cell" value={this.state.cell}
+                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                        {this.props.auth.errors['person.cell'] &&
+                                        <p className="error">{this.props.auth.errors['person.cell'][0]}</p>}
+                                    </div>
+                                    <div className="form-group">
+                                        <label>Email Address:</label>
+                                        <input type="email" className="form-control" name="email"
+                                               value={this.state.email}
+                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                        {this.props.auth.errors['person.email'] &&
+                                        <p className="error">{this.props.auth.errors['person.email'][0]}</p>}
+                                    </div>
+                                    {this.props.till.laybye &&
+                                    <div className="form-group mb-0">
+                                        <label>Address:</label>
+                                        <div>
+                                            <input type="line1" className="form-control mb-1 mr-2" name="line1"
+                                                   value={this.state.line1}
+                                                   onChange={this.handleText}/>
+                                            <input type="line2" className="form-control mb-1 mr-2" name="line2"
+                                                   value={this.state.line2}
+                                                   onChange={this.handleText}/>
+                                            <input type="line3" className="form-control mb-1 mr-2" name="line3"
+                                                   value={this.state.line3}
+                                                   onChange={this.handleText}/>
+                                        </div>
+                                    </div>
+                                    }
                                 </div>
-                                }
                             </div>
+                            }
                         </div>
-                        }
                     </Form>
                     }
                 </Modal.Body>

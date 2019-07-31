@@ -11,13 +11,13 @@ import './RefundReasonModal.scss';
 class RefundReasonModal extends React.Component {
 
     state = {
-        reason: "",
+        reason: "1",
         comments: ""
     };
 
     handleClose = () => {
         this.setState({
-            reason: "",
+            reason: "1",
             comments: ""
         });
         this.props.actions.modal.closeReasonModal();
@@ -55,17 +55,17 @@ class RefundReasonModal extends React.Component {
                 <Modal.Body>
                     <p>Select the reason for refund:</p>
                     <div className="form-group reasons d-flex flex-wrap">
-                        {this.props.settings.reasons && this.props.settings.reasons.map((item, index) => {
-                            return (
-                                <div key={index} className={index % 2 === 0 ? "ml-2" : "ml-5"}>
-                                    <span>{item.descr}</span>
-                                    <input type="radio" className="form-c   ontrol" value={item.resno}
-                                           onChange={this.changeReason}
-                                           name="reason"/>
-                                </div>
-                            )
-                        })
-                        }
+                        <select id='reason' name='reason' placeholder='Role'
+                                value={this.state.reason}
+                                onChange={this.changeReason} className='form-control' required>
+                            {this.props.settings.reasons &&
+                            this.props.settings.reasons.map((item, index) => {
+                                return (
+                                    <option key={index} value={item.resno}>{item.descr}</option>
+                                )
+                            })
+                            }
+                        </select>
                     </div>
                     <Form onSubmit={this.assignReason}>
                         <p>Enter your comments below:</p>

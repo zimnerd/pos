@@ -89,12 +89,16 @@ class RefundModal extends React.Component {
                     docNo: ""
                 });
             })
-            .catch(error => {
+            .catch( async error => {
                 console.log(error);
                 if (error.response.status === 401) {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
                 } else if (error.response.status === 404) {
                     toastr.error("Transaction could not be found!", "Find Transaction");
+                    await this.props.actions.till.setRefund({
+                        invNo: this.state.docNo,
+                        invType: this.props.till.laybye ? "L/B" : "INV"
+                    });
                     this.props.actions.modal.closeRefund();
                     this.props.actions.modal.openRefundDetails();
                 } else if (error.response.status === 422) {

@@ -242,9 +242,10 @@ class Till extends React.Component {
 
                 if (transaction.markdown) {
                     transaction.price = transaction.mdp;
-                    transaction.disc = (transaction.mdp / transaction.retail * 100).toFixed(2);
+                    transaction.disc = (transaction.mdp / (transaction.retail ? transaction.retail : transaction.price)
+                        * 100).toFixed(2);
                 } else {
-                    transaction.price = transaction.retail;
+                    transaction.price = transaction.retail ? transaction.retail : transaction.price;
                     transaction.disc = 0.00;
                 }
 
@@ -271,7 +272,7 @@ class Till extends React.Component {
                     transaction.subtotal = transaction.price * transaction.qty;
                     transaction.total = transaction.subtotal;
                 } else {
-                    transaction.price = transaction.retail;
+                    transaction.price = transaction.retail ? transaction.retail : transaction.price;
                     transaction.subtotal = transaction.price * transaction.qty;
 
                     if (typeof transaction.discStore !== "undefined") {
@@ -405,7 +406,7 @@ class Till extends React.Component {
                 <OtherModal/>
                 <PaymentOptionsModal/>
                 <TransactionId/>
-                <RetrieveHeldModal mapLineItem={this.mapHeldItems}/>
+                <RetrieveHeldModal mapHeldItems={this.mapHeldItems}/>
                 <ComboModal/>
                 <RefundModal mapLineItem={this.mapHeldItems}/>
                 <RefundDetailsModal/>

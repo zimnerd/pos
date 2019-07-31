@@ -56,7 +56,7 @@ class RetrieveHeldModal extends React.Component {
         this.props.actions.modal.closeRetrieveHeld();
     };
 
-    selectSale = sale => {
+    selectSale = async sale => {
         this.props.actions.till.setTransactions(sale.transactions);
         let totals = {
             total: 0,
@@ -69,11 +69,13 @@ class RetrieveHeldModal extends React.Component {
         };
         for (let x = 0, len = sale.transactions.length; x < len; x++) {
             let saleItem = sale.transactions[x];
-            totals = this.props.mapLineItem(saleItem, totals);
+            console.log(totals);
+            totals = this.props.mapHeldItems(saleItem, totals);
+            console.log(totals);
             totals.items++;
         }
 
-        this.props.actions.till.setTotals(totals);
+        await this.props.actions.till.setTotals(totals);
         this.handleClose();
     };
 

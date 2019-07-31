@@ -40,22 +40,23 @@ class RefundDetailsModal extends React.Component {
         });
         this.props.actions.modal.closeRefundDetails();
         this.props.actions.till.deactivateLayBye();
+        this.props.actions.till.setRefund();
     };
 
-    handleContinue = () => {
+    handleContinue = async () => {
         let refund = {
             invNo: this.state.invNo,
             invDate: this.state.invDate,
-            invType: this.props.till.refundData ? this.props.till.refundData.invType : this.state.invType,
+            invType: this.props.till.refundData.invType ? this.props.till.refundData.invType : this.state.invType,
             idNo: this.state.idNo,
             cell: this.state.cell,
             email: this.state.email,
             found: this.state.found,
-            brNo: this.props.till.refundData ? this.props.settings.shop.BrNo : this.state.brNo
+            brNo: this.props.till.refundData.brNo ? this.props.till.refundData.brNo : this.state.brNo
         };
+        await this.props.actions.modal.closeRefundDetails();
         this.props.actions.till.setRefund(refund);
         this.props.actions.till.activateRefund();
-        this.props.actions.modal.closeRefundDetails();
         this.setState({
             brNo: "",
             invNo: "",
@@ -69,7 +70,8 @@ class RefundDetailsModal extends React.Component {
     };
 
     componentDidUpdate(): void {
-        if (this.props.till.refundData && !this.state.updated) {
+        if (this.props.till.refundData && !this.state.updated && this.props.modal.refundDetails) {
+            console.log("here", this.state);
             this.setState({
                 invNo: this.props.till.refundData.invNo,
                 invDate: this.props.till.refundData.invDate,
@@ -98,7 +100,7 @@ class RefundDetailsModal extends React.Component {
                                 <input name="invNo" type="text" className="form-control"
                                        value={this.state.invNo} onChange={this.handleChange}/>
                             </div>
-                            {this.props.till && !this.props.till.refundData &&
+                            {this.props.till && this.props.till.refundData && !this.props.till.refundData.invType &&
                             <div className="form-group">
                                 <label>Invoice Type:</label>
                                 <select onChange={this.handleChange} className="form-control" name="invType">
@@ -108,7 +110,7 @@ class RefundDetailsModal extends React.Component {
                                 </select>
                             </div>
                             }
-                            {this.props.till && !this.props.till.refundData &&
+                            {this.props.till && this.props.till.refundData && !this.props.till.refundData.brNo &&
                             <div className="form-group">
                                 <label>Branch Number:</label>
                                 <input name="brNo" type="text" className="form-control"

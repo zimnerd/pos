@@ -183,12 +183,12 @@ class AuthenticationModal extends React.Component {
                         <div className="form-group">
                             <label>Username: </label>
                             <input type="text" name="username" className="form-control" placeholder="Username"
-                                   value={this.state.username} onChange={this.handleChange}/>
+                                   value={this.state.username} onChange={this.handleChange} autoComplete="false"/>
                         </div>
                         <div className="form-group">
                             <label>Password: </label>
                             <input type="password" name="password" className="form-control" placeholder="Password"
-                                   value={this.state.password} onChange={this.handleChange}/>
+                                   value={this.state.password} onChange={this.handleChange} autoComplete="false"/>
                         </div>
                     </Form>
                 </Modal.Body>
