@@ -64,9 +64,9 @@ class CompleteSaleModal extends React.Component {
         }
     }
 
-    changeMethod = event => {
+    changeMethod = method => {
         this.setState({
-            method: event.target.value
+            method: method
         }, () => {
             if (this.state.method === "Split") {
                 this.setState({
@@ -538,11 +538,21 @@ class CompleteSaleModal extends React.Component {
                             }
                             <hr/>
                             <label>Payment Method:</label>
-                            <select onChange={this.handleChange} className="form-control" name="method">
-                                <option value="CC">Card</option>
-                                <option value="Cash">Cash</option>
-                                <option value="Split">Split Payment</option>
-                            </select>
+                            <br/>
+                            <div className="btn-group" role="group" aria-label="...">
+                                <button type="button" className="btn btn-secondary" disabled={this.state.method === "Cash"}
+                                        onClick={() => this.changeMethod("Cash")}>
+                                    <span><i className="fa fa-money"/></span> Cash
+                                </button>
+                                <button type="button" className="btn btn-secondary" disabled={this.state.method === "CC"}
+                                        onClick={() => this.changeMethod("CC")}>
+                                    <span><i className="fa fa-credit-card"/></span> Card
+                                </button>
+                                <button type="button" className="btn btn-secondary" disabled={this.state.method === "Split"}
+                                        onClick={() => this.changeMethod("Split")}>
+                                    <span><i className="fa fa-random"/></span> Split
+                                </button>
+                            </div>
                             {
                                 this.state.method === "Split" &&
                                 <div className="form-group">

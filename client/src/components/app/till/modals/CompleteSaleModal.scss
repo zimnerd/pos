@@ -1,5 +1,17 @@
 .complete-sale {
 
+    .btn-group {
+
+        > .btn {
+
+            > span {
+                margin-right: 10px;
+            }
+
+        }
+
+    }
+
     form {
 
         .value {

@@ -1,8 +1,8 @@
 import React from 'react';
-import { withRouter } from "react-router-dom";
-import { connect } from "react-redux";
-import { bindActionCreators } from "redux";
-import { Button, Modal, Table } from "react-bootstrap";
+import {withRouter} from "react-router-dom";
+import {connect} from "react-redux";
+import {bindActionCreators} from "redux";
+import {Button, Modal, Table} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import toastr from "toastr";
@@ -16,7 +16,7 @@ class ReceiptsPaymentModal extends React.Component {
     state = {
         accNum: "",
         type: "",
-        method: "",
+        method: "Cash",
         card: "",
         cash: "",
         tendered: 0
@@ -50,13 +50,16 @@ class ReceiptsPaymentModal extends React.Component {
             shop: this.props.settings.shop,
             account: this.state.account,
             tendered: this.state.tendered,
-            method: this.state.method
+            method: this.state.method,
+            type: this.state.type
         };
 
-        axios.post(`/debtors/${this.state.account.no}`, request, { headers })
+        axios.post(`/debtors/${this.state.account.no}`, request, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor account successfully paid!", "Pay Debtor Account");
+
+                this.printReceipt(response.data.docNo);
             })
             .catch(error => {
                 console.log(error);
@@ -78,13 +81,16 @@ class ReceiptsPaymentModal extends React.Component {
             shop: this.props.settings.shop,
             account: this.state.account,
             tendered: this.state.tendered,
-            method: this.state.method
+            method: this.state.method,
+            type: this.state.type
         };
 
-        axios.post(`/laybyes/${this.state.account.no}`, request, { headers })
+        axios.post(`/laybyes/${this.state.account.no}`, request, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Lay-Bye account successfully paid!", "Pay Lay-Bye Account");
+
+                this.printReceipt(response.data.docNo);
             })
             .catch(error => {
                 console.log(error);
@@ -94,6 +100,15 @@ class ReceiptsPaymentModal extends React.Component {
                     toastr.error("Unknown error.");
                 }
             });
+    };
+
+    printReceipt = docNo => {
+        let a = document.createElement('a');
+        a.href = `http://localhost:8000/api/transactions/${docNo}/print`;
+        a.target = '_blank';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     };
 
     handleClose = () => {
@@ -109,9 +124,9 @@ class ReceiptsPaymentModal extends React.Component {
         this.props.actions.closeDebtorReceipts();
     };
 
-    changeMethod = event => {
+    changeMethod = value => {
         this.setState({
-            method: event.target.value
+            method: value
         }, () => {
             if (this.state.method === "Split") {
                 this.setState({
@@ -163,7 +178,7 @@ class ReceiptsPaymentModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/debtors?stype=${this.state.type}`, { headers })
+        axios.get(`/debtors?stype=${this.state.type}`, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor accounts found!", "Find Debtor Accounts");
@@ -190,7 +205,7 @@ class ReceiptsPaymentModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/laybyes`, { headers })
+        axios.get(`/laybyes`, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Lay-Bye accounts found!", "Find Lay-Bye Accounts");
@@ -221,7 +236,8 @@ class ReceiptsPaymentModal extends React.Component {
 
     render() {
         return (
-            <Modal size="lg" show={this.props.modal.debtorReceipts} onHide={this.handleClose} className="debtor-receipts">
+            <Modal size="lg" show={this.props.modal.debtorReceipts} onHide={this.handleClose}
+                   className="debtor-receipts">
                 <Modal.Header closeButton>
                     <Modal.Title>Debtor Receipts</Modal.Title>
                 </Modal.Header>
@@ -250,9 +266,9 @@ class ReceiptsPaymentModal extends React.Component {
                             </thead>
                             <tbody>
                             {this.state.accounts.length === 0 &&
-                                <tr>
-                                    <td colSpan="4" className="text-center">There are no accounts to display!</td>
-                                </tr>
+                            <tr>
+                                <td colSpan="4" className="text-center">There are no accounts to display!</td>
+                            </tr>
                             }
                             {this.state.accounts.map((item, index) => {
                                 return (
@@ -261,7 +277,7 @@ class ReceiptsPaymentModal extends React.Component {
                                         <td>{item.name}</td>
                                         <td>{item.email}</td>
                                         <td>{item.cell}</td>
-                                   </tr>
+                                    </tr>
                                 )
                             })
                             }
@@ -276,54 +292,60 @@ class ReceiptsPaymentModal extends React.Component {
                                        value={this.state.account.balance}/>
                             </div>
                             <hr/>
-                            <div className="p-1 payment-method">
-                                <label>Payment Method:</label>
-                                <div className="form-group d-flex">
-                                    <span>Cash</span>
-                                    <input type="radio" className="form-control" value="Cash" onChange={this.changeMethod}
-                                           name="method"/>
-                                </div>
-                                <div className="form-group d-flex">
-                                    <span>Card</span>
-                                    <input type="radio" className="form-control" value="CC" onChange={this.changeMethod}
-                                           name="method"/>
-                                </div>
-                                <div className="form-group d-flex">
-                                    <span>Split Payment</span>
-                                    <input type="radio" className="form-control" value="Split" onChange={this.changeMethod}
-                                           name="method"/>
-                                </div>
-                                {
-                                    this.state.method === "Split" &&
-                                    <div className="form-group">
-                                        <label>Cash Amount:</label>
-                                        <input type="text" className="form-control" name="cash"
-                                               value={this.state.cash}
-                                               onChange={this.handleChange}/>
-                                        <label>Card Amount:</label>
-                                        <input type="text" className="form-control" name="card"
-                                               value={this.state.card}
-                                               onChange={this.handleChange}/>
+                            <div className="d-flex">
+                                <div className="col-6">
+                                    <label>Payment Method:</label>
+                                    <br/>
+                                    <div className="btn-group" role="group" aria-label="...">
+                                        <button type="button" className="btn btn-secondary"
+                                                disabled={this.state.method === "Cash"}
+                                                onClick={() => this.changeMethod("Cash")}>
+                                            <span><i className="fa fa-money"/></span> Cash
+                                        </button>
+                                        <button type="button" className="btn btn-secondary"
+                                                disabled={this.state.method === "CC"}
+                                                onClick={() => this.changeMethod("CC")}>
+                                            <span><i className="fa fa-credit-card"/></span> Card
+                                        </button>
+                                        <button type="button" className="btn btn-secondary"
+                                                disabled={this.state.method === "Split"}
+                                                onClick={() => this.changeMethod("Split")}>
+                                            <span><i className="fa fa-random"/></span> Split
+                                        </button>
                                     </div>
-                                }
-                            </div>
-                            <hr/>
-                            <div className="form-group">
-                                <label>Amount Tendered:</label>
-                                <input type="text" className="form-control" value={this.state.tendered}
-                                       name="tendered"
-                                       disabled={this.state.method === "Split"} onChange={this.handleChange}/>
-                            </div>
-                            {this.state.tendered > this.state.account.balance &&
-                            <label className="value">Change:
-                                <span>{(this.state.tendered - this.state.account.balance).toFixed(2)}</span>
-                            </label>
-                            }
-                            <div className="form-group">
-                                <label>Balance:</label>
-                                <input type="text" className="form-control"
-                                       value={(this.state.account.balance - this.state.tendered).toFixed(2)}
-                                       disabled/>
+                                    {
+                                        this.state.method === "Split" &&
+                                        <div className="form-group">
+                                            <label>Cash Amount:</label>
+                                            <input type="text" className="form-control" name="cash"
+                                                   value={this.state.cash}
+                                                   onChange={this.handleChange}/>
+                                            <label>Card Amount:</label>
+                                            <input type="text" className="form-control" name="card"
+                                                   value={this.state.card}
+                                                   onChange={this.handleChange}/>
+                                        </div>
+                                    }
+                                </div>
+                                <div className="col-6">
+                                    <div className="form-group">
+                                        <label>Amount Tendered:</label>
+                                        <input type="text" className="form-control" value={this.state.tendered}
+                                               name="tendered"
+                                               disabled={this.state.method === "Split"} onChange={this.handleChange}/>
+                                    </div>
+                                    {this.state.tendered > this.state.account.balance &&
+                                    <label className="value">Change:
+                                        <span>{(this.state.tendered - this.state.account.balance).toFixed(2)}</span>
+                                    </label>
+                                    }
+                                    <div className="form-group">
+                                        <label>Balance:</label>
+                                        <input type="text" className="form-control"
+                                               value={(this.state.account.balance - this.state.tendered).toFixed(2)}
+                                               disabled/>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         }

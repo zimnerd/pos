@@ -29,7 +29,7 @@ class DebtorModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get('/debtors?stype=Credit', { headers })
+        axios.get('/debtors?stype=Credit,DCS', { headers })
             .then(async response => {
                 console.log(response.data);
 
@@ -114,6 +114,7 @@ class DebtorModal extends React.Component {
                             <thead>
                             <tr>
                                 <th>Debtor No.</th>
+                                <th>Debtor Type</th>
                                 <th>Name</th>
                                 <th>Cell</th>
                                 <th>Email</th>
@@ -123,13 +124,14 @@ class DebtorModal extends React.Component {
                             <tbody>
                             {(!this.props.till.debtors || this.props.till.debtors.length === 0) &&
                             <tr>
-                                <td colSpan="5" className="text-center">There are no debtors to display!</td>
+                                <td colSpan="6" className="text-center">There are no debtors to display!</td>
                             </tr>
                             }
                             {this.props.till.debtors && this.props.till.debtors.map((item, index) => {
                                 return (
                                     <tr key={index} onClick={() => this.selectDebtor(item)}>
                                         <td>{item.no}</td>
+                                        <td>{item.stype}</td>
                                         <td>{item.name}</td>
                                         <td>{item.cell}</td>
                                         <td>{item.email}</td>

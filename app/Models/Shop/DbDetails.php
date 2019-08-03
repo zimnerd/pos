@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Models\Shop;
+namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class TillDetails extends Model
+class DbDetails extends Model
 {
 
     protected $connection = "tilldb";
@@ -14,7 +14,7 @@ class TillDetails extends Model
      *
      * @var string
      */
-    protected $table = "till_details";
+    protected $table = "db_details";
 
 
     /**
@@ -39,7 +39,6 @@ class TillDetails extends Model
     public $timestamps = false;
 
     public $fillable = [
-        'tillno'
+        'dbName'
     ];
-
 }

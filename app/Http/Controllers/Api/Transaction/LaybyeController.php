@@ -157,7 +157,7 @@ class LaybyeController extends Controller
             $laybyeTransaction->invDate = \date("Y-m-d");
             $laybyeTransaction->dueDate = \date("Y-m-d");
             $laybyeTransaction->type = "DEP";
-            $laybyeTransaction->remarks = "Credit Payment";
+            $laybyeTransaction->remarks = "Laybye";
             $laybyeTransaction->period = $shop['Period'];
             $laybyeTransaction->vatPer = $shop['Period'];
             $laybyeTransaction->crnref = $docNo;
@@ -174,9 +174,9 @@ class LaybyeController extends Controller
             $summmary->VATAMT = 0;
             $summmary->AMT = $laybyeValues["tendered"];
             $summmary->GLCODE = 0;
-            $summmary->REMARKS = "Credit Payment";
+            $summmary->REMARKS = "Laybye";
             $summmary->COB = $laybyeValues["method"];
-            $summmary->STYPE = $laybyeValues["method"];
+            $summmary->STYPE = "Laybye";
 
             $summmary->UPDFLAG = 0;
             $summmary->TILLNO = $till['tillno'];
@@ -194,7 +194,7 @@ class LaybyeController extends Controller
             $summmary->save();
 
             DB::commit();
-            return response()->json(['laybye' => $laybye], $this->successStatus);
+            return response()->json(['laybye' => $laybye, 'docNo' => $depNo], $this->successStatus);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
             DB::rollBack();

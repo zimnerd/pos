@@ -94,6 +94,7 @@ class TransactionController extends Controller
                 case "INV":
                     $docNo = $till['tillno'] . $till["InvNo"];
                     if (isset($transaction['debtor'])) {
+                        $debtorObj = $transaction['debtor'];
                         $debtorNo = $transaction['debtor']['no'];
                     }
                     break;
@@ -152,7 +153,7 @@ class TransactionController extends Controller
                 $dailyTransaction->LINENO = $count;
                 $dailyTransaction->DOCNO = $docNo;
                 $dailyTransaction->DOCTYPE = $transaction["type"];
-                $dailyTransaction->SUP = $transaction["method"];
+                $dailyTransaction->SUP = isset($debtorObj) ? $debtorObj['no'] : $transaction["method"];
 
                 if (isset($transaction['stype'])) {
                     if ($transaction['stype'] === "Refund") {
@@ -199,7 +200,13 @@ class TransactionController extends Controller
                 $dailyTransaction->DLNO = 0;
                 $dailyTransaction->UPDNO = 0;
                 $dailyTransaction->UPDFLAG = 0;
-                $dailyTransaction->INVREF = null;
+
+                if ($refund) {
+                    $dailyTransaction->INVREF = $docNo;
+                } else {
+                    $dailyTransaction->INVREF = isset($laybyeNo) ? $laybyeNo : null;
+                }
+
                 $dailyTransaction->PERIOD = $shop['Period'];
                 $dailyTransaction->COMMENT = "";
                 $dailyTransaction->RESCODE = null;

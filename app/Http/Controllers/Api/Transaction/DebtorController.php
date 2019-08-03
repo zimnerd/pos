@@ -29,7 +29,21 @@ class DebtorController extends Controller
     public function retrieveDebtors()
     {
         $type = Input::get('stype');
-        $debtors = Debtor::query()->where('stype', $type)->get();
+        $types = preg_split("/,/", $type);
+        $debtorsQuery = Debtor::query();
+
+        $index = 0;
+        foreach ($types as $newType) {
+            if ($index === 0) {
+                $debtorsQuery->where('stype', $newType);
+            } else {
+                $debtorsQuery->orWhere('stype', $newType);
+            }
+
+            $index++;
+        }
+
+        $debtors = $debtorsQuery->get();
 
         $count = Debtor::all()->count();
 
@@ -146,7 +160,7 @@ class DebtorController extends Controller
             $debtorTransaction->invDate = \date("Y-m-d");
             $debtorTransaction->dueDate = \date("Y-m-d");
             $debtorTransaction->type = "DEP";
-            $debtorTransaction->remarks = "Credit Payment";
+            $debtorTransaction->remarks = $debtorValues["type"];
             $debtorTransaction->period = $shop['Period'];
             $debtorTransaction->vatPer = $shop['Period'];
             $debtorTransaction->crnref = $docNo;
@@ -163,7 +177,7 @@ class DebtorController extends Controller
             $summmary->VATAMT = 0;
             $summmary->AMT = $debtorValues["tendered"];
             $summmary->GLCODE = 0;
-            $summmary->REMARKS = "Credit Payment";
+            $summmary->REMARKS = $debtorValues["type"];
             $summmary->COB = $debtorValues["method"];
             $summmary->STYPE = $debtorValues["method"];
 
@@ -183,7 +197,7 @@ class DebtorController extends Controller
             $summmary->save();
 
             DB::commit();
-            return response()->json(['debtor' => $debtor], $this->successStatus);
+            return response()->json(['debtor' => $debtor, 'docNo' => $docNo], $this->successStatus);
         } catch (\Exception $e) {
             Log::error($e->getMessage(), $e->getTrace());
             DB::rollBack();
