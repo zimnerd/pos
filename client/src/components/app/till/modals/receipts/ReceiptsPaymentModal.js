@@ -296,7 +296,7 @@ class ReceiptsPaymentModal extends React.Component {
                                 <div className="col-6">
                                     <label>Payment Method:</label>
                                     <br/>
-                                    <div className="btn-group" role="group" aria-label="...">
+                                    <div className="btn-group payment" role="group" aria-label="...">
                                         <button type="button" className="btn btn-secondary"
                                                 disabled={this.state.method === "Cash"}
                                                 onClick={() => this.changeMethod("Cash")}>

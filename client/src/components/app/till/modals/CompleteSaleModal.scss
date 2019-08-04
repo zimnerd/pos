@@ -1,3 +1,5 @@
+@import "../../../../colours";
+
 .complete-sale {
 
     .btn-group {
@@ -33,6 +35,14 @@
 
         }
 
+    }
+
+}
+
+.payment {
+
+    > .btn:disabled {
+        background-color: $green;
     }
 
 }
