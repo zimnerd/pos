@@ -25,9 +25,11 @@
     <footer>
         <article>
             <address style="flex-wrap: wrap; display: flex;">
-                <p>Shop {{ $branch }}</p>
-                <p>Nelspruit Plaza</p>
-                <p>1200     Tel: 2800000</p>
+                <p>Shop {{ $branch['code'] }} {{ $branch['name'] }}</p>
+                <p>{{ $branch['add1'] }}</p>
+                <p>{{ $branch['add2'] }}</p>
+                <p>{{ $branch['add3'] }}</p>
+                <p>{{ $branch['postalCode'] }}     Tel: {{ $branch['tel1'] }}</p>
             </address>
             <br/>
             <p>Vat Reg Number: 215165111</p>
@@ -40,7 +42,7 @@
         <p>{{ $transaction_id }}</p>
         <p>{{ $date }}</p>
         <p>{{ $time }}</p>
-        <p>{{ $branch }}</p>
+        <p>{{ $branch['code'] }}</p>
         <p style="float: right;">Till No: {{ $till }}</p>
     </header>
     <section>

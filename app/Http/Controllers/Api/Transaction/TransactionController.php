@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Transaction;
 
 use App\Airtime;
+use App\Branch;
 use App\Colours;
 use App\DailyControl;
 use App\DailySummary;
@@ -18,7 +19,11 @@ use App\Person;
 use App\Product;
 use App\Refund;
 use App\Stock;
+use App\Summary;
+use App\Tax;
 use App\Till;
+use App\TradeSummary;
+use App\Transaction;
 use App\User;
 use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
@@ -223,7 +228,12 @@ class TransactionController extends Controller
                 }
 
                 $count++;
+
+                $monthlyTransaction = new Transaction($dailyTransaction->attributesToArray());
                 $dailyTransaction->save();
+                $monthlyTransaction->save();
+
+                $this->tradeSummaryEntries($shop, $monthlyTransaction);
 
                 $colour = Colours::query()
                     ->where("code", $item['clrcode'])
@@ -302,105 +312,113 @@ class TransactionController extends Controller
             }
 
             if ($transaction["type"] === "LBC" && $transaction['tendered'] == 0) {
-                $summmary = new DailySummary();
-                $summmary->BTYPE = "LBC";
-                $summmary->TRANNO = $till['tillno'] . $till["PayNo"];
+                $summary = new DailySummary();
+                $summary->BTYPE = "LBC";
+                $summary->TRANNO = $till['tillno'] . $till["PayNo"];
 
-                $summmary->BDATE = \date("Y-m-d");
-                $summmary->BRNO = $shop['BrNo'];
-                $summmary->TAXCODE = null;
-                $summmary->VATAMT = $totals["vat"];
-                $summmary->AMT = $balance * -1;
-                $summmary->GLCODE = 0;
-                $summmary->REMARKS = "Sale";
-                $summmary->COB = $transaction["method"];
+                $summary->BDATE = \date("Y-m-d");
+                $summary->BRNO = $shop['BrNo'];
+                $summary->TAXCODE = null;
+                $summary->VATAMT = $totals["vat"];
+                $summary->AMT = $balance * -1;
+                $summary->GLCODE = 0;
+                $summary->REMARKS = "Sale";
+                $summary->COB = $transaction["method"];
 
                 if (isset($transaction['stype'])) {
-                    $summmary->STYPE = $transaction['stype'];
+                    $summary->STYPE = $transaction['stype'];
                 } else {
-                    $summmary->STYPE = $transaction["method"];
+                    $summary->STYPE = $transaction["method"];
                 }
 
-                $summmary->UPDFLAG = 0;
-                $summmary->TILLNO = $till['tillno'];
-                $summmary->DLNO = 0;
-                $summmary->UPDNO = 0;
-                $summmary->OTTYPE = $transaction["type"];
-                $summmary->OTRANNO = $docNo;
-                $summmary->ODATE = \date("Y-m-d");
+                $summary->UPDFLAG = 0;
+                $summary->TILLNO = $till['tillno'];
+                $summary->DLNO = 0;
+                $summary->UPDNO = 0;
+                $summary->OTTYPE = $transaction["type"];
+                $summary->OTRANNO = $docNo;
+                $summary->ODATE = \date("Y-m-d");
 
                 if (isset($debtorNo)) {
-                    $summmary->DEBTOR = $debtorNo;
+                    $summary->DEBTOR = $debtorNo;
                 } else {
-                    $summmary->DEBTOR = "Cash";
+                    $summary->DEBTOR = "Cash";
                 }
 
-                $summmary->BUSER = $user->username;
-                $summmary->AUSER = $transaction["auth"];
-                $summmary->PERIOD = $shop['Period'];
-                $summmary->CCQNUM = "";
+                $summary->BUSER = $user->username;
+                $summary->AUSER = $transaction["auth"];
+                $summary->PERIOD = $shop['Period'];
+                $summary->CCQNUM = "";
 
                 if (isset($laybyeNo) && isset($depNo)) {
-                    $summmary->TRANNO = $depNo;
-                    $summmary->VATAMT = 0;
-                    $summmary->AMT = $transaction['tendered'];
+                    $summary->TRANNO = $depNo;
+                    $summary->VATAMT = 0;
+                    $summary->AMT = $transaction['tendered'];
                 }
 
-                $summmary->save();
+                $monthlySummary = new Summary((array)$summary);
+                $summary->save();
+                $monthlySummary->save();
+
+                $this->tradeSummary($shop, $monthlySummary);
             } elseif (!(($transaction["type"] === "LBC" && $transaction['tendered'] == 0)
                 || ($transaction["type"] === "CRN" && $stype === "Exchng"))
             ) {
-                $summmary = new DailySummary();
+                $summary = new DailySummary();
                 if ($transaction["type"] !== "CRN" && $transaction["type"] !== "LBC") {
-                    $summmary->BTYPE = "DEP";
-                    $summmary->TRANNO = $till['tillno'] . $till["DepNo"];
+                    $summary->BTYPE = "DEP";
+                    $summary->TRANNO = $till['tillno'] . $till["DepNo"];
                 } else {
-                    $summmary->BTYPE = "PAY";
-                    $summmary->TRANNO = $till['tillno'] . $till["PayNo"];
+                    $summary->BTYPE = "PAY";
+                    $summary->TRANNO = $till['tillno'] . $till["PayNo"];
                 }
 
-                $summmary->BDATE = \date("Y-m-d");
-                $summmary->BRNO = $shop['BrNo'];
-                $summmary->TAXCODE = null;
-                $summmary->VATAMT = $totals["vat"];
-                $summmary->AMT = $transaction["type"] === "LBC" || $transaction["type"] === "DCS" || $transaction["type"] === "Credit"
+                $summary->BDATE = \date("Y-m-d");
+                $summary->BRNO = $shop['BrNo'];
+                $summary->TAXCODE = null;
+                $summary->VATAMT = $totals["vat"];
+                $summary->AMT = $transaction["type"] === "LBC" || $transaction["type"] === "DCS" || $transaction["type"] === "Credit"
                     ? $transaction['tendered'] : $totals["total"];
-                $summmary->GLCODE = 0;
-                $summmary->REMARKS = "Sale";
-                $summmary->COB = $transaction["method"];
+                $summary->GLCODE = 0;
+                $summary->REMARKS = "Sale";
+                $summary->COB = $transaction["method"];
 
                 if (isset($transaction['stype'])) {
-                    $summmary->STYPE = $transaction['stype'];
+                    $summary->STYPE = $transaction['stype'];
                 } else {
-                    $summmary->STYPE = $transaction["method"];
+                    $summary->STYPE = $transaction["method"];
                 }
 
-                $summmary->UPDFLAG = 0;
-                $summmary->TILLNO = $till['tillno'];
-                $summmary->DLNO = 0;
-                $summmary->UPDNO = 0;
-                $summmary->OTTYPE = $transaction["type"];
-                $summmary->OTRANNO = $docNo;
-                $summmary->ODATE = \date("Y-m-d");
+                $summary->UPDFLAG = 0;
+                $summary->TILLNO = $till['tillno'];
+                $summary->DLNO = 0;
+                $summary->UPDNO = 0;
+                $summary->OTTYPE = $transaction["type"];
+                $summary->OTRANNO = $docNo;
+                $summary->ODATE = \date("Y-m-d");
 
                 if (isset($debtorNo)) {
-                    $summmary->DEBTOR = $debtorNo;
+                    $summary->DEBTOR = $debtorNo;
                 } else {
-                    $summmary->DEBTOR = "Cash";
+                    $summary->DEBTOR = "Cash";
                 }
 
-                $summmary->BUSER = $user->username;
-                $summmary->AUSER = $transaction["auth"];
-                $summmary->PERIOD = $shop['Period'];
-                $summmary->CCQNUM = "";
+                $summary->BUSER = $user->username;
+                $summary->AUSER = $transaction["auth"];
+                $summary->PERIOD = $shop['Period'];
+                $summary->CCQNUM = "";
 
                 if (isset($laybyeNo) && isset($depNo)) {
-                    $summmary->TRANNO = $depNo;
-                    $summmary->VATAMT = 0;
-                    $summmary->AMT = $transaction['tendered'];
+                    $summary->TRANNO = $depNo;
+                    $summary->VATAMT = 0;
+                    $summary->AMT = $transaction['tendered'];
                 }
 
-                $summmary->save();
+                $monthlySummary = new Summary($summary->attributesToArray());
+                $summary->save();
+                $monthlySummary->save();
+
+                $this->tradeSummary($shop, $monthlySummary);
             }
 
             if (!($transaction["type"] === "L/B" && $transaction['stype'] === "Refund")) {
@@ -698,6 +716,12 @@ class TransactionController extends Controller
 
         $transaction = $response->getOriginalContent()['lineItems'];
 
+        $branchCode = $transaction["branch"];
+        $branch = Branch::query()
+            ->where("code", $branchCode)
+//            ->where("active", true)
+            ->first();
+
         /**
          * @var DailyTransaction[] $lineItems
          */
@@ -753,7 +777,7 @@ class TransactionController extends Controller
             "time" => $time,
             "transactions" => $lineItems,
             "totals" => $totals,
-            "branch" => $transaction['branch'],
+            "branch" => $branch,
             "till" => $transaction['till'],
             "method" => $method,
             "type" => $type,
@@ -978,6 +1002,412 @@ class TransactionController extends Controller
     public function activateRefund()
     {
         return response()->json([], $this->successStatus);
+    }
+
+    private function tradeSummaryEntries($shop, Transaction $transaction)
+    {
+        $taxRate = Tax::query()
+            ->where('taxcode', 1)
+            ->first();
+
+        $docType = $transaction->DOCTYPE;
+        $stype = $transaction->STYPE;
+        $lslType = $transaction->LSLTYPE;
+        $docNo = $transaction->OTRANNO;
+        $otType = $transaction->OTTYPE;
+        $lslType = $transaction->LSLTYPE;
+        $branchCode = $transaction->BRNO;
+        $date = $transaction->BDATE;
+        $tillNo = $transaction->TILLNO;
+        $cob = $transaction->COB;
+        $period = $transaction->PERIOD;
+        $style = $transaction->STYLE;
+
+        $cp = $transaction->CP;
+        $sp = $transaction->SP;
+        $qty = $transaction->QTY;
+        $disc = $transaction->DISCAMT;
+        $vat = $transaction->VATAMT;
+        $amt = $transaction->AMT;
+
+        $product = Product::query()
+            ->where("code", $style)
+            ->first();
+
+        $tradeSummary = TradeSummary::query()
+            ->where("brno", $branchCode)
+            ->where("bdate", $date)
+            ->where("TILLNO", $tillNo)
+            ->where("PERIOD", $period)
+            ->first();
+
+        if (!$tradeSummary) {
+            $tradeSummary = new TradeSummary();
+            $tradeSummary->brno = $branchCode;
+            $tradeSummary->bdate = $date;
+            $tradeSummary->TILLNO = $tillNo;
+            $tradeSummary->PERIOD = $period;
+            $tradeSummary->CASHS = 0.00;
+            $tradeSummary->CCARDS = 0.00;
+            $tradeSummary->PDCS = 0.00;
+            $tradeSummary->CHQS = 0.00;
+            $tradeSummary->SLS = 0.00;
+            $tradeSummary->TOTDISC = 0.00;
+            $tradeSummary->TOTCP = 0.00;
+            $tradeSummary->TOTSP = 0.00;
+            $tradeSummary->LAYBYES = 0.00;
+            $tradeSummary->CREDITS = 0.00;
+            $tradeSummary->USLS = 0;
+            $tradeSummary->URET = 0;
+            $tradeSummary->REFUNDC = 0;
+            $tradeSummary->CASHC = 0;
+            $tradeSummary->CODC = 0;
+            $tradeSummary->CCC = 0;
+            $tradeSummary->PDCC = 0;
+            $tradeSummary->CREDITC = 0;
+            $tradeSummary->CELLP = 0;
+            $tradeSummary->SPACK = 0;
+            $tradeSummary->AIRTIME = 0;
+            $tradeSummary->CXCESS = 0;
+            $tradeSummary->TOTRFDS = 0;
+            $tradeSummary->LOANPAID = 0;
+            $tradeSummary->STFPAY = 0;
+            $tradeSummary->CSHREF = 0;
+            $tradeSummary->LBCRS = 0;
+            $tradeSummary->TCRNS = 0;
+            $tradeSummary->TINVS = 0;
+            $tradeSummary->CODPAY = 0;
+            $tradeSummary->DEBPAY = 0;
+            $tradeSummary->PDCPAY = 0;
+            $tradeSummary->STFRECS = 0;
+            $tradeSummary->LOANRECV = 0;
+            $tradeSummary->TOTCSHBNK = 0;
+            $tradeSummary->TOTCCS = 0;
+            $tradeSummary->OTHER = 0;
+            $tradeSummary->RDS = 0;
+            $tradeSummary->CHQDEP = 0;
+            $tradeSummary->LBPAY = 0;
+            $tradeSummary->CREXINV = 0;
+            $tradeSummary->CSEXINV = 0;
+        }
+
+        //INV/L/B entry
+        if (($docType === "L/B" || $docType === "INV") && $lslType !== "E") {
+            $amount = ($sp * $qty) - $disc;
+            $totalCp = $cp * $qty;
+            $totalSp = (($cp * $qty) - $disc) - $vat;
+
+            if ($product->category === $shop['CellCat'] && $product->category === $shop['CellGrp']) {
+                switch ($product->cellType) {
+                    case "H":
+                        $tradeSummary->CELLP += $amount;
+                        break;
+                    case "S":
+                        $tradeSummary->SPACK += $amount;
+                        break;
+                    case "A":
+                        $tradeSummary->AIRTIME += $amount;
+                        break;
+                    case "X":
+                        $tradeSummary->CXCESS += $amount;
+                        break;
+                }
+            } else {
+                switch ($cob) {
+                    case "Cash":
+                        $tradeSummary->CASHS += $amount;
+                        break;
+                    case "CC":
+                        $tradeSummary->CCARDS += $amount;
+                        break;
+                    case "PDC":
+                        $tradeSummary->PDCS += $amount;
+                        break;
+                    case "Cheque":
+                        $tradeSummary->CHQS += $amount;
+                        break;
+                }
+
+                $tradeSummary->USLS += $qty * 1;
+                $tradeSummary->SLS += $amount;
+                $tradeSummary->TOTDISC += $disc;
+                $tradeSummary->TOTCP += $totalCp;
+                $tradeSummary->TOTSP += $totalSp;
+                $tradeSummary->TINVS += 1;
+
+                switch ($stype) {
+                    case "Laybye":
+                        $tradeSummary->LAYBYES += $amount;
+                        break;
+                    case "COD":
+                    case "DCS":
+                        $tradeSummary->CODS += $amount;
+                        break;
+                    case "Credit":
+                        $tradeSummary->CREDITS += $amount;
+                        break;
+                }
+            }
+        }
+
+        //CRN entry
+        if ($docType === "CRN" && $lslType !== "E") {
+            $amount = ($sp * $qty * -1) + $disc;
+            $totalCp = ($cp * $qty) * -1;
+            $totalSp = (($cp * $qty * -1) + $disc) - ($vat * -1);
+
+            if ($product->category === $shop['CellCat'] && $product->category === $shop['CellGrp']) {
+                switch ($product->cellType) {
+                    case "H":
+                        $tradeSummary->CELLP += $amount;
+                        break;
+                    case "S":
+                        $tradeSummary->SPACK += $amount;
+                        break;
+                    case "A":
+                        $tradeSummary->AIRTIME += $amount;
+                        break;
+                    case "X":
+                        $tradeSummary->CXCESS += $amount;
+                        break;
+                }
+            } else {
+                switch ($cob) {
+                    case "Cash":
+                        $tradeSummary->CASHS += $amount;
+                        break;
+                    case "CC":
+                        $tradeSummary->CCARDS += $amount;
+                        break;
+                    case "PDC":
+                        $tradeSummary->PDCS += $amount;
+                        break;
+                    case "Cheque":
+                        $tradeSummary->CHQS += $amount;
+                        break;
+                }
+
+                $tradeSummary->URET += $qty * 1;
+                $tradeSummary->SLS += $amount;
+                $tradeSummary->TOTDISC -= $disc;
+                $tradeSummary->TOTCP += $totalCp;
+                $tradeSummary->TOTSP += $totalSp;
+                $tradeSummary->TCRNS += 1;
+
+                switch ($stype) {
+                    case "Refund":
+                        $tradeSummary->REFUNDC += $amount;
+                        break;
+                    case "Cash":
+                    case "Exchng":
+                        $tradeSummary->CASHC += $amount;
+                        break;
+                    case "DCS":
+                    case "COD":
+                        $tradeSummary->CODC += $amount;
+                        break;
+                    case "PDC":
+                        $tradeSummary->PDCC += $amount;
+                        break;
+                    case "Laybye":
+                        $tradeSummary->LAYBYEC += $amount;
+                        break;
+                    case "Credit":
+                        $tradeSummary->CREDITC += $amount;
+                        break;
+                }
+            }
+        }
+
+        if ($docType === "CRN" && $lslType === "E") {
+            if ($stype === "Cash") {
+                $tradeSummary->CSEXINV += $amt * -1;
+            } else {
+                $tradeSummary->CREXINV += $amt * -1;
+            }
+        }
+
+        if (($docType === "L/B" || $docType === "INV") && $lslType === "E") {
+            if ($stype === "Cash") {
+                $tradeSummary->CSEXINV += $amt;
+            } else {
+                $tradeSummary->CREXINV += $amt;
+            }
+        }
+
+        $tradeSummary->save();
+    }
+
+    private function tradeSummary($shop, Summary $summary)
+    {
+        $stype = $summary->STYPE;
+        $docNo = $summary->TRANNO;
+        $docType = $summary->BTYPE;
+        $oDocNo = $summary->OTRANNO;
+        $otType = $summary->OTTYPE;
+        $branchCode = $summary->BRNO;
+        $date = $summary->BDATE;
+        $tillNo = $summary->TILLNO;
+        $cob = $summary->COB;
+        $period = $summary->PERIOD;
+        $btype = $summary->BTYPE;
+
+        $amt = $summary->AMT;
+        $vat = $summary->VATAMT;
+
+        $tradeSummary = TradeSummary::query()
+            ->where("brno", $branchCode)
+            ->where("bdate", $date)
+            ->where("TILLNO", $tillNo)
+            ->where("PERIOD", $period)
+            ->first();
+
+        if (!$tradeSummary) {
+            $tradeSummary = new TradeSummary();
+            $tradeSummary->brno = $branchCode;
+            $tradeSummary->bdate = $date;
+            $tradeSummary->TILLNO = $tillNo;
+            $tradeSummary->PERIOD = $period;
+            $tradeSummary->CASHS = 0.00;
+            $tradeSummary->CCARDS = 0.00;
+            $tradeSummary->PDCS = 0.00;
+            $tradeSummary->CHQS = 0.00;
+            $tradeSummary->SLS = 0.00;
+            $tradeSummary->TOTDISC = 0.00;
+            $tradeSummary->TOTCP = 0.00;
+            $tradeSummary->TOTSP = 0.00;
+            $tradeSummary->LAYBYES = 0.00;
+            $tradeSummary->CREDITS = 0.00;
+            $tradeSummary->USLS = 0;
+            $tradeSummary->URET = 0;
+            $tradeSummary->REFUNDC = 0;
+            $tradeSummary->CASHC = 0;
+            $tradeSummary->CODC = 0;
+            $tradeSummary->CCC = 0;
+            $tradeSummary->PDCC = 0;
+            $tradeSummary->CREDITC = 0;
+            $tradeSummary->CELLP = 0;
+            $tradeSummary->SPACK = 0;
+            $tradeSummary->AIRTIME = 0;
+            $tradeSummary->CXCESS = 0;
+            $tradeSummary->TOTRFDS = 0;
+            $tradeSummary->LOANPAID = 0;
+            $tradeSummary->STFPAY = 0;
+            $tradeSummary->CSHREF = 0;
+            $tradeSummary->LBCRS = 0;
+            $tradeSummary->TCRNS = 0;
+            $tradeSummary->TINVS = 0;
+            $tradeSummary->CODPAY = 0;
+            $tradeSummary->DEBPAY = 0;
+            $tradeSummary->PDCPAY = 0;
+            $tradeSummary->STFRECS = 0;
+            $tradeSummary->LOANRECV = 0;
+            $tradeSummary->TOTCSHBNK = 0;
+            $tradeSummary->TOTCCS = 0;
+            $tradeSummary->OTHER = 0;
+            $tradeSummary->RDS = 0;
+            $tradeSummary->CHQDEP = 0;
+            $tradeSummary->LBPAY = 0;
+            $tradeSummary->CREXINV = 0;
+            $tradeSummary->CSEXINV = 0;
+        }
+
+        if ($btype === "PAY") {
+            switch ($stype) {
+                case "Refund":
+                    $tradeSummary->TOTRFDS += $amt;
+                    break;
+                case "Loan":
+                    $tradeSummary->LOANPAID += $amt;
+                    break;
+                case "Staff":
+                    $tradeSummary->STFPAY += $amt;
+                    break;
+                case "CC":
+                case "Cash":
+                    break;
+                default:
+                    if ($otType === "CRN") {
+                        $tradeSummary->CSHREF += $amt;
+                    }
+            }
+
+        } elseif ($btype === "LBC") {
+            $tradeSummary->LBCRS += $amt;
+        } elseif ($btype === "DEP") {
+            if ($cob !== "PDC") {
+                switch ($otType) {
+                    case "ADP":
+                        $tradeSummary->TOTCSHBNK += $amt;
+                        break;
+                    case "CCD":
+                        $tradeSummary->TOTCCS += $amt;
+                        break;
+                    case "ReD":
+                        if ($stype === "ReD") {
+                            $tradeSummary->OTHER += $amt;
+                        }
+                        break;
+                    case "PDC":
+                        if ($stype === "ReD") {
+                            $tradeSummary->OTHER += $amt;
+                            $tradeSummary->CHQDEP += $amt;
+                        } elseif ($stype === "RD") {
+                            $tradeSummary->RDS += $amt;
+                        } else {
+                            $tradeSummary->CHQDEP += $amt;
+                        }
+                        break;
+                    case "L/B":
+                        $tradeSummary->LBPAY += $amt;
+                        break;
+
+                }
+            }
+
+
+            if ($otType === "INV" && $cob !== "PDC") {
+                switch ($stype) {
+                    case "DCS":
+                    case "COD":
+                        $tradeSummary->CODPAY += $amt;
+                        break;
+                    case "Credit":
+                        $tradeSummary->DEBPAY += $amt;
+                        break;
+                    case "PDC":
+                        $tradeSummary->PDCPAY += $amt;
+                        break;
+                    case "Staff":
+                        $tradeSummary->STFRECS += $amt;
+                        break;
+                    case "Loan":
+                        $tradeSummary->LOANRECV += $amt;
+                        break;
+                }
+            } elseif ($otType === "D/P" && $cob !== "PDC") {
+                switch ($stype) {
+                    case "COD":
+                        $tradeSummary->CODPAY += $amt;
+                        break;
+                    case "Cash":
+                    case "Credit":
+                        $tradeSummary->DEBPAY += $amt;
+                        break;
+                    case "PDC":
+                        $tradeSummary->PDCPAY += $amt;
+                        break;
+                    case "Staff":
+                        $tradeSummary->STFRECS += $amt;
+                        break;
+                    case "Loan":
+                        $tradeSummary->LOANRECV += $amt;
+                        break;
+                }
+            }
+        }
+
+        $tradeSummary->save();
     }
 
 }
