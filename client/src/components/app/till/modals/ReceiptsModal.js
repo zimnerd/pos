@@ -25,8 +25,8 @@ class ReceiptsModal extends React.Component {
                 <Modal.Header closeButton>
                     <Modal.Title>Receipt Options</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
-                    <Card onClick={this.openDebtor} className="text-center">
+                <Modal.Body className="receipts-modal">
+                    <Card onClick={this.openDebtor} className="text-center success">
                         <Card.Header>
                             <span><i className="fa fa-money"/></span>
                         </Card.Header>

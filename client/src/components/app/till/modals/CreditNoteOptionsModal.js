@@ -39,9 +39,9 @@ class CreditNoteOptionsModal extends React.Component {
                 <Modal.Header closeButton>
                     <Modal.Title>Credit Note Options</Modal.Title>
                 </Modal.Header>
-                <Modal.Body className="d-flex">
+                <Modal.Body className="d-flex credit-note-options">
                     <div className="col-4">
-                        <Card onClick={this.activateExchange} className="text-center">
+                        <Card onClick={this.activateExchange} className="text-center warning">
                             <Card.Header>
                                 <span><i className="fa fa-exchange"/></span>
                             </Card.Header>
@@ -51,7 +51,7 @@ class CreditNoteOptionsModal extends React.Component {
                         </Card>
                     </div>
                     <div className="col-4">
-                        <Card onClick={this.refund} className="text-center">
+                        <Card onClick={this.refund} className="text-center danger">
                             <Card.Header>
                                 <span><i className="fa fa-refresh"/></span>
                             </Card.Header>
@@ -61,7 +61,7 @@ class CreditNoteOptionsModal extends React.Component {
                         </Card>
                     </div>
                     <div className="col-4">
-                        <Card onClick={this.laybyeRefund} className="text-center">
+                        <Card onClick={this.laybyeRefund} className="text-center success">
                             <Card.Header>
                                 <span><i className="fa fa-refresh"/></span>
                             </Card.Header>

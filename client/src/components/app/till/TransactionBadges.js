@@ -41,7 +41,7 @@ class TransactionBadges extends React.Component {
         return (
             <section className="p-3 widget-shadow badges">
                 {this.props.till.laybye &&
-                <Badge variant="success">Lay-Bye Purchase <span onClick={this.removeLaybye}><i
+                <Badge variant="success">Lay-Bye <span onClick={this.removeLaybye}><i
                     className="fa fa-times"/></span></Badge>
                 }
                 {this.props.till.returns &&

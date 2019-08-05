@@ -144,7 +144,7 @@ class LineItems extends React.Component {
         return (
             <section className="col-6 line-items widget-shadow">
                 <form className="d-flex">
-                    <input ref={(input) => { this.codeInput = input; }}
+                    <input ref={(input) => { this.codeInput = input; }} id="product-code-line"
                         onChange={this.handleChange} type="text" onFocus={this.reset}
                            placeholder="Enter product code" className="form-control" value={this.props.till.code}/>
                     <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>

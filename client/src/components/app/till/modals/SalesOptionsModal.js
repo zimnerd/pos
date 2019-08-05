@@ -147,10 +147,10 @@ class SalesOptionsModal extends React.Component {
                 <Modal.Header closeButton>
                     <Modal.Title>Sales Options</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className="sales-options">
                     <div className="d-flex">
                         <div className="col-4">
-                            <Card onClick={this.credit} className="text-center">
+                            <Card onClick={this.credit} className="text-center secondary">
                                 <Card.Header>
                                     <span><i className="fa fa-credit-card"/></span>
                                 </Card.Header>
@@ -160,7 +160,7 @@ class SalesOptionsModal extends React.Component {
                             </Card>
                         </div>
                         <div className="col-4">
-                            <Card onClick={this.activateLayBye} className="text-center">
+                            <Card onClick={this.activateLayBye} className="text-center success">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-grab-o"/></span>
                                 </Card.Header>
@@ -170,7 +170,7 @@ class SalesOptionsModal extends React.Component {
                             </Card>
                         </div>
                         <div className="col-4">
-                            <Card onClick={this.activateStaffPrice} className="text-center">
+                            <Card onClick={this.activateStaffPrice} className="text-center info">
                                 <Card.Header>
                                     <span><i className="fa fa-money"/></span>
                                 </Card.Header>
@@ -183,7 +183,7 @@ class SalesOptionsModal extends React.Component {
                     <hr/>
                     <div className="d-flex">
                         <div className="col-6">
-                            <Card onClick={this.holdSale} className="text-center">
+                            <Card onClick={this.holdSale} className="text-center warning">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-left"/></span>
                                 </Card.Header>
@@ -193,7 +193,7 @@ class SalesOptionsModal extends React.Component {
                             </Card>
                         </div>
                         <div className="col-6">
-                            <Card onClick={this.retrieveSale} className="text-center">
+                            <Card onClick={this.retrieveSale} className="text-center danger">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-right"/></span>
                                 </Card.Header>

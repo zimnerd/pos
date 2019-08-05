@@ -252,6 +252,7 @@ class ReceiptsPaymentModal extends React.Component {
                                 <option value="COD">COD</option>
                                 <option value="Credit">Credit</option>
                                 <option value="Loan">Loan</option>
+                                <option value="DCS">DCS</option>
                             </select>
                         </div>
                         {this.state.accounts &&
@@ -296,18 +297,18 @@ class ReceiptsPaymentModal extends React.Component {
                                 <div className="col-6">
                                     <label>Payment Method:</label>
                                     <br/>
-                                    <div className="btn-group payment" role="group" aria-label="...">
-                                        <button type="button" className="btn btn-secondary"
+                                    <div className="payment" role="group" aria-label="...">
+                                        <button type="button" className="btn btn-success m-1"
                                                 disabled={this.state.method === "Cash"}
                                                 onClick={() => this.changeMethod("Cash")}>
                                             <span><i className="fa fa-money"/></span> Cash
                                         </button>
-                                        <button type="button" className="btn btn-secondary"
+                                        <button type="button" className="btn btn-danger m-1"
                                                 disabled={this.state.method === "CC"}
                                                 onClick={() => this.changeMethod("CC")}>
                                             <span><i className="fa fa-credit-card"/></span> Card
                                         </button>
-                                        <button type="button" className="btn btn-secondary"
+                                        <button type="button" className="btn btn-info m-1"
                                                 disabled={this.state.method === "Split"}
                                                 onClick={() => this.changeMethod("Split")}>
                                             <span><i className="fa fa-random"/></span> Split

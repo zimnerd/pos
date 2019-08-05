@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -94,11 +95,8 @@ class CompleteSaleModal extends React.Component {
             [event.target.name]: event.target.value
         }, () => {
             if (this.state.method === "Split") {
-                let card = this.props.till.totals.total.toFixed(2) - this.state.cash;
                 this.setState({
-                    cash: this.state.cash,
-                    card: card,
-                    tendered: Number(Number(this.state.cash) + Number(card)).toFixed(2)
+                    tendered: Number(Number(this.state.cash) + Number(this.state.card)).toFixed(2)
                 });
             }
         });
@@ -490,6 +488,37 @@ class CompleteSaleModal extends React.Component {
         }
     };
 
+    keyDown = e => {
+        let event = window.event ? window.event : e;
+        if (event.keyCode === 13) { //enter
+            e.preventDefault();
+            let tenderedField = $('#saleTendered');
+            let nameField = $('#saleName');
+            let cellField = $('#saleCell');
+            let emailField = $('#saleEmail');
+
+            if (tenderedField.is(':focus')) {
+                nameField.focus();
+                return true;
+            }
+
+            if (nameField.is(':focus')) {
+                cellField.focus();
+                return true;
+            }
+
+            if (cellField.is(':focus')) {
+                emailField.focus();
+                return true;
+            }
+
+            tenderedField.focus();
+            return true;
+        }
+
+        return false;
+    };
+
     render() {
         return (
             <Modal size="lg" show={this.props.modal.complete} onHide={this.handleClose} className="complete-sale">
@@ -507,7 +536,7 @@ class CompleteSaleModal extends React.Component {
                     <Modal.Title>Complete Sale</Modal.Title>
                     }
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body onKeyDown={this.keyDown}>
                     {this.props.till.transactions &&
                     this.props.till.transactions.length === 0 &&
                     <p className="text-center">There are no transaction line items to pay for!</p>
@@ -539,16 +568,16 @@ class CompleteSaleModal extends React.Component {
                             <hr/>
                             <label>Payment Method:</label>
                             <br/>
-                            <div className="btn-group payment" role="group" aria-label="...">
-                                <button type="button" className="btn btn-secondary" disabled={this.state.method === "Cash"}
+                            <div className="payment" role="group" aria-label="...">
+                                <button type="button" className="btn btn-success m-1" disabled={this.state.method === "Cash"}
                                         onClick={() => this.changeMethod("Cash")}>
                                     <span><i className="fa fa-money"/></span> Cash
                                 </button>
-                                <button type="button" className="btn btn-secondary" disabled={this.state.method === "CC"}
+                                <button type="button" className="btn btn-danger m-1" disabled={this.state.method === "CC"}
                                         onClick={() => this.changeMethod("CC")}>
                                     <span><i className="fa fa-credit-card"/></span> Card
                                 </button>
-                                <button type="button" className="btn btn-secondary" disabled={this.state.method === "Split"}
+                                <button type="button" className="btn btn-info m-1" disabled={this.state.method === "Split"}
                                         onClick={() => this.changeMethod("Split")}>
                                     <span><i className="fa fa-random"/></span> Split
                                 </button>
@@ -570,8 +599,8 @@ class CompleteSaleModal extends React.Component {
                             <div className="form-group">
                                 <label>Amount Tendered:</label>
                                 <input type="text" className="form-control" value={this.state.tendered}
-                                       autoComplete="false"
-                                       name="tendered" onFocus={() => this.setState({ tendered: 0.00 })}
+                                       autoComplete="false" id="saleTendered"
+                                       name="tendered" onFocus={() => this.setState({ tendered: "" })}
                                        disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                             </div>
                             {this.state.tendered > this.props.till.totals.total &&
@@ -601,7 +630,7 @@ class CompleteSaleModal extends React.Component {
                                     <div className="form-group">
                                         <label>Name:</label>
                                         <input type="text" className="form-control" name="name" value={this.state.name}
-                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                               onChange={this.handleText} disabled={this.state.disabled} id="saleName"/>
                                         {this.props.auth.errors['person.name'] &&
                                         <p className="error">{this.props.auth.errors['person.name'][0]}</p>}
                                     </div>
@@ -617,14 +646,14 @@ class CompleteSaleModal extends React.Component {
                                     <div className="form-group">
                                         <label>Cell Number:</label>
                                         <input type="text" className="form-control" name="cell" value={this.state.cell}
-                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                               onChange={this.handleText} disabled={this.state.disabled} id="saleCell"/>
                                         {this.props.auth.errors['person.cell'] &&
                                         <p className="error">{this.props.auth.errors['person.cell'][0]}</p>}
                                     </div>
                                     <div className="form-group">
                                         <label>Email Address:</label>
                                         <input type="email" className="form-control" name="email"
-                                               value={this.state.email}
+                                               value={this.state.email} id="saleEmail"
                                                onChange={this.handleText} disabled={this.state.disabled}/>
                                         {this.props.auth.errors['person.email'] &&
                                         <p className="error">{this.props.auth.errors['person.email'][0]}</p>}

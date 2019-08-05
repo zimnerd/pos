@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as modalActions from "../../../redux/actions/modal.action";
 import * as tillActions from "../../../redux/actions/till.action";
@@ -140,6 +141,7 @@ class Till extends React.Component {
                 }
 
                 this.props.actions.modal.openCompleteSale();
+                $('#saleTendered').focus();
                 break;
             case 115:
                 if (event.preventDefault) {

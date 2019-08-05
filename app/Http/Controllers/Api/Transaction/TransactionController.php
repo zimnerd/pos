@@ -165,7 +165,12 @@ class TransactionController extends Controller
                         $refund = true;
                     }
 
-                    $dailyTransaction->STYPE = $transaction['stype'];
+                    if ($refund && $transaction["type"] === "LBC") {
+                        $dailyTransaction->STYPE = "Laybye";
+                        $dailyTransaction->DOCTYPE = "CRN";
+                    } else {
+                        $dailyTransaction->STYPE = $transaction['stype'];
+                    }
                 } else {
                     $dailyTransaction->STYPE = $transaction["method"];
                 }
@@ -206,7 +211,9 @@ class TransactionController extends Controller
                 $dailyTransaction->UPDNO = 0;
                 $dailyTransaction->UPDFLAG = 0;
 
-                if ($refund) {
+                if ($refund && $transaction["type"] === "LBC") {
+                    $dailyTransaction->INVREF = isset($laybyeNo) ? $laybyeNo : $docNo;;
+                } elseif ($refund) {
                     $dailyTransaction->INVREF = $docNo;
                 } else {
                     $dailyTransaction->INVREF = isset($laybyeNo) ? $laybyeNo : null;
@@ -326,7 +333,7 @@ class TransactionController extends Controller
                 $summary->COB = $transaction["method"];
 
                 if (isset($transaction['stype'])) {
-                    $summary->STYPE = $transaction['stype'];
+                    $summary->STYPE = "Laybye";
                 } else {
                     $summary->STYPE = $transaction["method"];
                 }
@@ -335,7 +342,7 @@ class TransactionController extends Controller
                 $summary->TILLNO = $till['tillno'];
                 $summary->DLNO = 0;
                 $summary->UPDNO = 0;
-                $summary->OTTYPE = $transaction["type"];
+                $summary->OTTYPE = "CRN";
                 $summary->OTRANNO = $docNo;
                 $summary->ODATE = \date("Y-m-d");
 
@@ -384,7 +391,11 @@ class TransactionController extends Controller
                 $summary->COB = $transaction["method"];
 
                 if (isset($transaction['stype'])) {
-                    $summary->STYPE = $transaction['stype'];
+                    if ($refund && $transaction["type"] === "LBC") {
+                        $summary->STYPE = "Laybye";
+                    } else {
+                        $summary->STYPE = $transaction['stype'];
+                    }
                 } else {
                     $summary->STYPE = $transaction["method"];
                 }
@@ -397,8 +408,14 @@ class TransactionController extends Controller
                 $summary->OTRANNO = $docNo;
                 $summary->ODATE = \date("Y-m-d");
 
+                if ($refund && $transaction["type"] === "LBC") {
+                    $summary->OTTYPE = "CRN";
+                }
+
                 if (isset($debtorNo)) {
                     $summary->DEBTOR = $debtorNo;
+                } elseif ($transaction["type"] === "L/B" && isset($laybyeNo)) {
+                    $summary->DEBTOR = "LB".$laybyeNo;
                 } else {
                     $summary->DEBTOR = "Cash";
                 }
@@ -505,39 +522,39 @@ class TransactionController extends Controller
                 }
 
                 if ($transaction["tendered"] != 0) {
-                    $depositTransaction = new LaybyeTransaction();
+                    $tenderedLaybyeTransaction = new LaybyeTransaction();
 
-                    $depositTransaction->accNo = $laybyeNo;
-                    $depositTransaction->invNo = isset($depNo) ? $depNo : $docNo;
-                    $depositTransaction->invDate = \date("Y-m-d");
-                    $depositTransaction->dueDate = \date("Y-m-d");
-                    $depositTransaction->invAmt = $transaction["tendered"];
-                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "LBC" : "DEP";
-                    $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
-                    $depositTransaction->period = $shop['Period'];
-                    $depositTransaction->vatPer = $shop['Period'];
-                    $depositTransaction->crnref = $docNo;
-                    $depositTransaction->dts = new \DateTime();
+                    $tenderedLaybyeTransaction->accNo = $laybyeNo;
+                    $tenderedLaybyeTransaction->invNo = isset($depNo) ? $depNo : $docNo;
+                    $tenderedLaybyeTransaction->invDate = \date("Y-m-d");
+                    $tenderedLaybyeTransaction->dueDate = \date("Y-m-d");
+                    $tenderedLaybyeTransaction->invAmt = $transaction["tendered"];
+                    $tenderedLaybyeTransaction->type = $transaction['stype'] === "Refund" ? "LBC" : "DEP";
+                    $tenderedLaybyeTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
+                    $tenderedLaybyeTransaction->period = $shop['Period'];
+                    $tenderedLaybyeTransaction->vatPer = $shop['Period'];
+                    $tenderedLaybyeTransaction->crnref = $docNo;
+                    $tenderedLaybyeTransaction->dts = new \DateTime();
 
-                    $depositTransaction->save();
+                    $tenderedLaybyeTransaction->save();
                     unset($itemDebtor);
                     unset($debtorNo);
                 } else {
-                    $depositTransaction = new LaybyeTransaction();
+                    $tenderedLaybyeTransaction = new LaybyeTransaction();
 
-                    $depositTransaction->accNo = $laybyeNo;
-                    $depositTransaction->invNo = isset($depNo) ? $depNo : $docNo;
-                    $depositTransaction->invDate = \date("Y-m-d");
-                    $depositTransaction->dueDate = \date("Y-m-d");
-                    $depositTransaction->invAmt = $depAmt;
-                    $depositTransaction->type = $transaction['stype'] === "Refund" ? "LBC" : "DEP";
-                    $depositTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
-                    $depositTransaction->period = $shop['Period'];
-                    $depositTransaction->vatPer = $shop['Period'];
-                    $depositTransaction->crnref = $docNo;
-                    $depositTransaction->dts = new \DateTime();
+                    $tenderedLaybyeTransaction->accNo = $laybyeNo;
+                    $tenderedLaybyeTransaction->invNo = isset($depNo) ? $depNo : $docNo;
+                    $tenderedLaybyeTransaction->invDate = \date("Y-m-d");
+                    $tenderedLaybyeTransaction->dueDate = \date("Y-m-d");
+                    $tenderedLaybyeTransaction->invAmt = $depAmt;
+                    $tenderedLaybyeTransaction->type = $transaction['stype'] === "Refund" ? "LBC" : "DEP";
+                    $tenderedLaybyeTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
+                    $tenderedLaybyeTransaction->period = $shop['Period'];
+                    $tenderedLaybyeTransaction->vatPer = $shop['Period'];
+                    $tenderedLaybyeTransaction->crnref = $docNo;
+                    $tenderedLaybyeTransaction->dts = new \DateTime();
 
-                    $depositTransaction->save();
+                    $tenderedLaybyeTransaction->save();
                 }
 
                 if (isset($itemDebtor)) {
@@ -598,25 +615,27 @@ class TransactionController extends Controller
                     $debtorTransaction->remarks = 'Staff Sale';
                 }
 
+                $dno = $debtor->no;
+
                 $debtor->save();
                 $debtorTransaction->save();
 
                 if ($transaction["tendered"] != 0 && $debtor->stype !== 'Staff') {
-                    $depositTransaction = new DebtorTransaction();
+                    $tenderedDebtorTransaction = new DebtorTransaction();
 
-                    $debtorTransaction->accNo = $debtorNo;
-                    $debtorTransaction->invNo = $docNo;
-                    $depositTransaction->invAmt = $transaction["tendered"];
-                    $depositTransaction->invDate = \date("Y-m-d");
-                    $depositTransaction->dueDate = \date("Y-m-d");
-                    $depositTransaction->type = $transaction["type"];
-                    $depositTransaction->remarks = "Credit Sale Deposit";
-                    $depositTransaction->period = $shop['Period'];
-                    $depositTransaction->vatPer = $shop['Period'];
-                    $depositTransaction->crnref = $docNo;
-                    $depositTransaction->dts = new \DateTime();
+                    $tenderedDebtorTransaction->accNo = $dno;
+                    $tenderedDebtorTransaction->invNo = $docNo;
+                    $tenderedDebtorTransaction->invAmt = $transaction["tendered"];
+                    $tenderedDebtorTransaction->invDate = \date("Y-m-d");
+                    $tenderedDebtorTransaction->dueDate = \date("Y-m-d");
+                    $tenderedDebtorTransaction->type = $transaction["type"];
+                    $tenderedDebtorTransaction->remarks = "Credit Sale Deposit";
+                    $tenderedDebtorTransaction->period = $shop['Period'];
+                    $tenderedDebtorTransaction->vatPer = $shop['Period'];
+                    $tenderedDebtorTransaction->crnref = $docNo;
+                    $tenderedDebtorTransaction->dts = new \DateTime();
 
-                    $depositTransaction->save();
+                    $tenderedDebtorTransaction->save();
                 }
             }
 
@@ -1019,7 +1038,7 @@ class TransactionController extends Controller
         $branchCode = $transaction->BRNO;
         $date = $transaction->BDATE;
         $tillNo = $transaction->TILLNO;
-        $cob = $transaction->COB;
+        $cob = $transaction->SUP;
         $period = $transaction->PERIOD;
         $style = $transaction->STYLE;
 
@@ -1095,9 +1114,9 @@ class TransactionController extends Controller
         if (($docType === "L/B" || $docType === "INV") && $lslType !== "E") {
             $amount = ($sp * $qty) - $disc;
             $totalCp = $cp * $qty;
-            $totalSp = (($cp * $qty) - $disc) - $vat;
+            $totalSp = (($sp * $qty) - $disc) - $vat;
 
-            if ($product->category === $shop['CellCat'] && $product->category === $shop['CellGrp']) {
+            if ($product->category === $shop['CellCat'] && $product->groupCode === $shop['CellGrp']) {
                 switch ($product->cellType) {
                     case "H":
                         $tradeSummary->CELLP += $amount;
@@ -1154,9 +1173,9 @@ class TransactionController extends Controller
         if ($docType === "CRN" && $lslType !== "E") {
             $amount = ($sp * $qty * -1) + $disc;
             $totalCp = ($cp * $qty) * -1;
-            $totalSp = (($cp * $qty * -1) + $disc) - ($vat * -1);
+            $totalSp = (($sp * $qty * -1) + $disc) - ($vat * -1);
 
-            if ($product->category === $shop['CellCat'] && $product->category === $shop['CellGrp']) {
+            if ($product->category === $shop['CellCat'] && $product->groupCode === $shop['CellGrp']) {
                 switch ($product->cellType) {
                     case "H":
                         $tradeSummary->CELLP += $amount;
