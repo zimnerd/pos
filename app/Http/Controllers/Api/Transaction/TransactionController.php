@@ -182,7 +182,13 @@ class TransactionController extends Controller
                 $dailyTransaction->AMT = $item['total'];
                 $dailyTransaction->VATAMT = $vat;
                 $dailyTransaction->QTY = $item['qty'];
-                $dailyTransaction->SP = $item['subtotal'];
+
+                if ($item['markdown'] === true) {
+                    $dailyTransaction->SP = $item['total'];
+                } else {
+                    $dailyTransaction->SP = $item['subtotal'];
+                }
+
                 $dailyTransaction->SPX = $item['subtotal'];
                 $dailyTransaction->CP = $item['cost'];
                 $dailyTransaction->DTYPE = '';
@@ -199,6 +205,7 @@ class TransactionController extends Controller
                     $saleType = 'D';
                 } elseif ($item['isStaff'] === true) {
                     $saleType = 'S';
+                    $dailyTransaction->STYPE = "Cash";
                 } else {
                     $saleType = 'R';
                 }
@@ -363,7 +370,7 @@ class TransactionController extends Controller
                     $summary->AMT = $transaction['tendered'];
                 }
 
-                $monthlySummary = new Summary((array)$summary);
+                $monthlySummary = new Summary($summary->attributesToArray());
                 $summary->save();
                 $monthlySummary->save();
 
@@ -405,7 +412,7 @@ class TransactionController extends Controller
                 $summary->DLNO = 0;
                 $summary->UPDNO = 0;
                 $summary->OTTYPE = $transaction["type"];
-                $summary->OTRANNO = $docNo;
+                $summary->OTRANNO = isset($transaction["oldDocNo"]) ? $transaction["oldDocNo"] : $docNo;
                 $summary->ODATE = \date("Y-m-d");
 
                 if ($refund && $transaction["type"] === "LBC") {
@@ -415,7 +422,7 @@ class TransactionController extends Controller
                 if (isset($debtorNo)) {
                     $summary->DEBTOR = $debtorNo;
                 } elseif ($transaction["type"] === "L/B" && isset($laybyeNo)) {
-                    $summary->DEBTOR = "LB".$laybyeNo;
+                    $summary->DEBTOR = $laybyeNo;
                 } else {
                     $summary->DEBTOR = "Cash";
                 }
@@ -529,7 +536,7 @@ class TransactionController extends Controller
                     $tenderedLaybyeTransaction->invDate = \date("Y-m-d");
                     $tenderedLaybyeTransaction->dueDate = \date("Y-m-d");
                     $tenderedLaybyeTransaction->invAmt = $transaction["tendered"];
-                    $tenderedLaybyeTransaction->type = $transaction['stype'] === "Refund" ? "LBC" : "DEP";
+                    $tenderedLaybyeTransaction->type = $transaction['stype'] === "Refund" ? "CRN" : "DEP";
                     $tenderedLaybyeTransaction->remarks = $transaction['stype'] === "Refund" ? "Refund" : "Deposit";
                     $tenderedLaybyeTransaction->period = $shop['Period'];
                     $tenderedLaybyeTransaction->vatPer = $shop['Period'];
@@ -583,7 +590,7 @@ class TransactionController extends Controller
 
                 $debtorTransaction->accNo = $debtorNo;
                 $debtorTransaction->invNo = $docNo;
-                $debtorTransaction->invAmt = $totals["total"] - $transaction["tendered"];
+                $debtorTransaction->invAmt = $totals["total"];
                 $debtorTransaction->invDate = \date("Y-m-d");
                 $debtorTransaction->dueDate = \date("Y-m-d");
                 $debtorTransaction->type = $transaction["type"] === "LBC" ? "CRN" : $transaction["type"];
@@ -620,7 +627,7 @@ class TransactionController extends Controller
                 $debtor->save();
                 $debtorTransaction->save();
 
-                if ($transaction["tendered"] != 0 && $debtor->stype !== 'Staff') {
+                if ($transaction["tendered"] != 0) {
                     $tenderedDebtorTransaction = new DebtorTransaction();
 
                     $tenderedDebtorTransaction->accNo = $dno;
@@ -628,8 +635,8 @@ class TransactionController extends Controller
                     $tenderedDebtorTransaction->invAmt = $transaction["tendered"];
                     $tenderedDebtorTransaction->invDate = \date("Y-m-d");
                     $tenderedDebtorTransaction->dueDate = \date("Y-m-d");
-                    $tenderedDebtorTransaction->type = $transaction["type"];
-                    $tenderedDebtorTransaction->remarks = "Credit Sale Deposit";
+                    $tenderedDebtorTransaction->type = "DEP";
+                    $tenderedDebtorTransaction->remarks = $debtor->stype === "Staff" ? "Staff Sale" : "Credit Sale Deposit";
                     $tenderedDebtorTransaction->period = $shop['Period'];
                     $tenderedDebtorTransaction->vatPer = $shop['Period'];
                     $tenderedDebtorTransaction->crnref = $docNo;
@@ -906,7 +913,7 @@ class TransactionController extends Controller
             ->first();
 
         if ($refund) {
-            return response()->json([], $this->validationStatus);
+            return response()->json(["error" => "This document has already been refunded!"], $this->validationStatus);
         }
 
         if ($type === "LB") {
@@ -921,7 +928,6 @@ class TransactionController extends Controller
 
         $transactions = StockTransaction::query()
             ->where('REF', $id)
-            ->where('BTYPE', $type)
             ->get();
 
         if (count($transactions) === 0) {
@@ -939,6 +945,11 @@ class TransactionController extends Controller
          * @var StockTransaction $item
          */
         foreach ($transactions as $item) {
+            if ($item->BTYPE !== $type) {
+                return response()->json(["error" => "The document number supplied is not the correct type to perform a refund"],
+                    $this->validationStatus);
+            }
+
             $qty++;
 
             $transaction = array();
@@ -1211,7 +1222,6 @@ class TransactionController extends Controller
                 $tradeSummary->TOTDISC -= $disc;
                 $tradeSummary->TOTCP += $totalCp;
                 $tradeSummary->TOTSP += $totalSp;
-                $tradeSummary->TCRNS += 1;
 
                 switch ($stype) {
                     case "Refund":
@@ -1386,6 +1396,7 @@ class TransactionController extends Controller
 
 
             if ($otType === "INV" && $cob !== "PDC") {
+                $tradeSummary->TINVS += 1;
                 switch ($stype) {
                     case "DCS":
                     case "COD":
@@ -1424,6 +1435,10 @@ class TransactionController extends Controller
                         break;
                 }
             }
+        }
+
+        if ($otType === "CRN") {
+            $tradeSummary->TCRNS += 1;
         }
 
         $tradeSummary->save();

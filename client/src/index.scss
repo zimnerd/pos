@@ -33,6 +33,8 @@ code {
         border: none;
         border-radius: 15px;
         box-shadow: 0 0 10px rgba(0, 0, 0, .5);
+        color: $white;
+        opacity: .9;
 
         &:hover {
             box-shadow: 0 5px 20px rgba(0, 0, 0, .5);

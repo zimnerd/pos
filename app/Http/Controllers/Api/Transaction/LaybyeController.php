@@ -185,7 +185,7 @@ class LaybyeController extends Controller
             $summmary->OTTYPE = "L/B";
             $summmary->OTRANNO = $docNo;
             $summmary->ODATE = \date("Y-m-d");
-            $summmary->DEBTOR = "Cash";
+            $summmary->DEBTOR = $id;
 
             $summmary->BUSER = $user->username;
             $summmary->PERIOD = $shop['Period'];

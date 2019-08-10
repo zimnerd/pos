@@ -102,7 +102,7 @@ class RefundModal extends React.Component {
                     this.props.actions.modal.closeRefund();
                     this.props.actions.modal.openRefundDetails();
                 } else if (error.response.status === 422) {
-                    toastr.error("This document has already been refunded!", "Find Transaction");
+                    toastr.error(error.response.data.error, "Find Transaction");
                 } else {
                     toastr.error("Unknown error.");
                 }

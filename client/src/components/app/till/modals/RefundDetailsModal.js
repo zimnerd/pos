@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Form, Modal } from "react-bootstrap";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
+import {Button, Form, Modal} from "react-bootstrap";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
 
+import * as authActions from "../../../../redux/actions/auth.action";
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
 
@@ -43,7 +44,50 @@ class RefundDetailsModal extends React.Component {
         this.props.actions.till.setRefund();
     };
 
+    invalidateForm = () => {
+        let errors = {};
+        if (this.state.invNo === "" || this.state.invNo == null) {
+            errors.invNo = "The invoice number is required."
+        }
+
+        if ((!this.props.till.refundData.invType && this.state.invType === "")
+            || (!this.props.till.refundData.invType && this.state.invType == null)) {
+            errors.invType = "The invoice type is required."
+        }
+
+        if (this.state.invDate === "" || this.state.invDate == null) {
+            errors.invDate = "The invoice date is required."
+        }
+
+        if (this.state.cell === "" || this.state.cell == null) {
+            errors.cell = "The cell number is required."
+        } else if (this.state.cell && this.state.cell.length !== 10) {
+            errors.cell = "The cell number needs to be 10 digits."
+        }
+
+        if (this.state.idNo === "" || this.state.idNo == null) {
+            errors.idNo = "The ID number is required."
+        }
+
+        if (this.state.brNo === "" || this.state.brNo == null) {
+            errors.brNo = "The branch number is required."
+        }
+
+        let keys = Object.keys(errors);
+        if (keys.length > 0) {
+            this.props.actions.auth.validationError(errors);
+            return true;
+        }
+
+        return false;
+    };
+
     handleContinue = async () => {
+        await this.props.actions.auth.errorReset();
+        if (this.invalidateForm()) {
+            return;
+        }
+
         let refund = {
             invNo: this.state.invNo,
             invDate: this.state.invDate,
@@ -97,24 +141,30 @@ class RefundDetailsModal extends React.Component {
                         <div className="col-6">
                             <div className="form-group">
                                 <label>Invoice Number:</label>
-                                <input name="invNo" type="text" className="form-control"
+                                <input name="invNo" type="text" className="form-control" required
                                        value={this.state.invNo} onChange={this.handleChange}/>
+                                {this.props.auth.errors['invNo'] &&
+                                <p className="error">{this.props.auth.errors['invNo']}</p>}
                             </div>
                             {this.props.till && this.props.till.refundData && !this.props.till.refundData.invType &&
                             <div className="form-group">
                                 <label>Invoice Type:</label>
-                                <select onChange={this.handleChange} className="form-control" name="invType">
+                                <select onChange={this.handleChange} className="form-control" name="invType" required>
                                     <option disabled selected>Select a type</option>
                                     <option value="INV">INV</option>
                                     <option value="L/B">L/B</option>
                                 </select>
+                                {this.props.auth.errors['invType'] &&
+                                <p className="error">{this.props.auth.errors['invType']}</p>}
                             </div>
                             }
                             {this.props.till && this.props.till.refundData && !this.props.till.refundData.brNo &&
                             <div className="form-group">
                                 <label>Branch Number:</label>
-                                <input name="brNo" type="text" className="form-control"
+                                <input name="brNo" type="text" className="form-control" required
                                        value={this.state.brNo} onChange={this.handleChange}/>
+                                {this.props.auth.errors['brNo'] &&
+                                <p className="error">{this.props.auth.errors['brNo']}</p>}
                             </div>
                             }
                             <div className="form-group">
@@ -126,18 +176,24 @@ class RefundDetailsModal extends React.Component {
                         <div className="col-6">
                             <div className="form-group">
                                 <label>Invoice Date:</label>
-                                <input name="invDate" type="date" className="form-control"
+                                <input name="invDate" type="date" className="form-control" required
                                        value={this.state.invDate} onChange={this.handleChange}/>
+                                {this.props.auth.errors['invDate'] &&
+                                <p className="error">{this.props.auth.errors['invDate']}</p>}
                             </div>
                             <div className="form-group">
                                 <label>ID Number:</label>
-                                <input name="idNo" type="text" className="form-control"
+                                <input name="idNo" type="text" className="form-control" required
                                        value={this.state.idNo} onChange={this.handleChange}/>
+                                {this.props.auth.errors['idNo'] &&
+                                <p className="error">{this.props.auth.errors['idNo']}</p>}
                             </div>
                             <div className="form-group">
                                 <label>Cell Number:</label>
-                                <input name="cell" type="text" className="form-control"
+                                <input name="cell" type="text" className="form-control" required
                                        value={this.state.cell} onChange={this.handleChange}/>
+                                {this.props.auth.errors['cell'] &&
+                                <p className="error">{this.props.auth.errors['cell']}</p>}
                             </div>
                         </div>
                     </Form>
@@ -168,6 +224,7 @@ function mapStateToProps(state) {
 function mapDispatchToProps(dispatch) {
     return {
         actions: {
+            auth: bindActionCreators(authActions, dispatch),
             till: bindActionCreators(tillActions, dispatch),
             modal: bindActionCreators(modalActions, dispatch)
         }

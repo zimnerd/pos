@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -17,10 +18,11 @@ class SalesOptionsModal extends React.Component {
         this.props.actions.modal.closeSales();
     };
 
-    credit = () => {
-        this.props.actions.till.setAuthCommand("credit");
-        this.props.actions.modal.openAuthentication();
-        this.handleClose();
+    credit = async () => {
+        await this.props.actions.till.setAuthCommand("credit");
+        await this.props.actions.modal.openAuthentication();
+        await this.handleClose();
+        $("#authUsername").focus();
     };
 
     activateLayBye = () => {
@@ -36,10 +38,11 @@ class SalesOptionsModal extends React.Component {
         this.handleClose();
     };
 
-    activateStaffPrice = () => {
-        this.props.actions.till.setAuthCommand("staff");
-        this.props.actions.modal.openAuthentication();
-        this.handleClose();
+    activateStaffPrice = async () => {
+        await this.props.actions.till.setAuthCommand("staff");
+        await this.props.actions.modal.openAuthentication();
+        await this.handleClose();
+        $("#authUsername").focus();
     };
 
     holdSale = () => {
@@ -86,7 +89,7 @@ class SalesOptionsModal extends React.Component {
 
     saveSettings = () => {
         let till = this.props.settings.till;
-        till.InvNo = Number(till.InvNo) + 1;
+        till.TempDocNo = Number(till.TempDocNo) + 1;
 
         axios.post(`/settings/till/${this.props.settings.number}`, till)
             .then(response => {

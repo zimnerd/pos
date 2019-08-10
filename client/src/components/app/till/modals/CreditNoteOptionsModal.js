@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Card, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import $ from "jquery";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -14,23 +15,26 @@ class CreditNoteOptionsModal extends React.Component {
         this.props.actions.modal.closeCredit();
     };
 
-    activateExchange = () => {
-        this.props.actions.till.setAuthCommand("exchange");
-        this.props.actions.modal.openAuthentication();
-        this.handleClose();
+    activateExchange = async () => {
+        await this.props.actions.till.setAuthCommand("exchange");
+        await this.props.actions.modal.openAuthentication();
+        await this.handleClose();
+        $("#authUsername").focus();
     };
 
-    refund = () => {
-        this.props.actions.till.setAuthCommand("refund");
-        this.props.actions.modal.openAuthentication();
-        this.handleClose();
+    refund = async () => {
+        await this.props.actions.till.setAuthCommand("refund");
+        await this.props.actions.modal.openAuthentication();
+        await this.handleClose();
+        $("#authUsername").focus();
     };
 
-    laybyeRefund = () => {
-        this.props.actions.till.activateLayBye();
-        this.props.actions.till.setAuthCommand("refund");
-        this.props.actions.modal.openAuthentication();
-        this.handleClose();
+    laybyeRefund = async () => {
+        await this.props.actions.till.activateLayBye();
+        await this.props.actions.till.setAuthCommand("refund");
+        await this.props.actions.modal.openAuthentication();
+        await this.handleClose();
+        $("#authUsername").focus();
     };
 
     render() {

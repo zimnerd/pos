@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { bindActionCreators } from "redux";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as userActions from "../../redux/actions/user.action";
 
@@ -13,6 +14,8 @@ import Header from "./Header";
 class Dashboard extends React.Component {
 
     componentDidMount() {
+        $("#record-transactions").focus();
+
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
@@ -60,7 +63,7 @@ class Dashboard extends React.Component {
                         <main className="card-body">
                             <h5 className="card-title">Record Transactions</h5>
                             <p className="card-text">Record transactions for a customer!</p>
-                            <Link to="/app/till" className="btn btn-success">Go now!</Link>
+                            <Link to="/app/till" className="btn btn-success" id="record-transactions">Go now!</Link>
                         </main>
                     </section>
                 </main>

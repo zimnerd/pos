@@ -33,6 +33,7 @@ class CreateTradeSummariesTable extends Migration
             $table->decimal("REFUNDC")->default(0.00);
             $table->decimal("CODC")->default(0.00);
             $table->decimal("LAYBYES")->default(0.00);
+            $table->decimal("LAYBYEC")->default(0.00);
             $table->decimal("PDCC")->default(0.00);
             $table->decimal("OTHER")->default(0.00);
             $table->decimal("DEBPAY")->default(0.00);

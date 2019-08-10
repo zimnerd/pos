@@ -263,12 +263,13 @@ class ReceiptsPaymentModal extends React.Component {
                                 <th>Name</th>
                                 <th>Email</th>
                                 <th>Cell</th>
+                                <th>Balance</th>
                             </tr>
                             </thead>
                             <tbody>
                             {this.state.accounts.length === 0 &&
                             <tr>
-                                <td colSpan="4" className="text-center">There are no accounts to display!</td>
+                                <td colSpan="5" className="text-center">There are no accounts to display!</td>
                             </tr>
                             }
                             {this.state.accounts.map((item, index) => {
@@ -278,6 +279,7 @@ class ReceiptsPaymentModal extends React.Component {
                                         <td>{item.name}</td>
                                         <td>{item.email}</td>
                                         <td>{item.cell}</td>
+                                        <td>{item.balance}</td>
                                     </tr>
                                 )
                             })

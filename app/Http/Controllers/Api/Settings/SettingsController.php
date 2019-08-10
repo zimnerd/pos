@@ -156,6 +156,9 @@ class SettingsController extends Controller
                     case "LbNo":
                         $info->ColValue = $request['LbNo'];
                         break;
+                    case "TempDocNo":
+                        $info->ColValue = $request['TempDocNo'];
+                        break;
                 }
 
                 $info->save();

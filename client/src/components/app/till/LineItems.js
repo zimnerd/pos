@@ -146,7 +146,7 @@ class LineItems extends React.Component {
                 <form className="d-flex">
                     <input ref={(input) => { this.codeInput = input; }} id="product-code-line"
                         onChange={this.handleChange} type="text" onFocus={this.reset}
-                           placeholder="Enter product code" className="form-control" value={this.props.till.code}/>
+                           placeholder="Press (f2) to focus" className="form-control" value={this.props.till.code}/>
                     <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
                 </form>
                 <table className="table table-striped table-responsive">

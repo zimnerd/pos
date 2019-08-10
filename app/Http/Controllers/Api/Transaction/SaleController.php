@@ -147,7 +147,7 @@ class SaleController extends Controller
             $transactions = $lineItems['transactions'];
 
             $till = $lineItems['till'];
-            $docNo = $till['tillno'] . $till['InvNo'];
+            $docNo = $till['tillno'] . $till['TempDocNo'];
 
             foreach ($transactions as $transaction) {
                 $sale = new Sale();
@@ -187,15 +187,18 @@ class SaleController extends Controller
      */
     public function removeSale($id)
     {
-        $sale = Sale::query()
+        $sales = Sale::query()
             ->where('docnum', $id)
-            ->first();
+            ->get();
 
-        if (!$sale) {
+        if (!$sales) {
             return response()->json([], $this->notFoundStatus);
         }
 
-        $sale->delete();
+        foreach ($sales as $sale) {
+            $sale->delete();
+        }
+
         return response()->json([], $this->successStatus);
     }
 

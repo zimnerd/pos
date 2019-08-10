@@ -125,6 +125,13 @@ class Till extends React.Component {
 
     openModal = (event) => {
         switch (event.keyCode) {
+            case 113:
+                if (event.preventDefault) {
+                    event.preventDefault();
+                }
+
+                $('#product-code-line').focus();
+                break;
             case 114:
                 if (event.preventDefault) {
                     event.preventDefault();

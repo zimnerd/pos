@@ -159,7 +159,8 @@ class CompleteSaleModal extends React.Component {
             stype: this.props.till.debtor ? this.props.till.debtor.stype : "Refund",
             auth: this.props.auth.auth,
             debtor: debtor,
-            tendered: this.state.tendered
+            tendered: this.state.tendered,
+            oldDocNo: this.props.till.refundData ? this.props.till.refundData.invNo : ""
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -426,6 +427,7 @@ class CompleteSaleModal extends React.Component {
             till.PayNo = Number(till.PayNo) + 1;
         } else {
             till.InvNo = Number(till.InvNo) + 1;
+            till.DepNo = Number(till.DepNo) + 1;
         }
 
         axios.post(`/settings/till/${this.props.settings.number}`, till)
@@ -496,23 +498,69 @@ class CompleteSaleModal extends React.Component {
             let nameField = $('#saleName');
             let cellField = $('#saleCell');
             let emailField = $('#saleEmail');
+            let idField = $('#saleId');
+            let saleUpdate = $('#saleUpdate');
+            let line1 = $('#saleLine1');
+            let line2 = $('#saleLine2');
+            let line3 = $('#saleLine3');
 
             if (tenderedField.is(':focus')) {
                 nameField.focus();
                 return true;
             }
 
-            if (nameField.is(':focus')) {
-                cellField.focus();
-                return true;
+            if (line1 == null) {
+                if (nameField.is(':focus')) {
+                    cellField.focus();
+                    return true;
+                }
+
+                if (cellField.is(':focus')) {
+                    emailField.focus();
+                    return true;
+                }
+
+                if (emailField.is(':focus')) {
+                    saleUpdate.focus();
+                    return true;
+                }
+            } else {
+                if (nameField.is(':focus')) {
+                    idField.focus();
+                    return true;
+                }
+
+                if (idField.is(':focus')) {
+                    cellField.focus();
+                    return true;
+                }
+
+                if (cellField.is(':focus')) {
+                    emailField.focus();
+                    return true;
+                }
+
+                if (emailField.is(':focus')) {
+                    line1.focus();
+                    return true;
+                }
+
+                if (line1.is(':focus')) {
+                    line2.focus();
+                    return true;
+                }
+
+                if (line2.is(':focus')) {
+                    line3.focus();
+                    return true;
+                }
+
+                if (line3.is(':focus')) {
+                    saleUpdate.focus();
+                    return true;
+                }
             }
 
-            if (cellField.is(':focus')) {
-                emailField.focus();
-                return true;
-            }
-
-            tenderedField.focus();
             return true;
         }
 
@@ -638,7 +686,7 @@ class CompleteSaleModal extends React.Component {
                                     <div className="form-group">
                                         <label>ID Number:</label>
                                         <input type="text" className="form-control" name="idNo" value={this.state.idNo}
-                                               onChange={this.handleText} disabled={this.state.disabled}/>
+                                               onChange={this.handleText} disabled={this.state.disabled} id="saleId"/>
                                         {this.props.auth.errors['person.idNo'] &&
                                         <p className="error">{this.props.auth.errors['person.idNo'][0]}</p>}
                                     </div>
@@ -662,13 +710,13 @@ class CompleteSaleModal extends React.Component {
                                     <div className="form-group mb-0">
                                         <label>Address:</label>
                                         <div>
-                                            <input type="line1" className="form-control mb-1 mr-2" name="line1"
+                                            <input type="line1" className="form-control mb-1 mr-2" name="line1" id="saleLine1"
                                                    value={this.state.line1}
                                                    onChange={this.handleText}/>
-                                            <input type="line2" className="form-control mb-1 mr-2" name="line2"
+                                            <input type="line2" className="form-control mb-1 mr-2" name="line2" id="saleLine2"
                                                    value={this.state.line2}
                                                    onChange={this.handleText}/>
-                                            <input type="line3" className="form-control mb-1 mr-2" name="line3"
+                                            <input type="line3" className="form-control mb-1 mr-2" name="line3" id="saleLine3"
                                                    value={this.state.line3}
                                                    onChange={this.handleText}/>
                                         </div>
@@ -682,17 +730,20 @@ class CompleteSaleModal extends React.Component {
                     }
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={this.handleClose}>
-                        Close
-                    </Button>
                     {this.props.till.transactions &&
                     this.props.till.totals &&
-                    (this.props.till.laybye || this.props.till.credit || this.state.tendered >= this.props.till.totals.total) &&
+                    (this.props.till.laybye
+                    || this.props.till.credit
+                    || (this.props.till.staff && this.state.tendered >= this.props.till.totals.total)
+                    || this.state.tendered >= this.props.till.totals.total) &&
                     this.props.till.transactions.length > 0 &&
-                    <Button variant="success" onClick={this.completeSale}>
+                    <Button variant="success" onClick={this.completeSale} id="saleUpdate">
                         Update & Print
                     </Button>
                     }
+                    <Button variant="danger" onClick={this.handleClose}>
+                        Close
+                    </Button>
                 </Modal.Footer>
             </Modal>
         )

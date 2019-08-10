@@ -188,7 +188,7 @@ class DebtorController extends Controller
             $summmary->OTTYPE = "CRN";
             $summmary->OTRANNO = $docNo;
             $summmary->ODATE = \date("Y-m-d");
-            $summmary->DEBTOR = "Cash";
+            $summmary->DEBTOR = $id;
 
             $summmary->BUSER = $user->username;
             $summmary->PERIOD = $shop['Period'];

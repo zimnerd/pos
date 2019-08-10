@@ -20,7 +20,7 @@ class OtherModal extends React.Component {
                 <Modal.Header closeButton>
                     <Modal.Title>Other Options</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className="other">
                     <Card className="text-center" onClick={() => this.props.history.push("/app/stock")}>
                         <Card.Header>
                             <span><i className="fa fa-search"/></span>

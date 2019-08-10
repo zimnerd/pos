@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -168,13 +169,39 @@ class AuthenticationModal extends React.Component {
             });
     };
 
+    keyDown = e => {
+        let event = window.event ? window.event : e;
+        if (event.keyCode === 13) { //enter
+
+            e.preventDefault();
+            let usernameField = $('#authUsername');
+            let passwordField = $('#authPassword');
+            let authAuth = $('#authAuth');
+
+            if (usernameField.is(':focus')) {
+                passwordField.focus();
+                return true;
+            }
+
+            if (passwordField.is(':focus')) {
+                authAuth.focus();
+                return true;
+            }
+
+            usernameField.focus();
+            return true;
+        }
+
+        return false;
+    };
+
     render() {
         return (
             <Modal show={this.props.modal.auth} onHide={this.handleClose} className="auth-modal">
                 <Modal.Header closeButton>
                     <Modal.Title>Authenticate</Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body onKeyDown={this.keyDown}>
                     <Form>
                         <div className="text-center">
                             <span><i className="fa fa-warning"/></span>
@@ -182,22 +209,22 @@ class AuthenticationModal extends React.Component {
                         </div>
                         <div className="form-group">
                             <label>Username: </label>
-                            <input type="text" name="username" className="form-control" placeholder="Username"
+                            <input type="text" name="username" className="form-control" placeholder="Username" id="authUsername"
                                    value={this.state.username} onChange={this.handleChange} autoComplete="false"/>
                         </div>
                         <div className="form-group">
                             <label>Password: </label>
-                            <input type="password" name="password" className="form-control" placeholder="Password"
+                            <input type="password" name="password" className="form-control" placeholder="Password" id="authPassword"
                                    value={this.state.password} onChange={this.handleChange} autoComplete="false"/>
                         </div>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
+                    <Button variant="success" onClick={this.authenticate} id="authAuth">
+                        Authenticate
+                    </Button>
                     <Button variant="danger" onClick={this.handleClose}>
                         Cancel
-                    </Button>
-                    <Button variant="success" onClick={this.authenticate}>
-                        Authenticate
                     </Button>
                 </Modal.Footer>
             </Modal>
