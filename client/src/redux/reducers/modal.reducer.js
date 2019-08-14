@@ -7,7 +7,7 @@ import {
     CLOSE_COMPLETE_REFUND_MODAL,
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
-    CLOSE_DEBTOR_MODAL, CLOSE_DEBTOR_RECEIPTS,
+    CLOSE_DEBTOR_MODAL, CLOSE_DEBTOR_RECEIPTS, CLOSE_EXCHANGE_SEARCH,
     CLOSE_LAY_BYE_CREDITOR,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
@@ -29,7 +29,7 @@ import {
     OPEN_COMPLETE_REFUND_MODAL,
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
-    OPEN_DEBTOR_MODAL, OPEN_DEBTOR_RECEIPTS,
+    OPEN_DEBTOR_MODAL, OPEN_DEBTOR_RECEIPTS, OPEN_EXCHANGE_SEARCH,
     OPEN_LAY_BYE_CREDITOR,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
@@ -139,6 +139,10 @@ export default function modalReducer(state = { errors: [] }, action) {
             return { ...state, debtorReceipts: action.debtorReceipts };
         case CLOSE_DEBTOR_RECEIPTS:
             return { ...state, debtorReceipts: action.debtorReceipts };
+        case OPEN_EXCHANGE_SEARCH:
+            return { ...state, exchangeSearch: action.exchangeSearch };
+        case CLOSE_EXCHANGE_SEARCH:
+            return { ...state, exchangeSearch: action.exchangeSearch };
         default:
             return state;
     }

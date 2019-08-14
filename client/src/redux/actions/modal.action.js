@@ -8,7 +8,7 @@ import {
     CLOSE_COMPLETE_SALE_MODAL,
     CLOSE_CREDIT_MODAL,
     CLOSE_DEBTOR_MODAL,
-    CLOSE_DEBTOR_RECEIPTS,
+    CLOSE_DEBTOR_RECEIPTS, CLOSE_EXCHANGE_SEARCH,
     CLOSE_LAY_BYE_CREDITOR,
     CLOSE_OTHERS_MODAL,
     CLOSE_PAYMENTS_MODAL,
@@ -31,7 +31,7 @@ import {
     OPEN_COMPLETE_SALE_MODAL,
     OPEN_CREDIT_MODAL,
     OPEN_DEBTOR_MODAL,
-    OPEN_DEBTOR_RECEIPTS,
+    OPEN_DEBTOR_RECEIPTS, OPEN_EXCHANGE_SEARCH,
     OPEN_LAY_BYE_CREDITOR,
     OPEN_OTHERS_MODAL,
     OPEN_PAYMENTS_MODAL,
@@ -229,4 +229,12 @@ export function openDebtorReceipts(debtorReceipts = true) {
 
 export function closeDebtorReceipts(debtorReceipts = false) {
     return { type: CLOSE_DEBTOR_RECEIPTS, debtorReceipts }
+}
+
+export function openExchangeSearch(exchangeSearch = true) {
+    return { type: OPEN_EXCHANGE_SEARCH, exchangeSearch }
+}
+
+export function closeExchangeSearch(exchangeSearch = false) {
+    return { type: CLOSE_EXCHANGE_SEARCH, exchangeSearch }
 }

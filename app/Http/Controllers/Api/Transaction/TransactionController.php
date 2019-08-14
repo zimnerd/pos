@@ -325,6 +325,11 @@ class TransactionController extends Controller
                 $stype = "";
             }
 
+            $credit = false;
+            if (isset($transaction["credit"])) {
+                $credit = $transaction["credit"];
+            }
+
             if ($transaction["type"] === "LBC" && $transaction['tendered'] == 0) {
                 $summary = new DailySummary();
                 $summary->BTYPE = "LBC";
@@ -376,7 +381,8 @@ class TransactionController extends Controller
 
                 $this->tradeSummary($shop, $monthlySummary);
             } elseif (!(($transaction["type"] === "LBC" && $transaction['tendered'] == 0)
-                || ($transaction["type"] === "CRN" && $stype === "Exchng"))
+                || ($transaction["type"] === "INV" && $credit)
+                || ($transaction["type"] === "INV" && $stype === "Exchng"))
             ) {
                 $summary = new DailySummary();
                 if ($transaction["type"] !== "CRN" && $transaction["type"] !== "LBC") {
@@ -715,6 +721,73 @@ class TransactionController extends Controller
             $lineItems['stype'] = $item->STYPE;
             $lineItems['rescode'] = $item->RESCODE;
             $lineItems['comments'] = $item->COMMENTS;
+        }
+
+        $lineItems["totals"]["vat"] = $vat;
+        $lineItems["totals"]["qty"] = $qty;
+        $lineItems["totals"]["total"] = $total;
+
+        return response()->json(['lineItems' => $lineItems], $this->successStatus);
+    }
+
+    /**
+     * Retrieve all line items for a document number from a completed stock transaction
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveStock($id)
+    {
+        $transactions = StockTransaction::query()
+            ->where('REF', $id)
+            ->get();
+
+        if (count($transactions) === 0) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $lineItems = array("type" => "", "branch" => "", "till" => "",
+            "transactions" => array(), "totals" => array("vat" => 0, "total" => 0, "qty" => 0));
+
+        $vat = 0;
+        $total = 0;
+        $qty = 0;
+
+        /**
+         * @var StockTransaction $item
+         */
+        foreach ($transactions as $item) {
+            $qty++;
+
+            $transaction = array();
+            $transaction['code'] = $item->STYLE;
+            $transaction['colour'] = $item->CLR;
+            $transaction['clrcode'] = $item->CLR;
+            $transaction['size'] = $item->SIZES;
+            $transaction['cost'] = $item->CP;
+            $transaction['type'] = $item->BTYPE;
+
+            /**
+             * @var Product $product
+             */
+            $product = Product::query()->where('code', $item->STYLE)->first();
+            $transaction['description'] = $product->descr;
+
+            $transaction['disc'] = $item->DISCAMT;
+            $transaction['markdown'] = $item->SLTYPE === 'M' ? true : false;
+            $transaction['isStaff'] = $item->SLTYPE === 'S' ? true : false;
+            $transaction['combo'] = $item->SLTYPE === 'D' ? true : false;
+            $transaction['price'] = $item->SP;
+            $transaction['qty'] = $item->QTY;
+            $transaction['subtotal'] = $item->QTY * $item->SP;
+            $transaction['total'] = $item->AMT;
+            $total += $item->AMT;
+            $vat += $item->VATAMT;
+
+            $lineItems["transactions"][] = $transaction;
+            $lineItems["type"] = $item->BTYPE;
+            $lineItems["branch"] = $item->BRNO;
+            $lineItems["date"] = $item->BDATE;
         }
 
         $lineItems["totals"]["vat"] = $vat;
@@ -1163,7 +1236,6 @@ class TransactionController extends Controller
                 $tradeSummary->TOTDISC += $disc;
                 $tradeSummary->TOTCP += $totalCp;
                 $tradeSummary->TOTSP += $totalSp;
-                $tradeSummary->TINVS += 1;
 
                 switch ($stype) {
                     case "Laybye":
@@ -1207,7 +1279,11 @@ class TransactionController extends Controller
                         $tradeSummary->CASHS += $amount;
                         break;
                     case "CC":
-                        $tradeSummary->CCARDS += $amount;
+                        if ($stype === "Refund") {
+                            $tradeSummary->CCC += $amount;
+                        } else {
+                            $tradeSummary->CCARDS += $amount;
+                        }
                         break;
                     case "PDC":
                         $tradeSummary->PDCS += $amount;

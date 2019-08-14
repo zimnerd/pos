@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 class DbDetails extends Model
 {
 
-    protected $connection = "tilldb";
+    protected $connection = "maindb";
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = "db_details";
+    protected $table = "posdbs";
 
 
     /**
@@ -39,6 +39,7 @@ class DbDetails extends Model
     public $timestamps = false;
 
     public $fillable = [
-        'dbName'
+        'dbname',
+        'dbtype'
     ];
 }

@@ -265,7 +265,8 @@ class CompleteSaleModal extends React.Component {
             method: method,
             auth: this.props.auth.auth,
             debtor: this.props.till.debtor,
-            tendered: this.state.tendered
+            tendered: this.state.tendered,
+            credit: this.props.till.credit
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -505,7 +506,7 @@ class CompleteSaleModal extends React.Component {
             let line3 = $('#saleLine3');
 
             if (tenderedField.is(':focus')) {
-                nameField.focus();
+                saleUpdate.focus();
                 return true;
             }
 

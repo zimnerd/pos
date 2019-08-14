@@ -47,7 +47,7 @@ class AuthenticationModal extends React.Component {
         switch (this.props.till.command) {
             case "exchange":
                 if (await this.activate(this.props.till.command)) {
-                    await this.props.actions.till.activateExchange();
+                    this.props.actions.modal.openExchangeSearch();
                     this.props.mapTransactions();
                     this.props.actions.auth.setAuth(this.state.username);
                 }

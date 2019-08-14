@@ -62,12 +62,11 @@ class SalesOptionsModal extends React.Component {
             transactions: heldSales
         };
 
-        this.props.actions.till.setTransactions();
-
+        let transactions = this.props.till.transactions.filter(item => !item.hold);
+        this.props.actions.till.setTransactions(transactions);
         axios.post(`/sales`, request, { headers })
             .then(response => {
                 console.log(response.data);
-                this.props.actions.till.setTransactions();
 
                 this.props.actions.till.setTransactionId(response.data.sale);
                 this.props.actions.modal.openTransaction();

@@ -156,9 +156,6 @@ class SettingsController extends Controller
                     case "LbNo":
                         $info->ColValue = $request['LbNo'];
                         break;
-                    case "TempDocNo":
-                        $info->ColValue = $request['TempDocNo'];
-                        break;
                 }
 
                 $info->save();
@@ -214,13 +211,8 @@ class SettingsController extends Controller
      */
     public function retrieveTillNumber()
     {
-        $details = TillDetails::query()->first();
-        if (!$details) {
-            return response()->json(['error' => 'The datasource containing the till number has not be setup.'],
-                $this->notFoundStatus);
-        }
-
-        return response()->json(["number" => $details['tillno']], $this->successStatus);
+        $number = app("tillno");
+        return response()->json(["number" => $number], $this->successStatus);
     }
 
 }

@@ -112,6 +112,8 @@ Route::group(["prefix" => "transactions"], function () {
         Route::post('', 'Api\Transaction\TransactionController@createTransaction');
         Route::get('{id}', 'Api\Transaction\TransactionController@retrieveTransaction');
 
+        Route::get('{id}/stock', 'Api\Transaction\TransactionController@retrieveStock');
+
         Route::post('refunds', 'Api\Transaction\TransactionController@saveRefund');
         Route::get('{id}/refunds/{type}', 'Api\Transaction\TransactionController@retrieveRefund');
     });

@@ -249,10 +249,7 @@ class ReceiptsPaymentModal extends React.Component {
                                 <option disabled selected>Select a type</option>
                                 <option value="Laybye">Laybye</option>
                                 <option value="Staff">Staff</option>
-                                <option value="COD">COD</option>
                                 <option value="Credit">Credit</option>
-                                <option value="Loan">Loan</option>
-                                <option value="DCS">DCS</option>
                             </select>
                         </div>
                         {this.state.accounts &&

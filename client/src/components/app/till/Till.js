@@ -42,6 +42,7 @@ import DebtorModal from "./modals/DebtorModal";
 import LayByeCreditorModal from "./modals/LayByeCreditorModal";
 import ReceiptsModal from "./modals/ReceiptsModal";
 import ReceiptsPaymentModal from "./modals/receipts/ReceiptsPaymentModal";
+import ExchangeInvoiceSearch from "./modals/ExchangeInvoiceSearch";
 
 class Till extends React.Component {
 
@@ -252,7 +253,7 @@ class Till extends React.Component {
                 if (transaction.markdown) {
                     transaction.price = transaction.mdp;
                     transaction.disc = (transaction.mdp / (transaction.retail ? transaction.retail : transaction.price)
-                        * 100).toFixed(2);
+                    * 100).toFixed(2);
                 } else {
                     transaction.price = transaction.retail ? transaction.retail : transaction.price;
                     transaction.disc = 0.00;
@@ -392,7 +393,7 @@ class Till extends React.Component {
                                createTransaction={this.createTransaction}/>
                     <div className="col-2">
                         {(this.props.till.laybye || this.props.till.refund || this.props.till.exchange
-                            || this.props.till.staff || this.props.till.credit || this.props.till.returns) &&
+                        || this.props.till.staff || this.props.till.credit || this.props.till.returns) &&
                         <TransactionBadges mapTransactions={this.mapTransactions}/>
                         }
                         <Totals openModal={this.openModal}/>
@@ -427,6 +428,7 @@ class Till extends React.Component {
                 <LayByeCreditorModal mapLineItem={this.mapHeldItems}/>
                 <ReceiptsModal/>
                 <ReceiptsPaymentModal/>
+                <ExchangeInvoiceSearch mapLineItem={this.mapHeldItems}/>
             </article>
         )
     }

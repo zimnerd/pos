@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Modal } from "react-bootstrap";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
-import Form from "react-bootstrap/Form";
+import $ from "jquery";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -14,6 +14,7 @@ class TransactionCompleteModal extends React.Component {
     handleClose = () => {
         this.props.actions.modal.closeTransactionComplete();
         this.props.actions.till.setCompletedTransaction();
+        $('#product-code-line').focus();
     };
 
     printReceipt = () => {
