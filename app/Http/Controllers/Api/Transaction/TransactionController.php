@@ -314,8 +314,6 @@ class TransactionController extends Controller
                 $stockTransaction->ASSNO = 0;
                 $stockTransaction->LBTAKEN = "";
                 $stockTransaction->SMAN = "";
-                $stockTransaction->SMAN = "";
-                $stockTransaction->SMAN = "";
                 $stockTransaction->SLTYPE = $saleType;
                 $stockTransaction->BTYPE = $transaction["type"];
                 $stockTransaction->VATAMT = $vat;
@@ -325,11 +323,11 @@ class TransactionController extends Controller
                 $stockTransaction->COMMENT = "";
 
                 if (isset($item['rescode'])) {
-                    $stockTransaction->RESCODE = $item['rescode'];
+                    $stockTransaction->REASONCODE = $item['rescode'];
                 }
 
                 if (isset($item['comments'])) {
-                    $stockTransaction->COMMENT = $item['comments'];
+                    $stockTransaction->REASONCOMMENTS = $item['comments'];
                 }
 
                 $stockTransaction->save();
@@ -427,6 +425,10 @@ class TransactionController extends Controller
                     }
                 } else {
                     $summary->STYPE = $transaction["method"];
+                }
+
+                if ($transaction["type"] === "CRN" && $transaction["stype"] === "Exchng") {
+                    $summary->AMT = 0;
                 }
 
                 $summary->UPDFLAG = 0;
@@ -1292,20 +1294,16 @@ class TransactionController extends Controller
             } else {
                 switch ($cob) {
                     case "Cash":
-                        $tradeSummary->CASHS += $amount;
+                        $tradeSummary->CASHC += $amount;
                         break;
                     case "CC":
-                        if ($stype === "Refund") {
-                            $tradeSummary->CCC += $amount;
-                        } else {
-                            $tradeSummary->CCARDS += $amount;
-                        }
+                        $tradeSummary->CCC += $amount;
                         break;
                     case "PDC":
-                        $tradeSummary->PDCS += $amount;
+                        $tradeSummary->PDCC += $amount;
                         break;
                     case "Cheque":
-                        $tradeSummary->CHQS += $amount;
+                        $tradeSummary->CHQC += $amount;
                         break;
                 }
 
@@ -1321,7 +1319,6 @@ class TransactionController extends Controller
                         break;
                     case "Cash":
                     case "Exchng":
-                        $tradeSummary->CASHC += $amount;
                         break;
                     case "DCS":
                     case "COD":
