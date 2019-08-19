@@ -314,11 +314,23 @@ class TransactionController extends Controller
                 $stockTransaction->ASSNO = 0;
                 $stockTransaction->LBTAKEN = "";
                 $stockTransaction->SMAN = "";
+                $stockTransaction->SMAN = "";
+                $stockTransaction->SMAN = "";
                 $stockTransaction->SLTYPE = $saleType;
                 $stockTransaction->BTYPE = $transaction["type"];
                 $stockTransaction->VATAMT = $vat;
                 $stockTransaction->DISCAMT = $item['subtotal'] - $item['total'];
                 $stockTransaction->AMT = $item['total'];
+                $stockTransaction->RESCODE = null;
+                $stockTransaction->COMMENT = "";
+
+                if (isset($item['rescode'])) {
+                    $stockTransaction->RESCODE = $item['rescode'];
+                }
+
+                if (isset($item['comments'])) {
+                    $stockTransaction->COMMENT = $item['comments'];
+                }
 
                 $stockTransaction->save();
             }

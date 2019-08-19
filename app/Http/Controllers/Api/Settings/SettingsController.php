@@ -9,6 +9,7 @@ use App\Models\Shop\TillDetails;
 use App\Reason;
 use App\Shop;
 use App\Till;
+use App\TillControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -213,6 +214,50 @@ class SettingsController extends Controller
     {
         $number = app("tillno");
         return response()->json(["number" => $number], $this->successStatus);
+    }
+
+    /**
+     * Retrieves the controls for a specific till number.
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveControls($id)
+    {
+        $tillControl = TillControl::query()
+            ->where("tillno", $id)
+            ->first();
+
+        if (!$tillControl) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        return response()->json(["control" => $tillControl], $this->successStatus);
+    }
+
+    /**
+     * Updates the controls for a specific till number.
+     *
+     * @param $id
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function updateControls($id, Request $request)
+    {
+        $tillControl = TillControl::query()
+            ->where("tillno", $id)
+            ->first();
+
+        if (!$tillControl) {
+            return response()->json([], $this->notFoundStatus);
+        }
+
+        $control = $request->all();
+
+        $control['lastlogin_at'] = \date('Y-m-d H:i:s');
+        $tillControl->update($control);
+
+        return response()->json(["control" => $tillControl], $this->successStatus);
     }
 
 }

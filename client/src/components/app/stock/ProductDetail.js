@@ -63,6 +63,15 @@ class ProductDetail extends React.Component {
                             </tr>
                             </thead>
                             <tbody>
+                            {this.props.stock.product
+                            && this.props.stock.product.info
+                            && this.props.stock.product.info.length === 0
+                            &&
+                            <tr>
+                                <td className="text-center" colSpan="6">There is no stock available!</td>
+                            </tr>
+                            }
+
                             {this.props.stock.product &&
                             this.props.stock.product.info.map((item, index) => {
                                 let colour = this.props.stock.product.colours.find(colour => colour.code === item.CLR);
@@ -81,6 +90,16 @@ class ProductDetail extends React.Component {
                                                 <td>1.00</td>
                                                 <td>{`${price.toFixed(2)}`}</td>
                                                 <td/>
+                                            </tr>
+                                        );
+
+                                        values.push(value);
+                                    }
+
+                                    if (values.length === 0) {
+                                        let value = (
+                                            <tr key={index}>
+                                                <td className="text-center" colSpan="6">There is no stock available!</td>
                                             </tr>
                                         );
 

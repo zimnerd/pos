@@ -2,7 +2,9 @@ import {
     RETRIEVE_HADDITH,
     RETRIEVE_REASONS,
     RETRIEVE_SHOP_DETAILS,
-    RETRIEVE_TILL_DETAILS, RETRIEVE_TILL_NUMBER,
+    RETRIEVE_TILL_CONTROLS,
+    RETRIEVE_TILL_DETAILS,
+    RETRIEVE_TILL_NUMBER,
     SAVE_TILL_DETAILS,
     SET_COMBOS
 } from "../constants/settings.constants";
@@ -23,6 +25,8 @@ export default function settingsReducer(state = { errors: [] }, action) {
             return { ...state, reasons: action.reasons };
         case RETRIEVE_TILL_NUMBER:
             return { ...state, number: action.number };
+        case RETRIEVE_TILL_CONTROLS:
+            return { ...state, controls: action.controls };
         default:
             return state;
     }

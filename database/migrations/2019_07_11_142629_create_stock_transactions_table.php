@@ -36,6 +36,8 @@ class CreateStockTransactionsTable extends Migration
             $table->char('SLTYPE');
             $table->string('SMAN')->nullable();
             $table->integer('ASSNO');
+            $table->string('REASONCODE')->nullable();
+            $table->string('REASONCOMMENTS')->nullable();
             $table->timestamps();
         });
     }

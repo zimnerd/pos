@@ -2,7 +2,9 @@ import {
     RETRIEVE_HADDITH,
     RETRIEVE_REASONS,
     RETRIEVE_SHOP_DETAILS,
-    RETRIEVE_TILL_DETAILS, RETRIEVE_TILL_NUMBER,
+    RETRIEVE_TILL_CONTROLS,
+    RETRIEVE_TILL_DETAILS,
+    RETRIEVE_TILL_NUMBER,
     SAVE_TILL_DETAILS,
     SET_COMBOS
 } from "../constants/settings.constants";
@@ -33,4 +35,8 @@ export function retrieveReasons(reasons = []) {
 
 export function retrieveTillNumber(number = []) {
     return { type: RETRIEVE_TILL_NUMBER, number };
+}
+
+export function retrieveTillControls(controls = {}) {
+    return { type: RETRIEVE_TILL_CONTROLS, controls };
 }

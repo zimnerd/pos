@@ -57,7 +57,9 @@ class StockTransaction extends Model
         'AMT',
         'VATAMT',
         'DISCAMT',
-        'ASSNO'
+        'ASSNO',
+        'REASONCODE',
+        'REASONCOMMENTS'
     ];
 
 }

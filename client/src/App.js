@@ -84,6 +84,22 @@ class App extends React.Component {
                 console.log(error);
                 toastr.error("Unknown error.");
             });
+
+        axios.get(`/v1/settings/till/${this.props.settings.number}/controls`)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till Controls Retrieved!", "Retrieve Till Controls");
+                this.props.actions.settings.retrieveTillControls(response.data.control);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 404) {
+                    toastr.error("There are no controls on record for this till number!", "Retrieve Till Controls");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     render() {

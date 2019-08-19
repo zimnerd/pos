@@ -6,6 +6,7 @@ import toastr from 'toastr';
 import $ from "jquery";
 
 import * as authActions from '../../redux/actions/auth.action';
+import * as settingsActions from '../../redux/actions/settings.action';
 
 import './Login.scss';
 
@@ -23,7 +24,7 @@ class Login extends React.Component {
 
     onSubmit = event => {
         event.preventDefault();
-        this.props.actions.errorReset();
+        this.props.actions.auth.errorReset();
 
         if (this.props.settings.till == null) {
             toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
@@ -31,11 +32,13 @@ class Login extends React.Component {
         }
 
         axios.post('/v1/user/login', this.state)
-            .then(response => {
+            .then(async response => {
                 console.log(response);
                 toastr.success('Login Successful!', 'Login User');
 
-                this.props.actions.loginUser(response.data.success.token);
+                await this.updateControls();
+
+                this.props.actions.auth.loginUser(response.data.success.token);
                 this.props.history.push('/app/dashboard');
             })
             .catch(error => {
@@ -44,7 +47,26 @@ class Login extends React.Component {
                     toastr.error('The username and password combination is invalid!', 'Unauthorized');
                 } else {
                     toastr.error('The information you have supplied is invalid!', 'Validation');
-                    this.props.actions.validationError(error.response.data.errors);
+                    this.props.auth.actions.validationError(error.response.data.errors);
+                }
+            });
+    };
+
+    updateControls = async () => {
+        let controls = this.props.settings.controls;
+        controls.user = this.state.username;
+
+        await axios.put(`/v1/settings/till/${this.props.settings.number}/controls`, controls)
+            .then(response => {
+                console.log(response);
+                toastr.success('Updated till controls!', 'Update Till Controls');
+
+                this.props.actions.settings.retrieveTillControls(response.data.controls);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 404) {
+                    toastr.error("There are no controls on record for this till number!", "Retrieve Till Controls");
                 }
             });
     };
@@ -132,7 +154,10 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
     return {
-        actions: bindActionCreators(authActions, dispatch)
+        actions: {
+            auth: bindActionCreators(authActions, dispatch),
+            settings: bindActionCreators(settingsActions, dispatch)
+        }
     };
 }
 

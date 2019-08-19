@@ -52,6 +52,8 @@ Route::group(["prefix" => "v1/settings"], function () {
     Route::get('haddith', 'Api\Settings\SettingsController@retrieveHaddith');
     Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
+    Route::get('till/{id}/controls', 'Api\Settings\SettingsController@retrieveControls');
+    Route::put('till/{id}/controls', 'Api\Settings\SettingsController@updateControls');
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');
     Route::get('till', 'Api\Settings\SettingsController@retrieveTillNumber');
     Route::get('reasons', 'Api\Settings\SettingsController@refundReasons');
