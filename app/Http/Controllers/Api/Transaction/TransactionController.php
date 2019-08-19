@@ -319,8 +319,8 @@ class TransactionController extends Controller
                 $stockTransaction->VATAMT = $vat;
                 $stockTransaction->DISCAMT = $item['subtotal'] - $item['total'];
                 $stockTransaction->AMT = $item['total'];
-                $stockTransaction->RESCODE = null;
-                $stockTransaction->COMMENT = "";
+                $stockTransaction->REASONCODE = null;
+                $stockTransaction->REASONCOMMENTS = "";
 
                 if (isset($item['rescode'])) {
                     $stockTransaction->REASONCODE = $item['rescode'];
