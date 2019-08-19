@@ -39,6 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
         App::singleton('tillno', function () {
             $fn = fopen("C:/FW_Files/tilldir/tillno.txt", "r");
+//            $fn = fopen("/var/www/html/app-data/tilldir/tillno.txt", "r");
             $result = fgets($fn, 20);
             fclose($fn);
             return $result;

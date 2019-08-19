@@ -29,7 +29,7 @@ class DebtorModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get('/debtors?stype=Credit,DCS', { headers })
+        axios.get('/v1/debtors?stype=Credit,DCS', { headers })
             .then(async response => {
                 console.log(response.data);
 
@@ -66,7 +66,7 @@ class DebtorModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        await axios.post('/debtors', this.state.debtor, { headers })
+        await axios.post('/v1/debtors', this.state.debtor, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor Saved!", "Save Debtor");

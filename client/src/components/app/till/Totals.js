@@ -19,7 +19,7 @@ class Totals extends React.Component {
                 'Authorization': 'Bearer ' + this.props.auth.token
             };
 
-            axios.get(`/laybyes/${this.props.till.refundData.invNo}/transactions`, { headers })
+            axios.get(`/v1/laybyes/${this.props.till.refundData.invNo}/transactions`, { headers })
                 .then(response => {
                     console.log(response.data);
                     toastr.success("Refund amount found!", "Find Refund Amount");

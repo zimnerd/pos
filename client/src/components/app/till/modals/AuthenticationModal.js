@@ -47,9 +47,10 @@ class AuthenticationModal extends React.Component {
         switch (this.props.till.command) {
             case "exchange":
                 if (await this.activate(this.props.till.command)) {
-                    this.props.actions.modal.openExchangeSearch();
+                    await this.props.actions.modal.openExchangeSearch();
                     this.props.mapTransactions();
                     this.props.actions.auth.setAuth(this.state.username);
+                    $('#searchDocNo').focus();
                 }
                 break;
             case "staff":
@@ -76,6 +77,7 @@ class AuthenticationModal extends React.Component {
                         password: ""
                     });
                     this.props.actions.modal.closeAuthentication();
+                    $('#refundDocNo').focus();
                 } else {
                     this.setState({
                         username: "",
@@ -95,7 +97,7 @@ class AuthenticationModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get('/debtors?stype=staff', { headers })
+        axios.get('/v1/debtors?stype=staff', { headers })
             .then(async response => {
                 console.log(response.data);
 
@@ -149,7 +151,7 @@ class AuthenticationModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.state.user
         };
-        return await axios.get(`/transactions/activate/${type}`, { headers: headers })
+        return await axios.get(`/v1/transactions/activate/${type}`, { headers: headers })
             .then(response => {
                 console.log(response);
                 toastr.success("Activation has been authorized!", "Authorize Activation");

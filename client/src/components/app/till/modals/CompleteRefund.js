@@ -71,7 +71,7 @@ class CompleteRefund extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/transactions`, transaction, { headers })
+        axios.post(`/v1/transactions`, transaction, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -89,7 +89,7 @@ class CompleteRefund extends React.Component {
                 }
             });
     };
-    
+
     printReceipt = number => {
         let a = document.createElement('a');
         a.href = `http://localhost:8000/api/transactions/${number}/print`;
@@ -103,7 +103,7 @@ class CompleteRefund extends React.Component {
         let till = this.props.settings.till;
         till.CrnNo = Number(till.CrnNo) + 1;
 
-        axios.post(`/settings/till/${this.props.settings.number}`, till)
+        axios.post(`/v1/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 
@@ -127,7 +127,7 @@ class CompleteRefund extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        await axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
+        await axios.post(`/v1/transactions/refunds`, this.props.till.refundData, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund saved!", "Save Refund");

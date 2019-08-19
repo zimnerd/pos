@@ -40,7 +40,7 @@ class CardModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/transactions`, transaction, { headers })
+        axios.post(`/v1/transactions`, transaction, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -94,7 +94,7 @@ class CardModal extends React.Component {
             till.InvNo = Number(till.InvNo) + 1;
         }
 
-        axios.post(`/settings/till/${this.props.settings.number}`, till)
+        axios.post(`/v1/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 

@@ -37,7 +37,7 @@ class StockInformation extends React.Component {
             page: this.state.page
         };
 
-        axios.get("/products", { headers, params })
+        axios.get("/v1/products", { headers, params })
             .then(response => {
                 console.log(response.data);
                 if (!this.state.toasted) {

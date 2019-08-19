@@ -54,7 +54,7 @@ class ReceiptsPaymentModal extends React.Component {
             type: this.state.type
         };
 
-        axios.post(`/debtors/${this.state.account.no}`, request, {headers})
+        axios.post(`/v1/debtors/${this.state.account.no}`, request, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor account successfully paid!", "Pay Debtor Account");
@@ -85,7 +85,7 @@ class ReceiptsPaymentModal extends React.Component {
             type: this.state.type
         };
 
-        axios.post(`/laybyes/${this.state.account.no}`, request, {headers})
+        axios.post(`/v1/laybyes/${this.state.account.no}`, request, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Lay-Bye account successfully paid!", "Pay Lay-Bye Account");
@@ -178,7 +178,7 @@ class ReceiptsPaymentModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/debtors?stype=${this.state.type}`, {headers})
+        axios.get(`/v1/debtors?stype=${this.state.type}`, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor accounts found!", "Find Debtor Accounts");
@@ -205,7 +205,7 @@ class ReceiptsPaymentModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/laybyes`, {headers})
+        axios.get(`/v1/laybyes`, {headers})
             .then(response => {
                 console.log(response.data);
                 toastr.success("Lay-Bye accounts found!", "Find Lay-Bye Accounts");

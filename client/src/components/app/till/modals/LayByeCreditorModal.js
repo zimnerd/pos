@@ -20,7 +20,7 @@ class LayByeCreditorModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        await axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
+        await axios.post(`/v1/transactions/refunds`, this.props.till.refundData, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund saved!", "Save Refund");
@@ -68,7 +68,7 @@ class LayByeCreditorModal extends React.Component {
         till.CrnNo = Number(till.CrnNo) + 1;
         till.PayNo = Number(till.PayNo) + 1;
 
-        axios.post(`/settings/till/${this.props.settings.number}`, till)
+        axios.post(`/v1/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 
@@ -113,7 +113,7 @@ class LayByeCreditorModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/transactions`, transaction, { headers })
+        axios.post(`/v1/transactions`, transaction, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -178,7 +178,7 @@ class LayByeCreditorModal extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        return await axios.post('/debtors', debtor, { headers })
+        return await axios.post('/v1/debtors', debtor, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Debtor Saved!", "Save Debtor");

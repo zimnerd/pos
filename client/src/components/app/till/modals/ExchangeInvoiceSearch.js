@@ -52,7 +52,7 @@ class ExchangeInvoiceSearch extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/transactions/${this.state.docNo}/stock`, { headers })
+        axios.get(`/v1/transactions/${this.state.docNo}/stock`, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Transaction found!", "Find Transaction");
@@ -73,6 +73,7 @@ class ExchangeInvoiceSearch extends React.Component {
                 } else if (error.response.status === 404) {
                     toastr.error("Transaction could not be found!", "Find Transaction");
                     this.props.actions.modal.closeExchangeSearch();
+                    this.props.actions.till.activateExchange();
                 } else if (error.response.status === 422) {
                     toastr.error(error.response.data.error, "Find Transaction");
                 } else {
@@ -95,17 +96,17 @@ class ExchangeInvoiceSearch extends React.Component {
                     <Form onSubmit={this.findDocument}>
                         <div className="form-group">
                             <label>Invoice Number:</label>
-                            <input name="invoice" type="text" className="form-control" placeholder="Invoice Number"
+                            <input name="invoice" type="text" className="form-control" placeholder="Invoice Number" id="searchDocNo"
                                    value={this.state.docNo} onChange={this.handleChange}/>
                         </div>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={this.handleClose}>
-                        Close
-                    </Button>
                     <Button variant="success" onClick={this.findDocument}>
                         Continue
+                    </Button>
+                    <Button variant="danger" onClick={this.handleClose}>
+                        Close
                     </Button>
                 </Modal.Footer>
             </Modal>

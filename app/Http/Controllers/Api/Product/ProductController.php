@@ -12,7 +12,9 @@ use App\Http\Controllers\Controller;
 use App\Prices;
 use App\Product;
 use App\Stock;
+use ErrorException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ProductController extends Controller
 {
@@ -101,13 +103,27 @@ class ProductController extends Controller
         $queryBuilder->where('style', $product->code);
         $quantities = $queryBuilder->get();
 
+//        $name = "/var/www/html/app-data/stylepics/" . strtolower($product->code) . ".jpg";
+        $name = "C:\\FW_Files\\stylepics\\" . strtolower($product->code) . ".jpg";
+        $image = "";
+
+        try {
+            $file = file_get_contents($name);
+            if ($file !== FALSE) {
+                $image = "" . base64_encode($file) . "";
+            }
+        } catch (ErrorException $exception) {
+            Log::debug("The following image cannot be found: " . $name);
+        }
+
         $response = array(
             "code" => $product->code,
             "description" => $product->descr,
             "colours" => $colours,
             "prices" => $prices,
             "info" => $quantities,
-            "items" => $items
+            "items" => $items,
+            "image" => $image
         );
 
         return response()->json(['product' => $response], $this->successStatus);

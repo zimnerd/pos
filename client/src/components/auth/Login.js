@@ -25,7 +25,7 @@ class Login extends React.Component {
         event.preventDefault();
         this.props.actions.errorReset();
 
-        axios.post('/user/login', this.state)
+        axios.post('/v1/user/login', this.state)
             .then(response => {
                 console.log(response);
                 toastr.success('Login Successful!', 'Login User');

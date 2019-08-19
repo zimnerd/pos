@@ -19,7 +19,7 @@ class ProductDetail extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/products/${params.code}`, { headers })
+        axios.get(`/v1/products/${params.code}`, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -43,6 +43,10 @@ class ProductDetail extends React.Component {
                 <section className="container widget widget-shadow stock-info">
                     {this.props.stock.product &&
                     <header className="text-center">
+                        {this.props.stock.product.image &&
+                        <img src={"data:image/png;base64, " + this.props.stock.product.image} height="200" width="200"/>
+                        }
+                        <br/>
                         <h1>{this.props.stock.product.description}</h1>
                     </header>
                     }

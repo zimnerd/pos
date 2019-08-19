@@ -4,6 +4,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as modalActions from "../../../../redux/actions/modal.action";
 import * as tillActions from "../../../../redux/actions/till.action";
@@ -58,7 +59,7 @@ class RefundModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/transactions/${this.state.docNo}/refunds/${type}`, { headers })
+        axios.get(`/v1/transactions/${this.state.docNo}/refunds/${type}`, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund found!", "Find Refund");
@@ -82,12 +83,13 @@ class RefundModal extends React.Component {
                     refund.email = person.email;
                 }
 
+                this.props.actions.modal.openRefundDetails();
                 this.props.actions.till.setRefund(refund);
                 this.props.actions.modal.closeRefund();
-                this.props.actions.modal.openRefundDetails();
                 this.setState({
                     docNo: ""
                 });
+                $('#refundDetailsInvNo').focus();
             })
             .catch( async error => {
                 console.log(error);
@@ -95,12 +97,13 @@ class RefundModal extends React.Component {
                     toastr.error("You are unauthorized to make this request.", "Unauthorized");
                 } else if (error.response.status === 404) {
                     toastr.error("Transaction could not be found!", "Find Transaction");
+                    this.props.actions.modal.openRefundDetails();
                     await this.props.actions.till.setRefund({
                         invNo: this.state.docNo,
                         invType: this.props.till.laybye ? "L/B" : "INV"
                     });
                     this.props.actions.modal.closeRefund();
-                    this.props.actions.modal.openRefundDetails();
+                    $('#refundDetailsInvNo').focus();
                 } else if (error.response.status === 422) {
                     toastr.error(error.response.data.error, "Find Transaction");
                 } else {
@@ -139,17 +142,17 @@ class RefundModal extends React.Component {
                     <Form onSubmit={this.findDocument}>
                         <div className="form-group">
                             <label>Invoice Number:</label>
-                            <input name="invoice" type="text" className="form-control" placeholder="Invoice Number"
+                            <input name="invoice" type="text" className="form-control" placeholder="Invoice Number" id="refundDocNo"
                                    value={this.state.docNo} onChange={this.handleChange}/>
                         </div>
                     </Form>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={this.handleClose}>
-                        Close
-                    </Button>
                     <Button variant="success" onClick={this.findDocument}>
                         Continue
+                    </Button>
+                    <Button variant="danger" onClick={this.handleClose}>
+                        Close
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -20,7 +20,8 @@ import './App.scss';
 class App extends React.Component {
 
     componentDidMount = async () => {
-        await axios.get('/settings/till')
+        // axios.defaults.baseURL = "http://192.168.99.100/api";
+        await axios.get('/v1/settings/till')
             .then(async response => {
                 console.log(response.data);
 
@@ -32,7 +33,7 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get('/settings/shop')
+        axios.get('/v1/settings/shop')
             .then(response => {
                 console.log(response.data);
 
@@ -44,7 +45,7 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get(`/settings/till/${this.props.settings.number}`)
+        axios.get(`/v1/settings/till/${this.props.settings.number}`)
             .then(response => {
                 console.log(response.data);
 
@@ -56,7 +57,7 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get('/auth/roles')
+        axios.get('/v1/auth/roles')
             .then(response => {
                 console.log(response.data);
 
@@ -68,7 +69,7 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get('/settings/reasons')
+        axios.get('/v1/settings/reasons')
             .then(response => {
                 console.log(response.data);
 

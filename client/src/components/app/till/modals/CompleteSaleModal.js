@@ -102,6 +102,59 @@ class CompleteSaleModal extends React.Component {
         });
     };
 
+    handleSplit = event => {
+        const name = event.target.name;
+        let change = event.target.value;
+
+        let cash = this.state.cash;
+        let card = this.state.card;
+        let tendered = this.state.tendered;
+
+        if (this.validTender(event)) {
+            if (name === "cash") {
+                cash = Number(change);
+                card = Number(this.props.till.totals.total) - cash;
+            } else {
+                card = Number(change);
+                cash = Number(this.props.till.totals.total) - card;
+            }
+            tendered = (cash + card).toFixed(2);
+            card = card.toFixed(2);
+            cash = cash.toFixed(2);
+        } else {
+            if (name === "cash") {
+                cash = event.target.value;
+                card = this.state.card;
+            } else {
+                card = event.target.value;
+                cash = this.state.cash;
+            }
+        }
+
+        this.setState({
+            cash: cash,
+            card: card,
+            tendered: tendered
+        });
+    };
+
+    validTender = event => {
+        let change = event.target.value;
+        if (change === "") {
+            return false;
+        }
+
+        let splits = change.split(".");
+        let value = splits[1];
+        if (change.endsWith(".")) {
+            return false;
+        } else if (value.length === 1) {
+            return false;
+        }
+
+        return true;
+    };
+
     handleText = event => {
         this.setState({
             [event.target.name]: event.target.value
@@ -113,7 +166,7 @@ class CompleteSaleModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        await axios.post(`/transactions/refunds`, this.props.till.refundData, { headers })
+        await axios.post(`/v1/transactions/refunds`, this.props.till.refundData, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Refund saved!", "Save Refund");
@@ -171,7 +224,7 @@ class CompleteSaleModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/transactions`, transaction, { headers })
+        axios.post(`/v1/transactions`, transaction, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -276,7 +329,7 @@ class CompleteSaleModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.post(`/transactions`, transaction, { headers })
+        axios.post(`/v1/transactions`, transaction, { headers })
             .then(async response => {
                 console.log(response.data);
 
@@ -330,7 +383,7 @@ class CompleteSaleModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/sales`, { headers })
+        axios.get(`/v1/sales`, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -431,7 +484,7 @@ class CompleteSaleModal extends React.Component {
             till.DepNo = Number(till.DepNo) + 1;
         }
 
-        axios.post(`/settings/till/${this.props.settings.number}`, till)
+        axios.post(`/v1/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 
@@ -455,7 +508,7 @@ class CompleteSaleModal extends React.Component {
                 'Authorization': 'Bearer ' + this.props.auth.token
             };
 
-            axios.get(`/people/${this.state.cell}`, { headers })
+            axios.get(`/v1/people/${this.state.cell}`, { headers })
                 .then(response => {
                     console.log(response.data);
 
@@ -612,21 +665,25 @@ class CompleteSaleModal extends React.Component {
                             }
                             {(this.props.till.laybye || this.props.till.credit) && !this.props.till.refund &&
                             <label
-                                className="value">Balance: <span>{(Number(this.props.till.totals.total) - Number(this.state.tendered)).toFixed(2)}</span></label>
+                                className="value">Balance:
+                                <span>{(Number(this.props.till.totals.total) - Number(this.state.tendered)).toFixed(2)}</span></label>
                             }
                             <hr/>
                             <label>Payment Method:</label>
                             <br/>
                             <div className="payment" role="group" aria-label="...">
-                                <button type="button" className="btn btn-success m-1" disabled={this.state.method === "Cash"}
+                                <button type="button" className="btn btn-success m-1"
+                                        disabled={this.state.method === "Cash"}
                                         onClick={() => this.changeMethod("Cash")}>
                                     <span><i className="fa fa-money"/></span> Cash
                                 </button>
-                                <button type="button" className="btn btn-danger m-1" disabled={this.state.method === "CC"}
+                                <button type="button" className="btn btn-danger m-1"
+                                        disabled={this.state.method === "CC"}
                                         onClick={() => this.changeMethod("CC")}>
                                     <span><i className="fa fa-credit-card"/></span> Card
                                 </button>
-                                <button type="button" className="btn btn-info m-1" disabled={this.state.method === "Split"}
+                                <button type="button" className="btn btn-info m-1"
+                                        disabled={this.state.method === "Split"}
                                         onClick={() => this.changeMethod("Split")}>
                                     <span><i className="fa fa-random"/></span> Split
                                 </button>
@@ -637,11 +694,11 @@ class CompleteSaleModal extends React.Component {
                                     <label>Cash Amount:</label>
                                     <input type="text" className="form-control" name="cash"
                                            value={this.state.cash}
-                                           onChange={this.handleChange}/>
+                                           onChange={this.handleSplit}/>
                                     <label>Card Amount:</label>
                                     <input type="text" className="form-control" name="card"
                                            value={this.state.card}
-                                           onChange={this.handleChange}/>
+                                           onChange={this.handleSplit}/>
                                 </div>
                             }
                             <hr/>
@@ -711,13 +768,16 @@ class CompleteSaleModal extends React.Component {
                                     <div className="form-group mb-0">
                                         <label>Address:</label>
                                         <div>
-                                            <input type="line1" className="form-control mb-1 mr-2" name="line1" id="saleLine1"
+                                            <input type="line1" className="form-control mb-1 mr-2" name="line1"
+                                                   id="saleLine1"
                                                    value={this.state.line1}
                                                    onChange={this.handleText}/>
-                                            <input type="line2" className="form-control mb-1 mr-2" name="line2" id="saleLine2"
+                                            <input type="line2" className="form-control mb-1 mr-2" name="line2"
+                                                   id="saleLine2"
                                                    value={this.state.line2}
                                                    onChange={this.handleText}/>
-                                            <input type="line3" className="form-control mb-1 mr-2" name="line3" id="saleLine3"
+                                            <input type="line3" className="form-control mb-1 mr-2" name="line3"
+                                                   id="saleLine3"
                                                    value={this.state.line3}
                                                    onChange={this.handleText}/>
                                         </div>

@@ -21,7 +21,7 @@ class RetrieveHeldModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/sales`, { headers })
+        axios.get(`/v1/sales`, { headers })
             .then(response => {
                 console.log(response.data);
 

@@ -64,7 +64,7 @@ class SalesOptionsModal extends React.Component {
 
         let transactions = this.props.till.transactions.filter(item => !item.hold);
         this.props.actions.till.setTransactions(transactions);
-        axios.post(`/sales`, request, { headers })
+        axios.post(`/v1/sales`, request, { headers })
             .then(response => {
                 console.log(response.data);
 
@@ -90,7 +90,7 @@ class SalesOptionsModal extends React.Component {
         let till = this.props.settings.till;
         till.TempDocNo = Number(till.TempDocNo) + 1;
 
-        axios.post(`/settings/till/${this.props.settings.number}`, till)
+        axios.post(`/v1/settings/till/${this.props.settings.number}`, till)
             .then(response => {
                 console.log(response.data);
 
@@ -113,7 +113,7 @@ class SalesOptionsModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.get(`/sales`, { headers })
+        axios.get(`/v1/sales`, { headers })
             .then(response => {
                 console.log(response.data);
 

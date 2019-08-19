@@ -19,7 +19,7 @@ class Dashboard extends React.Component {
         const headers = {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
-        axios.get("/user/details", { headers: headers })
+        axios.get("/v1/user/details", { headers: headers })
             .then(response => {
                 console.log(response);
                 toastr.success("User Details Retrieved!", "User Details");
