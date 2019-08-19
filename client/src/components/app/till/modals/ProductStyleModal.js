@@ -142,6 +142,9 @@ class ProductStyleModal extends React.Component {
                         <thead>
                         <tr>
                             <th>Code</th>
+                            {this.props.stock.product && this.props.stock.product.serial &&
+                            <th>Serial No.</th>
+                            }
                             <th>Colour</th>
                             <th>Size</th>
                             <th>Quantity on Hand</th>
@@ -196,8 +199,31 @@ class ProductStyleModal extends React.Component {
                                         </tr>
                                     );
 
+                                    if (this.props.stock.product.serial) {
+                                        value = (
+                                            <tr id={"row-" + indexVal} tabIndex={indexVal}
+                                                onClick={() => this.selectProduct(product)} key={indexVal}>
+                                                <td>{product.code}</td>
+                                                <td>{item.serialno}</td>
+                                                <td>{product.colour}</td>
+                                                <td>{product.size}</td>
+                                                <td>{product.qoh}</td>
+                                                <td>{product.total.toFixed(2)}</td>
+                                                <td/>
+                                            </tr>
+                                        );
+                                    }
+
                                     values.push(value);
                                     indexVal++;
+                                }
+
+                                if (values.length === 0) {
+                                    return (
+                                        <tr>
+                                            <td colspan="6" className="text-center">There are no products available!</td>
+                                        </tr>
+                                    );
                                 }
 
                                 return values;

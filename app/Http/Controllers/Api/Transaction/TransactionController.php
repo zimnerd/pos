@@ -226,6 +226,10 @@ class TransactionController extends Controller
                     $dailyTransaction->INVREF = isset($laybyeNo) ? $laybyeNo : null;
                 }
 
+                if (isset($transaction["oldDocNo"])) {
+                    $dailyTransaction->INVREF = $transaction["oldDocNo"];
+                }
+
                 $dailyTransaction->PERIOD = $shop['Period'];
                 $dailyTransaction->COMMENT = "";
                 $dailyTransaction->RESCODE = null;

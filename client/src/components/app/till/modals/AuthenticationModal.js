@@ -128,7 +128,7 @@ class AuthenticationModal extends React.Component {
             return false;
         }
         let credentials = { username: this.state.username, password: this.state.password };
-        return await axios.post("/user/admin/login", credentials)
+        return await axios.post("/v1/user/admin/login", credentials)
             .then(async response => {
                 console.log(response);
                 toastr.success("Admin Authenticated!", "Admin Authentication");

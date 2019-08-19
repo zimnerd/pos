@@ -54,7 +54,11 @@ class App extends React.Component {
             })
             .catch(error => {
                 console.log(error);
-                toastr.error("Unknown error.");
+                if (error.response.status === 404) {
+                    toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
+                } else {
+                    toastr.error("Unknown error.");
+                }
             });
 
         axios.get('/v1/auth/roles')

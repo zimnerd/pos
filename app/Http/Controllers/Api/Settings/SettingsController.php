@@ -47,7 +47,7 @@ class SettingsController extends Controller
     {
         $tillInfo = Till::query()->where('tillno', $id)->get();
 
-        if (!$tillInfo) {
+        if (count($tillInfo) === 0) {
             return response()->json([], $this->notFoundStatus);
         }
 

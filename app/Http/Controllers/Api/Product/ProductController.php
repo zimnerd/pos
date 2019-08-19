@@ -84,11 +84,13 @@ class ProductController extends Controller
 
         // the product is either a handset or airtime
         $items = array();
+        $serial = false;
         if (count($prices) === 0) {
             $queryBuilder = Handset::query();
             $queryBuilder->where('code', $product->code)
                 ->whereNull('solddate');
             $items = $queryBuilder->get();
+            $serial = true;
 
             if (count($items) === 0) {
                 $queryBuilder = Airtime::query();
@@ -96,6 +98,7 @@ class ProductController extends Controller
                     ->whereNull('solddate')
                     ->orderBy('receiveddate', 'asc');
                 $items[] = $queryBuilder->first();
+                $serial = false;
             }
         }
 
@@ -123,7 +126,8 @@ class ProductController extends Controller
             "prices" => $prices,
             "info" => $quantities,
             "items" => $items,
-            "image" => $image
+            "image" => $image,
+            "serial" => $serial
         );
 
         return response()->json(['product' => $response], $this->successStatus);

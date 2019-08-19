@@ -25,6 +25,11 @@ class Login extends React.Component {
         event.preventDefault();
         this.props.actions.errorReset();
 
+        if (this.props.settings.till == null) {
+            toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
+            return;
+        }
+
         axios.post('/v1/user/login', this.state)
             .then(response => {
                 console.log(response);
@@ -120,7 +125,8 @@ class Login extends React.Component {
 
 function mapStateToProps(state) {
     return {
-        auth: state.auth
+        auth: state.auth,
+        settings: state.settings
     };
 }
 
