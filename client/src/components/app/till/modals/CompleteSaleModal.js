@@ -148,6 +148,8 @@ class CompleteSaleModal extends React.Component {
         let value = splits[1];
         if (change.endsWith(".")) {
             return false;
+        } else if (value == null) {
+            return false;
         } else if (value.length === 1) {
             return false;
         }
