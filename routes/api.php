@@ -108,6 +108,7 @@ Route::group(["prefix" => "v1/airtime"], function () {
 Route::group(["prefix" => "v1/transactions"], function () {
 
     Route::get('{id}/print', 'Api\Transaction\TransactionController@printReceipt');
+    Route::get('{id}/print/debtor', 'Api\Transaction\TransactionController@printDebtorReceipt');
 
     Route::group(['middleware' => 'auth:api'], function () {
 

@@ -104,7 +104,7 @@ class ReceiptsPaymentModal extends React.Component {
 
     printReceipt = docNo => {
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/transactions/${docNo}/print`;
+        a.href = `http://localhost:8000/api/v1/transactions/${docNo}/print/debtor`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();

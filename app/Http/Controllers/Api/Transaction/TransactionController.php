@@ -816,6 +816,71 @@ class TransactionController extends Controller
     }
 
     /**
+     * Print transaction debtor receipt.
+     *
+     * @param $id
+     * @return \Illuminate\Http\Response
+     */
+    public function printDebtorReceipt($id)
+    {
+        $isDebtor = false;
+        $debtorTransaction = LaybyeTransaction::query()
+            ->where("invNo", $id)
+            ->first();
+
+        if (!$debtorTransaction) {
+            $debtorTransaction = DebtorTransaction::query()
+                ->where("invNo", $id)
+                ->first();
+
+            if (!$debtorTransaction) {
+                return response()->json([], $this->notFoundStatus);
+            }
+
+            $isDebtor = true;
+            $accNo = $debtorTransaction['accNo'];
+
+            $debtor = Debtor::query()
+                ->where("no", $accNo)
+                ->first();
+        } else {
+            $accNo = $debtorTransaction['accNo'];
+            $debtor = Laybye::query()
+                ->where("no", $accNo)
+                ->first();
+        }
+
+        $depNo = $debtorTransaction['invNo'];
+        $name = $debtor['name'];
+        $amt = $debtorTransaction['invAmt'];
+        $balance = $debtor['balance'];
+        $date = \date('Y-m-d');
+
+        /**
+         * @var SnappyPdf $snappy
+         */
+        $snappy = App::make('snappy.pdf');
+        $html = View::make('debtor', [
+            "date" => $date,
+            "accNo" => $accNo,
+            "depNo" => $depNo,
+            "isDebtor" => $isDebtor,
+            "name" => $name,
+            "amt" => $amt,
+            "balance" => $balance
+        ]);
+        return new Response(
+            $snappy->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="receipt.pdf"'
+            )
+        );
+
+    }
+
+    /**
      * Print transaction receipt.
      *
      * @param $id
@@ -836,7 +901,6 @@ class TransactionController extends Controller
         $branchCode = $transaction["branch"];
         $branch = Branch::query()
             ->where("code", $branchCode)
-//            ->where("active", true)
             ->first();
 
         /**
