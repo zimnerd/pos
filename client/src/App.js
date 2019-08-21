@@ -20,8 +20,12 @@ import './App.scss';
 class App extends React.Component {
 
     componentDidMount = async () => {
-        axios.defaults.baseURL = `http://${process.env.REACT_APP_IP_HOST}`;
-        console.log("IP Address", `${process.env.REACT_APP_IP_HOST}`);
+        let ip = "192.168.99.100/api";
+        if (process.env.REACT_APP_IP_HOST != null) {
+            ip = process.env.REACT_APP_IP_HOST;
+        }
+        axios.defaults.baseURL = `http://${ip}`;
+        console.log("IP Address", `${ip}`);
         await axios.get('/v1/settings/till')
             .then(async response => {
                 console.log(response.data);

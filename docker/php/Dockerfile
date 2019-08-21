@@ -9,7 +9,7 @@ RUN docker-php-ext-install pdo_mysql
 
 WORKDIR /usr/src/app
 
-RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git
+RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vv
 
 ADD ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 ADD ./docker/php/composer /bin/
