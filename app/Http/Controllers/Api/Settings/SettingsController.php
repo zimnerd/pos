@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\Settings;
 use App\ComboPrice;
 use App\Haddith;
 use App\Http\Controllers\Controller;
-use App\Models\Shop\TillDetails;
 use App\Reason;
 use App\Shop;
 use App\Till;

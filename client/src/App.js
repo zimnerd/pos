@@ -20,13 +20,14 @@ import './App.scss';
 class App extends React.Component {
 
     componentDidMount = async () => {
-        // axios.defaults.baseURL = "http://192.168.99.100/api";
+        axios.defaults.baseURL = `http://${process.env.REACT_APP_IP_HOST}`;
+        console.log("IP Address", `${process.env.REACT_APP_IP_HOST}`);
         await axios.get('/v1/settings/till')
             .then(async response => {
                 console.log(response.data);
 
                 toastr.success("Till Number Retrieved!", "Retrieve Till Number");
-                this.props.actions.settings.retrieveTillNumber(response.data.number);
+                await this.props.actions.settings.retrieveTillNumber(response.data.number);
             })
             .catch(error => {
                 console.log(error);

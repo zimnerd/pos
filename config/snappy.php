@@ -4,7 +4,8 @@ return array(
 
     'pdf' => array(
         'enabled' => true,
-        'binary'  => 'C:\\Installs\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
+        'binary'  => env("PDF_LOC", '/usr/local/bin/wkhtmltopdf'),
+//        'binary'  => 'C:\\Installs\\wkhtmltopdf\\bin\\wkhtmltopdf.exe',
         'timeout' => false,
         'options' => array(),
         'env'     => array()

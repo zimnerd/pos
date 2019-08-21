@@ -38,8 +38,8 @@ class AppServiceProvider extends ServiceProvider
         DB::purge('mysql');
 
         App::singleton('tillno', function () {
-            $fn = fopen("C:/FW_Files/tilldir/tillno.txt", "r");
-//            $fn = fopen("/var/www/html/app-data/tilldir/tillno.txt", "r");
+            $name = env("TILL_NUM_TXT");
+            $fn = fopen($name, "r");
             $result = fgets($fn, 20);
             fclose($fn);
             return $result;

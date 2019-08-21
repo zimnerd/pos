@@ -1,55 +1,35 @@
-version: '3'
+version: '3.1'
 services:
-  apache:
-    build: .docker/apache
-    container_name: fashion_apache
+  nginx:
+    build:
+      context: .
+      dockerfile: docker/nginx/Dockerfile
+    restart: always
     ports:
-      - 8080:80
-    volumes:
-      - .docker/config/vhosts:/etc/apache2/sites-enabled
-      - .:/home/wwwroot/fashion
+      - "8080:80"
+      - "443:443"
     depends_on:
-      - php
-
-  mysql:
-    image: mysql
-    build: .docker/mysql
-    container_name: fashion_mysql
-    command: ["--default-authentication-plugin=mysql_native_password"]
-    ports:
-      - 3306:3306
-    volumes:
-      - .docker/data/database:/var/lib/mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: root
+      - "php"
 
   php:
     build:
       context: .
-      dockerfile: Dockerfile
-    container_name: fashion_php
-    volumes:
-      - .:/home/wwwroot/fashion
+      dockerfile: docker/php/Dockerfile
+    restart: always
     environment:
-      - maildev_host=fashion_maildev
-    depends_on:
-      - maildev
-    links:
-      - mysql
+     - DB_HOST=$DB_HOST
+     - DB_HOST_MAIN=$DB_HOST_MAIN
+     - TILL_NUM_TXT=/var/www/html/app-data/tilldir/tillno.txt
+     - PICS_LOCATION=/var/www/html/app-data/stylepics/
+     - PDF_LOC=/usr/local/bin/wkhtmltopdf
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: fashion_phpmyadmin
+  client:
+    build:
+      context: .
+      dockerfile: docker/client/Dockerfile
+    restart: always
     environment:
-      PMA_HOST: mysql
-      PMA_PORT: 3306
+      - "env_file: .env.production"
+      - "NODE_ENV: production"
     ports:
-      - 8081:80
-    links:
-      - mysql
-
-  maildev:
-    image: djfarrelly/maildev
-    container_name: fashion_maildev
-    ports:
-      - 8001:80
+      - "80:80"

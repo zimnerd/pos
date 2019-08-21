@@ -106,8 +106,8 @@ class ProductController extends Controller
         $queryBuilder->where('style', $product->code);
         $quantities = $queryBuilder->get();
 
-//        $name = "/var/www/html/app-data/stylepics/" . strtolower($product->code) . ".jpg";
-        $name = "C:\\FW_Files\\stylepics\\" . strtolower($product->code) . ".jpg";
+        $location = env("PICS_LOCATION");
+        $name = $location . strtolower($product->code) . ".jpg";
         $image = "";
 
         try {
