@@ -205,6 +205,7 @@ class CompleteSaleModal extends React.Component {
         }
 
         let transaction = {
+            tax: this.props.settings.tax,
             shop: this.props.settings.shop,
             till: this.props.settings.till,
             transactions: transactionsToComplete,
@@ -312,6 +313,7 @@ class CompleteSaleModal extends React.Component {
                 line3: this.state.line3
             },
             shop: this.props.settings.shop,
+            tax: this.props.settings.tax,
             till: this.props.settings.till,
             transactions: transactionsToComplete,
             totals: this.props.till.totals,
@@ -415,7 +417,7 @@ class CompleteSaleModal extends React.Component {
             'Authorization': 'Bearer ' + this.props.auth.token
         };
 
-        axios.delete(`/sales/${saleNum}`, { headers })
+        axios.delete(`/v1/sales/${saleNum}`, { headers })
             .then(response => {
                 console.log(response.data);
                 toastr.success("Held Sale removed!", "Remove Held Sale");
@@ -439,8 +441,13 @@ class CompleteSaleModal extends React.Component {
                 continue;
             }
 
+            let ip = "192.168.99.100/api";
+            if (process.env.REACT_APP_IP_HOST != null) {
+                ip = process.env.REACT_APP_IP_HOST;
+            }
+
             let a = document.createElement('a');
-            a.href = `http://localhost:8000/api/v1/airtime/${item.code}/print/${item.serialno}`;
+            a.href = `http://${ip}/v1/airtime/${item.code}/print/${item.serialno}`;
             a.target = '_blank';
             document.body.appendChild(a);
             a.click();
@@ -449,8 +456,13 @@ class CompleteSaleModal extends React.Component {
     };
 
     printReceipt = number => {
+        let ip = "192.168.99.100/api";
+        if (process.env.REACT_APP_IP_HOST != null) {
+            ip = process.env.REACT_APP_IP_HOST;
+        }
+
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/v1/transactions/${number}/print`;
+        a.href = `http://${ip}/v1/transactions/${number}/print`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();

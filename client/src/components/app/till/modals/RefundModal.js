@@ -100,7 +100,8 @@ class RefundModal extends React.Component {
                     this.props.actions.modal.openRefundDetails();
                     await this.props.actions.till.setRefund({
                         invNo: this.state.docNo,
-                        invType: this.props.till.laybye ? "L/B" : "INV"
+                        invType: this.props.till.laybye ? "L/B" : "INV",
+                        notFound: true
                     });
                     this.props.actions.modal.closeRefund();
                     $('#refundDetailsInvNo').focus();

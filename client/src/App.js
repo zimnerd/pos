@@ -105,6 +105,18 @@ class App extends React.Component {
                     toastr.error("Unknown error.");
                 }
             });
+
+        axios.get('/v1/settings/tax')
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Tax Rate Retrieved!", "Retrieve Tax Rate");
+                this.props.actions.settings.retrieveTax(Number(response.data.tax));
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
     };
 
     render() {

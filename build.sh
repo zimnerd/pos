@@ -7,14 +7,14 @@ echo "Checking IP Host variable"
 if [ -z "$DB_HOST" ]
 then
       echo "IP Host variable has not been set, please set this to to continue."
-      echo "E.g. export IP_HOST={the ip address of the MySQL server}"
+      echo "E.g. export DB_HOST={the ip address of the MySQL server}"
       exit
 fi
 
 if [ -z "$DB_HOST_MAIN" ]
 then
       echo "IP Host variable has not been set, please set this to to continue."
-      echo "E.g. export IP_HOST={the ip address of the MySQL server}"
+      echo "E.g. export DB_HOST_MAIN={the ip address of the MySQL server}"
       exit
 fi
 

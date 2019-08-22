@@ -48,6 +48,7 @@ class CompleteExchange extends React.Component {
         this.props.actions.till.resetTotals();
         let transactionsToComplete = this.props.till.transactions.filter(item => !item.hold);
         let transaction = {
+            tax: this.props.settings.tax,
             shop: this.props.settings.shop,
             till: this.props.settings.till,
             transactions: transactionsToComplete,

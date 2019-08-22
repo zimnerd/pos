@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers\Api\Settings;
 
+use App\Branch;
 use App\ComboPrice;
 use App\Haddith;
 use App\Http\Controllers\Controller;
 use App\Reason;
 use App\Shop;
+use App\Tax;
 use App\Till;
 use App\TillControl;
 use Illuminate\Http\Request;
@@ -191,6 +193,40 @@ class SettingsController extends Controller
         }
 
         return response()->json(['combos' => $combos], $this->successStatus);
+    }
+
+    /**
+     * Retrieve all branch codes
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveBranches()
+    {
+        $branches = Branch::all(["code"]);
+        if (count($branches) === 0) {
+            return response()->json(['error' => 'The branches cannot be found.'], $this->notFoundStatus);
+        }
+
+        return response()->json(['branches' => $branches], $this->successStatus);
+    }
+
+    /**
+     * Retrieve tax rate
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveTax()
+    {
+        $tax = Tax::query()
+            ->select(["rate"])
+            ->where("taxcode", 1)
+            ->first();
+
+        if (!$tax) {
+            return response()->json(['error' => 'The branches cannot be found.'], $this->notFoundStatus);
+        }
+
+        return response()->json(['tax' => $tax->rate], $this->successStatus);
     }
 
     /**

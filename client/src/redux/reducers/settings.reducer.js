@@ -1,7 +1,9 @@
 import {
+    RETRIEVE_BRANCHES,
     RETRIEVE_HADDITH,
     RETRIEVE_REASONS,
     RETRIEVE_SHOP_DETAILS,
+    RETRIEVE_TAX,
     RETRIEVE_TILL_CONTROLS,
     RETRIEVE_TILL_DETAILS,
     RETRIEVE_TILL_NUMBER,
@@ -27,6 +29,10 @@ export default function settingsReducer(state = { errors: [] }, action) {
             return { ...state, number: action.number };
         case RETRIEVE_TILL_CONTROLS:
             return { ...state, controls: action.controls };
+        case RETRIEVE_BRANCHES:
+            return { ...state, codes: action.codes };
+        case RETRIEVE_TAX:
+            return { ...state, tax: action.tax };
         default:
             return state;
     }

@@ -103,8 +103,13 @@ class ReceiptsPaymentModal extends React.Component {
     };
 
     printReceipt = docNo => {
+        let ip = "192.168.99.100/api";
+        if (process.env.REACT_APP_IP_HOST != null) {
+            ip = process.env.REACT_APP_IP_HOST;
+        }
+
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/v1/transactions/${docNo}/print/debtor`;
+        a.href = `http://${ip}/v1/transactions/${docNo}/print/debtor`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();

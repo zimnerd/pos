@@ -28,9 +28,6 @@ class ActionBar extends React.Component {
                         <section className="card card-body m-2 bg-info" onClick={() => this.props.openModal({ keyCode: 121 })}>
                             <span className="card-text text-center" onClick={() => this.props.openModal({ keyCode: 121 })}>Receipts (F10)</span>
                         </section>
-                        <section className="card card-body m-2 bg-light" onClick={() => this.props.openModal({ keyCode: 123 })}>
-                            <span className="card-text text-center" onClick={() => this.props.openModal({ keyCode: 123 })}>Other (F12)</span>
-                        </section>
                     </section>
                 </main>
                 <footer className="till-text w-100">

@@ -22,6 +22,7 @@ services:
      - TILL_NUM_TXT=/var/www/html/app-data/tilldir/tillno.txt
      - PICS_LOCATION=/var/www/html/app-data/stylepics/
      - PDF_LOC=/usr/local/bin/wkhtmltopdf
+     - APP_KEY=base64:VAWEzrc+VgXFKKM3PpE9ngsk/dBgoAOFtCcoVv17lT0=
 
   client:
     build:

@@ -6,7 +6,7 @@ ADD ./docker/nginx/nginx.conf /etc/nginx/conf.d/default.conf
 
 WORKDIR /usr/src/app
 
-RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vv
+RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vvv
 
 WORKDIR /var/www/html
 

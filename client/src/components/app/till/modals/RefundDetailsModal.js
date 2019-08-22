@@ -97,7 +97,8 @@ class RefundDetailsModal extends React.Component {
             cell: this.state.cell,
             email: this.state.email,
             found: this.state.found,
-            brNo: this.props.till.refundData.brNo ? this.props.till.refundData.brNo : this.state.brNo
+            brNo: this.props.till.refundData.brNo ? this.props.till.refundData.brNo : this.state.brNo,
+            notFound: this.props.till.refundData.notFound
         };
         await this.props.actions.modal.closeRefundDetails();
         this.props.actions.till.setRefund(refund);
@@ -116,7 +117,6 @@ class RefundDetailsModal extends React.Component {
 
     componentDidUpdate(): void {
         if (this.props.till.refundData && !this.state.updated && this.props.modal.refundDetails) {
-            console.log("here", this.state);
             this.setState({
                 invNo: this.props.till.refundData.invNo,
                 invDate: this.props.till.refundData.invDate,
@@ -218,8 +218,15 @@ class RefundDetailsModal extends React.Component {
                             {this.props.till && this.props.till.refundData && !this.props.till.refundData.brNo &&
                             <div className="form-group">
                                 <label>Branch Number:</label>
-                                <input name="brNo" type="text" className="form-control" required id="refundDetailsBrNo"
-                                       value={this.state.brNo} onChange={this.handleChange}/>
+                                <select onChange={this.handleChange} className="form-control" name="brNo" required>
+                                    <option disabled selected>Select a branch</option>
+                                    {this.props.settings.codes && this.props.settings.codes.map(item => {
+                                            return (
+                                                <option value={item.code}>{item.code}</option>
+                                            )
+                                        }
+                                    )}
+                                </select>
                                 {this.props.auth.errors['brNo'] &&
                                 <p className="error">{this.props.auth.errors['brNo']}</p>}
                             </div>

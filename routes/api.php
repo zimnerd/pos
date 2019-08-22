@@ -47,6 +47,7 @@ Route::group(["prefix" => "v1/settings"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {
         Route::get('combos', 'Api\Settings\SettingsController@retrieveCombos');
+        Route::get('branches', 'Api\Settings\SettingsController@retrieveBranches');
     });
 
     Route::get('haddith', 'Api\Settings\SettingsController@retrieveHaddith');
@@ -57,6 +58,7 @@ Route::group(["prefix" => "v1/settings"], function () {
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');
     Route::get('till', 'Api\Settings\SettingsController@retrieveTillNumber');
     Route::get('reasons', 'Api\Settings\SettingsController@refundReasons');
+    Route::get('tax', 'Api\Settings\SettingsController@retrieveTax');
 
 });
 

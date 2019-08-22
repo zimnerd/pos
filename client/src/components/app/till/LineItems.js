@@ -111,6 +111,16 @@ class LineItems extends React.Component {
 
         await this.props.actions.till.setTransactions(transactions);
         this.props.mapTransactions();
+
+        let newCombos = [];
+        for (let transaction of this.props.till.transactions) {
+            let comboMatch = this.props.till.combos.find(combo => combo.style === transaction.code);
+            if (comboMatch) {
+                newCombos.push(comboMatch);
+            }
+        }
+
+        this.props.actions.till.setCombos(newCombos);
     };
 
     removeItem = async (index) => {
@@ -136,16 +146,45 @@ class LineItems extends React.Component {
             this.props.actions.till.setRefund();
         }
     };
-    componentDidMount(){
+
+    componentDidMount() {
         this.codeInput.focus();
+    };
+
+    handlePriceChange = async (event, index) => {
+        let item = this.props.till.transactions[index];
+        item.price = event.target.value;
+        item.disc = 0;
+        item.subtotal = item.price;
+        item.total = item.price;
+        item.retail = item.price;
+        item.mdp = item.price;
+        item.markdown = false;
+
+        await this.props.actions.till.setTransactions(this.props.till.transactions);
+
+        let totals = {
+            total: 0,
+            subtotal: 0,
+            vat: 0,
+            discount: 0,
+            items: 0
+        };
+        for (let transaction of this.props.till.transactions) {
+            totals = await this.props.mapHeldItem(transaction, totals);
+        }
+
+        this.props.actions.till.setTotals(totals);
     };
 
     render() {
         return (
             <section className="col-6 line-items widget-shadow">
                 <form className="d-flex">
-                    <input ref={(input) => { this.codeInput = input; }} id="product-code-line"
-                        onChange={this.handleChange} type="text" onFocus={this.reset}
+                    <input ref={(input) => {
+                        this.codeInput = input;
+                    }} id="product-code-line"
+                           onChange={this.handleChange} type="text" onFocus={this.reset}
                            placeholder="Press (f2) to focus" className="form-control" value={this.props.till.code}/>
                     <button className="btn btn-primary" onClick={this.enterProduct}>Enter</button>
                 </form>
@@ -184,7 +223,12 @@ class LineItems extends React.Component {
                                     }
                                 </td>
                                 <td><span>{item.qty}</span></td>
+                                {this.props.till.refundData && this.props.till.refundData.notFound &&
+                                <td style="width: 100px;"><input onChange={e => this.handlePriceChange(e, index)} value={item.price}/></td>
+                                }
+                                {this.props.till.refundData && !this.props.till.refundData.notFound &&
                                 <td>{item.price}</td>
+                                }
                                 <td>{Number(item.subtotal).toFixed(2)}</td>
                                 <td><span>{item.disc}</span></td>
                                 <td>{Number(item.total).toFixed(2)}</td>
@@ -215,7 +259,8 @@ class LineItems extends React.Component {
 function mapStateToProps(state) {
     return {
         till: state.till,
-        auth: state.auth
+        auth: state.auth,
+        settings: state.settings
     };
 }
 

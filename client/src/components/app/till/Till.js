@@ -62,6 +62,31 @@ class Till extends React.Component {
 
         this.props.actions.till.resetTotals();
         this.retrieveHaddiths();
+        this.retrieveBranchCodes();
+    };
+
+    retrieveBranchCodes = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/v1/settings/branches`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Branch codes retrieved!", "Retrieve Branch Codes");
+                this.props.actions.settings.retrieveBranchCodes(response.data.branches);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error("No branch codes could be found.", "Retrieve Branch Codes");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     retrieveHaddiths = () => {
@@ -100,7 +125,7 @@ class Till extends React.Component {
         let totals = this.props.till.totals;
 
         const discount = transaction.price - transaction.total;
-        const subtotal = transaction.total / 115 * 100;
+        const subtotal = transaction.total / (100 + this.props.settings.tax) * 100;
         const vat = transaction.total - subtotal;
 
         totals.total += Number(Number(transaction.total).toFixed(2));
@@ -113,7 +138,7 @@ class Till extends React.Component {
 
     mapHeldItems = (transaction, totals) => {
         const discount = transaction.price - transaction.total;
-        const subtotal = transaction.total / 115 * 100;
+        const subtotal = transaction.total / (100 + this.props.settings.tax) * 100;
         const vat = transaction.total - subtotal;
 
         totals.total += Number(Number(transaction.total).toFixed(2));
@@ -259,7 +284,7 @@ class Till extends React.Component {
                     transaction.disc = 0.00;
                 }
 
-                let comboFromList = this.props.till.combos.find(combo => combo.style === transaction.code);
+                let comboFromList = this.props.till.combos.find(combo => combo.style === transaction.code && !transaction.hold);
                 if (comboFromList) {
                     if (comboIndex !== -1) {
                         let oldTran = this.props.till.transactions[comboIndex];
@@ -389,7 +414,7 @@ class Till extends React.Component {
                         <InformationBar/>
                     </div>
                     <LineItems mapLineItem={this.mapLineItem} mapTransactions={this.mapTransactions}
-                               openStyles={this.openStyles} retrieveCombo={this.retrieveCombo}
+                               openStyles={this.openStyles} retrieveCombo={this.retrieveCombo} mapHeldItem={this.mapHeldItems}
                                createTransaction={this.createTransaction}/>
                     <div className="col-2">
                         {(this.props.till.laybye || this.props.till.refund || this.props.till.exchange
@@ -439,7 +464,8 @@ function mapStateToProps(state) {
     return {
         user: state.user,
         till: state.till,
-        auth: state.auth
+        auth: state.auth,
+        settings: state.settings
     };
 }
 

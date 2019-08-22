@@ -4,7 +4,7 @@ RUN apk --no-cache add git curl
 
 WORKDIR /usr/src
 
-RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vv
+RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vvv
 
 WORKDIR /usr/src/app
 

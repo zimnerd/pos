@@ -94,6 +94,10 @@
                     <td colspan="4">{{ $totals['total'] }}</td>
                 </tr>
                 <tr>
+                    <td colspan="4">Total Savings: </td>
+                    <td colspan="4">{{ $discount }}</td>
+                </tr>
+                <tr>
                     <td colspan="4">Payment Method: {{ $method }}</td>
                     <td colspan="4">{{ $tendered }}</td>
                 </tr>

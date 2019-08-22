@@ -1,7 +1,8 @@
 import {
+    RETRIEVE_BRANCHES,
     RETRIEVE_HADDITH,
     RETRIEVE_REASONS,
-    RETRIEVE_SHOP_DETAILS,
+    RETRIEVE_SHOP_DETAILS, RETRIEVE_TAX,
     RETRIEVE_TILL_CONTROLS,
     RETRIEVE_TILL_DETAILS,
     RETRIEVE_TILL_NUMBER,
@@ -39,4 +40,12 @@ export function retrieveTillNumber(number = []) {
 
 export function retrieveTillControls(controls = {}) {
     return { type: RETRIEVE_TILL_CONTROLS, controls };
+}
+
+export function retrieveBranchCodes(codes = {}) {
+    return { type: RETRIEVE_BRANCHES, codes };
+}
+
+export function retrieveTax(tax = "15") {
+    return { type: RETRIEVE_TAX, tax };
 }

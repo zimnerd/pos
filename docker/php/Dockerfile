@@ -9,7 +9,10 @@ RUN docker-php-ext-install pdo_mysql
 
 WORKDIR /usr/src/app
 
-RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vv
+COPY oauth-private.key /var/www/html/storage/oauth-private.key
+COPY oauth-public.key /var/www/html/storage/oauth-public.key
+
+RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vvv
 
 ADD ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 ADD ./docker/php/composer /bin/
@@ -24,3 +27,5 @@ WORKDIR /var/www/html
 ADD vendor.zip .
 
 RUN unzip vendor.zip
+
+

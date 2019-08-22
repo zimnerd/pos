@@ -178,7 +178,7 @@ class TransactionController extends Controller
                 $dailyTransaction->BDATE = \date("Y-m-d");
                 $dailyTransaction->BTIME = \date("H:i:s");
 
-                $vat = $item['total'] - ($item['total'] / 115 * 100);
+                $vat = $item['total'] - ($item['total'] / (100 + (int) $transaction['tax']) * 100);
                 $dailyTransaction->AMT = $item['total'];
                 $dailyTransaction->VATAMT = $vat;
                 $dailyTransaction->QTY = $item['qty'];
@@ -701,6 +701,7 @@ class TransactionController extends Controller
         $vat = 0;
         $total = 0;
         $qty = 0;
+        $disc = 0;
 
         /**
          * @var DailyTransaction $item
@@ -730,6 +731,7 @@ class TransactionController extends Controller
             $transaction['total'] = $item->AMT;
             $total += $item->AMT;
             $vat += $item->VATAMT;
+            $disc += $item->DISCAMT;
 
             $lineItems["transactions"][] = $transaction;
             $lineItems["method"] = $item->SUP;
@@ -744,6 +746,7 @@ class TransactionController extends Controller
         $lineItems["totals"]["vat"] = $vat;
         $lineItems["totals"]["qty"] = $qty;
         $lineItems["totals"]["total"] = $total;
+        $lineItems["totals"]["disc"] = $disc;
 
         return response()->json(['lineItems' => $lineItems], $this->successStatus);
     }
@@ -964,6 +967,7 @@ class TransactionController extends Controller
             "type" => $type,
             "tendered" => $totals['total'],
             "change" => 0,
+            "discount" => $totals['disc'],
             "refundAmt" => isset($refundAmt) ? $refundAmt : null,
             "originalDocNo" => isset($originalDocNo) ? $originalDocNo : null,
             "reason" => isset($reason) ? $reason : null,
