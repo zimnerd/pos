@@ -9,4 +9,4 @@ echo "The application will now start on your default browser."
 echo "If the application has not started after a few minutes,"
 echo "Please open a browser tab at $(docker-machine ip) to use the application!"
 
-start "http://$(docker-machine ip)"
+start "http://localhost"
