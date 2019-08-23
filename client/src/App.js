@@ -20,7 +20,7 @@ import './App.scss';
 class App extends React.Component {
 
     componentDidMount = async () => {
-        let ip = "192.168.99.100/api";
+        let ip = "localhost/api";
         if (process.env.REACT_APP_IP_HOST != null) {
             ip = process.env.REACT_APP_IP_HOST;
         }

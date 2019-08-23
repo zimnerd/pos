@@ -18,6 +18,13 @@ then
       exit
 fi
 
+if [ -z "$DB_PASSWORD" ]
+then
+      echo "IP Host variable has not been set, please set this to to continue."
+      echo "E.g. export DB_PASSWORD={the password to the MySQL server}"
+      exit
+fi
+
 echo "Setting Docker Machine IP"
 export MACHINE_IP=$(docker-machine ip)
 

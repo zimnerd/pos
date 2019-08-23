@@ -17,6 +17,7 @@ services:
       dockerfile: docker/php/Dockerfile
     restart: always
     environment:
+     - DB_PASSWORD=$DB_PASSWORD
      - DB_HOST=$DB_HOST
      - DB_HOST_MAIN=$DB_HOST_MAIN
      - TILL_NUM_TXT=/var/www/html/app-data/tilldir/tillno.txt
@@ -30,7 +31,7 @@ services:
       dockerfile: docker/client/Dockerfile
     restart: always
     environment:
-      - "env_file: .env.production"
-      - "NODE_ENV: production"
+      - "env_file=.env.production"
+      - "NODE_ENV=production"
     ports:
       - "80:80"

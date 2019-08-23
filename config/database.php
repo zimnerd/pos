@@ -61,7 +61,7 @@ return [
 
         'maindb' => [
             'driver' => 'mysql',
-            'host' => env('DB_HOST_MAIN', '192.168.1.101'),
+            'host' => env('DB_HOST_MAIN', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'maindb'),
             'username' => env('DB_USERNAME', 'root'),

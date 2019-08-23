@@ -12,7 +12,7 @@ WORKDIR /usr/src/app
 COPY oauth-private.key /var/www/html/storage/oauth-private.key
 COPY oauth-public.key /var/www/html/storage/oauth-public.key
 
-RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -vvv
+RUN git clone https://jolsen_neslotech:4EyBYMmyjV%40@gitlab.com/neslotech-devs/fashion-world-pos.git -v
 
 ADD ./docker/php/php.ini /usr/local/etc/php/conf.d/php.ini
 ADD ./docker/php/composer /bin/
