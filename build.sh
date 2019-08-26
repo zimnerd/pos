@@ -42,7 +42,7 @@ mkdir app-data
 cp -r /c/FW_Files/tilldir ./app-data/tilldir
 cp -r /c/FW_Files/stylepics ./app-data/stylepics
 
-docker-compose build
+docker-compose build --no-cache
 
 echo ""
 echo "Build is complete, run the run.sh script to start the application"
