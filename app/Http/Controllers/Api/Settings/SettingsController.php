@@ -40,6 +40,30 @@ class SettingsController extends Controller
     }
 
     /**
+     * Save the shop settings
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\Response
+     */
+    public function saveShop(Request $request)
+    {
+        $this->validate($request, [
+            'nextLaybyeNo' => 'required'
+        ]);
+
+        $shop = $request->all();
+
+        $shopInfo = Shop::query()
+            ->where('ColName', 'nextLaybyeNo')
+            ->first();
+
+        $shopInfo->ColValue = $shop['nextLaybyeNo'];
+        $shopInfo->save();
+
+        return response()->json(["shop" => $shopInfo], $this->successStatus);
+    }
+
+    /**
      * Retrieve the till settings
      *
      * @param integer $id

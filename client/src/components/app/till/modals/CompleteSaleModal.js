@@ -493,6 +493,24 @@ class CompleteSaleModal extends React.Component {
         this.props.actions.till.setTotals(totals);
     };
 
+    saveShop = shop => {
+        axios.post(`/v1/settings/shop`, shop)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Shop Settings updated!", "Update Shop Settings");
+                this.props.actions.settings.retrieveShop(shop);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+    };
+
     saveSettings = (type) => {
         let till = this.props.settings.till;
         let shop = this.props.settings.shop;
@@ -500,6 +518,7 @@ class CompleteSaleModal extends React.Component {
             till.DepNo = Number(till.DepNo) + 1;
             if (shop.oneLaybyeNo === "Yes") {
                 shop.nextLaybyeNo = Number(shop.nextLaybyeNo) + 1;
+                this.saveShop(shop);
             } else {
                 till.LbNo = Number(till.LbNo) + 1;
             }

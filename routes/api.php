@@ -60,6 +60,7 @@ Route::group(["prefix" => "v1/settings"], function () {
 
     Route::get('haddith', 'Api\Settings\SettingsController@retrieveHaddith');
     Route::get('shop', 'Api\Settings\SettingsController@retrieveShopDetails');
+    Route::post('shop', 'Api\Settings\SettingsController@saveShop');
     Route::get('till/{id}', 'Api\Settings\SettingsController@retrieveTillDetails');
     Route::get('till/{id}/controls', 'Api\Settings\SettingsController@retrieveControls');
     Route::put('till/{id}/controls', 'Api\Settings\SettingsController@updateControls');
