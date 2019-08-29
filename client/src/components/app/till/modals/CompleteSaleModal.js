@@ -289,6 +289,7 @@ class CompleteSaleModal extends React.Component {
             this.props.actions.till.setTransactions();
             this.props.actions.till.resetTotals();
             this.props.actions.auth.setAuth();
+            this.props.actions.till.setNotFound(false);
             this.handleClose();
             return;
         }
@@ -373,6 +374,7 @@ class CompleteSaleModal extends React.Component {
                 this.props.actions.till.deactivateRefund();
                 this.props.actions.till.setCombos();
                 this.props.actions.auth.setAuth();
+                this.props.actions.till.setNotFound(false);
             })
             .catch(error => {
                 console.log(error);

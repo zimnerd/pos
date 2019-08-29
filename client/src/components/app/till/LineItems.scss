@@ -1,5 +1,14 @@
 @import "../../../colours";
 
+.input-change {
+    max-width: 50px;
+
+    > input {
+        width: 100%;
+    }
+
+}
+
 .line-items {
     height: 100%;
     padding: 15px;

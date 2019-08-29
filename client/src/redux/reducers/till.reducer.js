@@ -20,7 +20,7 @@ import {
     SET_CODE,
     SET_COMBOS,
     SET_COMPLETED_TRANSACTION,
-    SET_DEBTOR,
+    SET_DEBTOR, SET_NOT_FOUND,
     SET_REFUND,
     SET_SALES,
     SET_SALESMEN,
@@ -88,6 +88,9 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, sales: action.sales };
         case SET_SALESMEN:
             return { ...state, salesmen: action.salesmen };
+        case SET_NOT_FOUND:
+            debugger
+            return { ...state, notFound: action.notFound };
         default:
             return state;
     }

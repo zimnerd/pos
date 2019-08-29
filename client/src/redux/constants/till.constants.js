@@ -26,3 +26,4 @@ export const SET_DEBTOR = "SET_DEBTOR";
 export const NEXT_DEBTOR = "NEXT_DEBTOR";
 export const SET_SALES = "SET_SALES";
 export const SET_SALESMEN = "SET_SALESMEN";
+export const SET_NOT_FOUND = "SET_NOT_FOUND";

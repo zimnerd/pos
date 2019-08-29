@@ -74,6 +74,7 @@ class ExchangeInvoiceSearch extends React.Component {
                     toastr.error("Transaction could not be found!", "Find Transaction");
                     this.props.actions.modal.closeExchangeSearch();
                     this.props.actions.till.activateExchange();
+                    this.props.actions.till.setNotFound();
                 } else if (error.response.status === 422) {
                     toastr.error(error.response.data.error, "Find Transaction");
                 } else {

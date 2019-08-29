@@ -17,7 +17,7 @@ import {
     SET_AUTH_COMMAND,
     SET_CODE,
     SET_COMBOS,
-    SET_COMPLETED_TRANSACTION, SET_DEBTOR,
+    SET_COMPLETED_TRANSACTION, SET_DEBTOR, SET_NOT_FOUND,
     SET_REFUND, SET_SALES, SET_SALESMEN,
     SET_TOTALS,
     SET_TRANSACTION_ID,
@@ -143,4 +143,8 @@ export function setSales(sales = []) {
 
 export function setSalesmen(salesmen = []) {
     return { type: SET_SALESMEN, salesmen }
+}
+
+export function setNotFound(notFound = true) {
+    return { type: SET_NOT_FOUND, notFound }
 }

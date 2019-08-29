@@ -243,8 +243,12 @@ class LineItems extends React.Component {
                                     </div>
                                 </td>
                                 {this.props.till.refundData && this.props.till.refundData.notFound &&
-                                <td style="width: 100px;"><input onChange={e => this.handlePriceChange(e, index)}
+                                <td className="input-change"><input onChange={e => this.handlePriceChange(e, index)}
                                                                  value={item.price}/></td>
+                                }
+                                {this.props.till.notFound &&
+                                <td className="input-change"><input onChange={e => this.handlePriceChange(e, index)}
+                                                                    value={item.price}/></td>
                                 }
                                 {this.props.till.refundData && !this.props.till.refundData.notFound &&
                                 <td>{item.price}</td>

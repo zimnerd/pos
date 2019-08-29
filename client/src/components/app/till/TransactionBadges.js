@@ -11,10 +11,12 @@ class TransactionBadges extends React.Component {
 
     removeLaybye = () => {
         this.props.actions.deactivateLayBye();
+        this.props.actions.setNotFound(false);
     };
 
     removeExchange = () => {
         this.props.actions.deactivateExchange();
+        this.props.actions.setNotFound(false);
     };
 
     removeStaff = async () => {
@@ -31,6 +33,7 @@ class TransactionBadges extends React.Component {
         this.props.actions.resetTransactions();
         this.props.actions.deactivateRefund();
         this.props.actions.setRefund();
+        this.props.actions.setNotFound(false);
     };
 
     removeCredit = () => {
