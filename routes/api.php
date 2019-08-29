@@ -43,6 +43,14 @@ Route::group(["prefix" => "v1/people"], function () {
 
 });
 
+Route::group(["prefix" => "v1/salesmen"], function () {
+
+    Route::group(['middleware' => 'auth:api'], function () {
+        Route::get('', 'Api\SalesmanController@retrieveSalesmen');
+    });
+
+});
+
 Route::group(["prefix" => "v1/settings"], function () {
 
     Route::group(['middleware' => 'auth:api'], function () {

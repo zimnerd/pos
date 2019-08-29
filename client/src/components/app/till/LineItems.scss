@@ -11,13 +11,13 @@
 
     .table {
         margin-top: 15px;
-        height: 415px;
-        max-height: 415px;
+        height: 540px;
+        max-height: 540px;
 
         thead {
 
             th {
-                min-width: 70px;
+                min-width: 100px;
             }
 
         }
@@ -35,11 +35,15 @@
             }
 
             .description {
-                display: flex;
+                display: grid;
                 flex-wrap: wrap;
 
                 .badge {
                     margin-left: 5px;
+                }
+
+                span {
+                    white-space: nowrap;
                 }
 
             }

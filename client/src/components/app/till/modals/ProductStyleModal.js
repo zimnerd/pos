@@ -41,7 +41,7 @@ class ProductStyleModal extends React.Component {
             return;
         }
 
-        transactions.push(product);
+        transactions.unshift(product);
         this.props.actions.till.setTransactions(transactions);
         this.handleClose();
         this.props.mapLineItem(product);

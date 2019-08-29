@@ -1,19 +1,33 @@
 import {
     ACTIVATE_CREDIT,
     ACTIVATE_EXCHANGE,
-    ACTIVATE_LAY_BYE, ACTIVATE_REFUND,
+    ACTIVATE_LAY_BYE,
+    ACTIVATE_REFUND,
     ACTIVATE_RETURNS,
-    ACTIVATE_STAFF, DEACTIVATE_CREDIT,
+    ACTIVATE_STAFF,
+    DEACTIVATE_CREDIT,
     DEACTIVATE_EXCHANGE,
-    DEACTIVATE_LAY_BYE, DEACTIVATE_REFUND,
+    DEACTIVATE_LAY_BYE,
+    DEACTIVATE_REFUND,
     DEACTIVATE_RETURNS,
-    DEACTIVATE_STAFF, NEXT_DEBTOR, RESET_COMPLETED_TRANSACTION,
+    DEACTIVATE_STAFF,
+    NEXT_DEBTOR,
+    RESET_COMPLETED_TRANSACTION,
     RESET_TOTALS,
-    RESET_TRANSACTIONS, RETRIEVE_DEBTORS,
-    SET_AUTH_COMMAND, SET_CODE, SET_COMBOS, SET_COMPLETED_TRANSACTION, SET_DEBTOR, SET_REFUND, SET_SALES,
+    RESET_TRANSACTIONS,
+    RETRIEVE_DEBTORS,
+    SET_AUTH_COMMAND,
+    SET_CODE,
+    SET_COMBOS,
+    SET_COMPLETED_TRANSACTION,
+    SET_DEBTOR,
+    SET_REFUND,
+    SET_SALES,
+    SET_SALESMEN,
     SET_TOTALS,
     SET_TRANSACTION_ID,
-    SET_TRANSACTIONS, VALIDATION_ERROR
+    SET_TRANSACTIONS,
+    VALIDATION_ERROR
 } from "../constants/till.constants";
 
 export default function tillReducer(state = { errors: [] }, action) {
@@ -72,6 +86,8 @@ export default function tillReducer(state = { errors: [] }, action) {
             return { ...state, next: action.next };
         case SET_SALES:
             return { ...state, sales: action.sales };
+        case SET_SALESMEN:
+            return { ...state, salesmen: action.salesmen };
         default:
             return state;
     }

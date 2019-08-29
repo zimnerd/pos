@@ -16,7 +16,7 @@ import './CompleteSaleModal.scss';
 class CompleteSaleModal extends React.Component {
 
     state = {
-        method: "Cash",
+        method: "",
         tendered: "0.00",
         cash: "0.00",
         card: "0.00",
@@ -35,7 +35,7 @@ class CompleteSaleModal extends React.Component {
 
     handleClose = () => {
         this.setState({
-            method: "Cash",
+            method: "",
             tendered: "0.00",
             cash: "0.00",
             card: "0.00",
@@ -70,6 +70,8 @@ class CompleteSaleModal extends React.Component {
             method: method
         }, () => {
             if (this.state.method === "Split") {
+                let cashField = $('#cashAmount');
+                cashField.focus();
                 this.setState({
                     tendered: Number(Number(this.state.cash) + Number(this.state.card)).toFixed(2)
                 });
@@ -292,7 +294,11 @@ class CompleteSaleModal extends React.Component {
         }
 
         let method = this.state.method;
+        let splitCash = 0;
+        let splitCard = 0;
         if (method === "Split") {
+            splitCash = this.state.cash;
+            splitCard = this.state.card;
             method = this.state.cash >= this.state.card ? "Cash" : "CC";
         }
 
@@ -323,7 +329,9 @@ class CompleteSaleModal extends React.Component {
             auth: this.props.auth.auth,
             debtor: this.props.till.debtor,
             tendered: this.state.tendered,
-            credit: this.props.till.credit
+            credit: this.props.till.credit,
+            splitCard: splitCard,
+            splitCash: splitCash
         };
 
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -678,6 +686,8 @@ class CompleteSaleModal extends React.Component {
             let cashBtn = $('#cashBtn');
             let cardBtn = $('#cardBtn');
             let splitBtn = $('#splitBtn');
+            let cashField = $('#cashAmount');
+            let cardField = $('#cardAmount');
 
             if (cashBtn.is(':focus')) {
                 cashBtn.click();
@@ -693,7 +703,16 @@ class CompleteSaleModal extends React.Component {
 
             if (splitBtn.is(':focus')) {
                 splitBtn.click();
-                tenderedField.focus();
+                return true;
+            }
+
+            if (cashField.is(':focus')) {
+                cardField.focus();
+                return true;
+            }
+
+            if (cardField.is(':focus')) {
+                saleUpdate.focus();
                 return true;
             }
 
@@ -701,6 +720,12 @@ class CompleteSaleModal extends React.Component {
         }
 
         return false;
+    };
+
+    changeSalesman = event => {
+        this.setState({
+            salesman: event.target.value
+        });
     };
 
     render() {
@@ -729,6 +754,19 @@ class CompleteSaleModal extends React.Component {
                     this.props.till.transactions.length > 0 &&
                     <Form className="d-flex">
                         <div className="col-6">
+                            {this.props.till.salesmen &&
+                            <div className="form-group">
+                                <label>Salesman:</label>
+                                <select onChange={this.changeSalesman} className="form-control" required>
+                                    <option disabled selected>Select a salesman</option>
+                                    {this.props.till.salesmen.map((item, index) => {
+                                        return (
+                                            <option key={index} value={item.code}>{item.name}</option>
+                                        )
+                                    })}
+                                </select>
+                            </div>
+                            }
                             {!this.props.till.laybye &&
                             <label className="value"> Total Invoice
                                 Amount: <span>{this.props.till.totals && this.props.till.totals.total.toFixed(2)}</span></label>

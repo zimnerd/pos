@@ -10,13 +10,13 @@ class Alerts extends React.Component {
 
     render = () => {
         return (
-            <section className="col-4 alerts widget-shadow">
+            <section className="alerts widget-shadow mt-3">
                 <header>
-                    <h3 className="tex">Warehouse Alerts</h3>
+                    <h6 className="text">Warehouse Alerts</h6>
                     <hr/>
                 </header>
                 <main>
-                    <h3 className="text-center">Coming Soon!</h3>
+                    <h6 className="text-center">Coming Soon!</h6>
                 </main>
             </section>
         )

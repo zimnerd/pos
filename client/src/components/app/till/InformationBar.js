@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import * as settingsActions from "../../../redux/actions/settings.action";
 
 import './InformationBar.scss';
+import Alerts from "./Alerts";
 
 class InformationBar extends React.Component {
 
@@ -16,16 +17,16 @@ class InformationBar extends React.Component {
         return (
             <aside className="info">
                 {this.props.settings.haddith &&
-                <main className="p-3 widget-shadow"
+                <section className="p-3 widget-shadow"
                       dangerouslySetInnerHTML={{ __html: this.props.settings.haddith.value }}>
-                </main>
+                </section>
                 }
                 {this.props.settings.combos.length > 0 &&
-                <footer className="p-3 widget-shadow mt-3">
+                <section className="p-3 widget-shadow mt-3">
                     {this.props.settings.combos && this.props.settings.combos.length > 0 &&
                     <section>
                         <header>
-                            <h3 className="tex">Combos</h3>
+                            <h6 className="text">Combos</h6>
                             <hr/>
                         </header>
                         <table className="table table-striped table-responsive">
@@ -55,8 +56,9 @@ class InformationBar extends React.Component {
                         </table>
                     </section>
                     }
-                </footer>
+                </section>
                 }
+                <Alerts/>
             </aside>
         )
     }

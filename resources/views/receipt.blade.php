@@ -124,6 +124,11 @@
     </section>
     <br/>
     @endif
+    @if ($remarks !== null)
+    <h5 style="text-transform: uppercase">
+       {{ $remarks }}
+    </h5>
+    @endif
     <h5 style="text-transform: uppercase">
         Refunds and exchanges accepted as per refund and exchange policy in store. Terms and conditions apply. No exchange
         on underwear, leggings and bodysuits

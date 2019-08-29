@@ -73,7 +73,7 @@ class StockInformation extends React.Component {
         return (
             <article>
                 <Header/>
-                <section className="container widget widget-shadow stock">
+                <section className="container widget widget-shadow stocks">
                     <header className="container text-center">
                         <h1>Stock Information</h1>
                         <hr/>

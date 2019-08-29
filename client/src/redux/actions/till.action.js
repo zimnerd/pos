@@ -18,7 +18,7 @@ import {
     SET_CODE,
     SET_COMBOS,
     SET_COMPLETED_TRANSACTION, SET_DEBTOR,
-    SET_REFUND, SET_SALES,
+    SET_REFUND, SET_SALES, SET_SALESMEN,
     SET_TOTALS,
     SET_TRANSACTION_ID,
     SET_TRANSACTIONS,
@@ -139,4 +139,8 @@ export function nextDebtor(next) {
 
 export function setSales(sales = []) {
     return { type: SET_SALES, sales }
+}
+
+export function setSalesmen(salesmen = []) {
+    return { type: SET_SALESMEN, salesmen }
 }

@@ -64,6 +64,33 @@ class Till extends React.Component {
         this.props.actions.till.resetTotals();
         this.retrieveHaddiths();
         this.retrieveBranchCodes();
+        this.retrieveSalesmen();
+    };
+
+
+    retrieveSalesmen = () => {
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+
+        axios.get(`/v1/salesmen`, { headers })
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Salesmen retrieved!", "Retrieve Salesmen");
+                this.props.actions.till.setSalesmen(response.data.salesmen);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    toastr.error("No salesmen could be found.", "Retrieve Salesmen");
+                    this.props.actions.till.setSalesmen();
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     retrieveBranchCodes = () => {
@@ -175,7 +202,7 @@ class Till extends React.Component {
                 }
 
                 this.props.actions.modal.openCompleteSale();
-                $('#cardBtn').focus();
+                $('#cashBtn').focus();
                 break;
             case 115:
                 if (event.preventDefault) {
@@ -398,8 +425,9 @@ class Till extends React.Component {
             items = [];
         }
 
-        items.push(transaction);
+        items.unshift(transaction);
         this.mapLineItem(transaction);
+
         this.props.actions.till.setTransactions(items);
     };
 
@@ -423,12 +451,9 @@ class Till extends React.Component {
                         <TransactionBadges mapTransactions={this.mapTransactions}/>
                         }
                         <Totals openModal={this.openModal}/>
+                        <ActionBar openModal={this.openModal}/>
                     </div>
                 </main>
-                <section className="d-flex">
-                    <Alerts/>
-                    <ActionBar openModal={this.openModal}/>
-                </section>
                 <footer className="till-text w-100">
                     <span>Till number {this.props.settings.number} logged in as {this.props.user.username}</span>
                 </footer>

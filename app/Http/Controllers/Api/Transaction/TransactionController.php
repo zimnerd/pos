@@ -18,6 +18,7 @@ use App\Models\Transaction\StockTransaction;
 use App\Person;
 use App\Product;
 use App\Refund;
+use App\Shop;
 use App\Stock;
 use App\Summary;
 use App\Tax;
@@ -261,7 +262,7 @@ class TransactionController extends Controller
                 $dailyTransaction->save();
                 $monthlyTransaction->save();
 
-                $this->tradeSummaryEntries($shop, $monthlyTransaction);
+                $this->tradeSummaryEntries($shop, $monthlyTransaction, $transaction);
 
                 $colour = Colours::query()
                     ->where("code", $item['clrcode'])
@@ -961,6 +962,11 @@ class TransactionController extends Controller
                 $method = "Cash";
         }
 
+        $laybyeRemarks = Shop::query()
+            ->select(['ColValue'])
+            ->where('ColName', 'LaybyeRemarks')
+            ->first();
+
         /**
          * @var SnappyPdf $snappy
          */
@@ -981,7 +987,8 @@ class TransactionController extends Controller
             "refundAmt" => isset($refundAmt) ? $refundAmt : null,
             "originalDocNo" => isset($originalDocNo) ? $originalDocNo : null,
             "reason" => isset($reason) ? $reason : null,
-            "comments" => isset($comments) ? $comments : null
+            "comments" => isset($comments) ? $comments : null,
+            "remarks" => $laybyeRemarks ? $laybyeRemarks->ColValue : null
         ]);
         return new Response(
             $snappy->getOutputFromHtml($html),
@@ -1203,7 +1210,7 @@ class TransactionController extends Controller
         return response()->json([], $this->successStatus);
     }
 
-    private function tradeSummaryEntries($shop, Transaction $transaction)
+    private function tradeSummaryEntries($shop, Transaction $transaction, $actual)
     {
         $taxRate = Tax::query()
             ->where('taxcode', 1)
@@ -1312,19 +1319,24 @@ class TransactionController extends Controller
                         break;
                 }
             } else {
-                switch ($cob) {
-                    case "Cash":
-                        $tradeSummary->CASHS += $amount;
-                        break;
-                    case "CC":
-                        $tradeSummary->CCARDS += $amount;
-                        break;
-                    case "PDC":
-                        $tradeSummary->PDCS += $amount;
-                        break;
-                    case "Cheque":
-                        $tradeSummary->CHQS += $amount;
-                        break;
+                if (isset($actual['splitCard']) && isset($actual['splitCash'])) {
+                    $tradeSummary->CASHS += floatval($amount);
+                    $tradeSummary->CCARDS += floatval($amount);
+                } else {
+                    switch ($cob) {
+                        case "Cash":
+                            $tradeSummary->CASHS += $amount;
+                            break;
+                        case "CC":
+                            $tradeSummary->CCARDS += $amount;
+                            break;
+                        case "PDC":
+                            $tradeSummary->PDCS += $amount;
+                            break;
+                        case "Cheque":
+                            $tradeSummary->CHQS += $amount;
+                            break;
+                    }
                 }
 
                 $tradeSummary->USLS += $qty * 1;

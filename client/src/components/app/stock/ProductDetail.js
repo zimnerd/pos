@@ -44,7 +44,7 @@ class ProductDetail extends React.Component {
                     {this.props.stock.product &&
                     <header className="text-center">
                         {this.props.stock.product.image &&
-                        <img src={"data:image/png;base64, " + this.props.stock.product.image} height="200" width="200"/>
+                        <img className="stock-img" src={"data:image/png;base64, " + this.props.stock.product.image} height="200" width="200"/>
                         }
                         <br/>
                         <h1>{this.props.stock.product.description}</h1>

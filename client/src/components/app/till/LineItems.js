@@ -1,6 +1,6 @@
 import React from 'react';
 import { bindActionCreators } from "redux";
-import { Badge } from "react-bootstrap";
+import { Badge, Button } from "react-bootstrap";
 import { connect } from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
@@ -12,6 +12,10 @@ import * as stockActions from "../../../redux/actions/stock.action";
 import './LineItems.scss';
 
 class LineItems extends React.Component {
+
+    state = {
+        allHeld: false
+    };
 
     enterProduct = async event => {
         event.preventDefault();
@@ -96,6 +100,15 @@ class LineItems extends React.Component {
 
     reset = async () => {
         await this.props.actions.till.setCode();
+    };
+
+    holdAll = async () => {
+        this.setState({
+            allHeld: !this.state.allHeld
+        });
+        for (let x = 0; x < this.props.till.transactions.length; x++) {
+            await this.holdItem(x);
+        }
     };
 
     holdItem = async (index) => {
@@ -193,12 +206,17 @@ class LineItems extends React.Component {
                     <tr>
                         <th>Code</th>
                         <th>Description</th>
-                        <th>Qty</th>
                         <th>Price</th>
-                        <th>Subtotal</th>
                         <th>Disc. %</th>
                         <th>Total</th>
-                        <th colSpan="2"/>
+                        <th colSpan="2">
+                        {!this.state.allHeld &&
+                            <Button variant="warning" onClick={this.holdAll}>Hold All</Button>
+                        }
+                        {this.state.allHeld &&
+                            <Button variant="dark" onClick={this.holdAll}>Unhold All</Button>
+                        }
+                        </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -212,24 +230,28 @@ class LineItems extends React.Component {
                         this.props.till && this.props.till.transactions.map((item, index) =>
                             <tr key={index}>
                                 <td>{item.code}</td>
-                                <td className="description d-flex flex-wrap">
+                                <td className="description">
                                     <span>{item.description}</span>
-                                    <small>{item.size + ", " + item.colour}</small>
-                                    {item.markdown &&
-                                    <span className="badge badge-danger">Markdown</span>
-                                    }
-                                    {item.combo &&
-                                    <span className="badge badge-info">Combo</span>
-                                    }
+                                    <div className="d-flex">
+                                        <small>{item.size + ", " + item.colour}</small>
+                                        {item.markdown &&
+                                        <span className="badge badge-danger">Markdown</span>
+                                        }
+                                        {item.combo &&
+                                        <span className="badge badge-info">Combo</span>
+                                        }
+                                    </div>
                                 </td>
-                                <td><span>{item.qty}</span></td>
                                 {this.props.till.refundData && this.props.till.refundData.notFound &&
-                                <td style="width: 100px;"><input onChange={e => this.handlePriceChange(e, index)} value={item.price}/></td>
+                                <td style="width: 100px;"><input onChange={e => this.handlePriceChange(e, index)}
+                                                                 value={item.price}/></td>
                                 }
                                 {this.props.till.refundData && !this.props.till.refundData.notFound &&
                                 <td>{item.price}</td>
                                 }
-                                <td>{Number(item.subtotal).toFixed(2)}</td>
+                                {!this.props.till.refundData &&
+                                <td>{item.price}</td>
+                                }
                                 <td><span>{item.disc}</span></td>
                                 <td>{Number(item.total).toFixed(2)}</td>
                                 <td>

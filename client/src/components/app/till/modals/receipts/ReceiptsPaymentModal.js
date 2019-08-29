@@ -6,6 +6,7 @@ import {Button, Modal, Table} from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import axios from "axios";
 import toastr from "toastr";
+import $ from "jquery";
 
 import * as modalActions from "../../../../../redux/actions/modal.action";
 
@@ -16,7 +17,7 @@ class ReceiptsPaymentModal extends React.Component {
     state = {
         accNum: "",
         type: "",
-        method: "Cash",
+        method: "",
         card: "",
         cash: "",
         tendered: 0
@@ -120,7 +121,7 @@ class ReceiptsPaymentModal extends React.Component {
         this.setState({
             accNum: "",
             type: "Laybye",
-            method: "Cash",
+            method: "",
             card: "",
             cash: "",
             tendered: 0,
@@ -134,6 +135,8 @@ class ReceiptsPaymentModal extends React.Component {
             method: value
         }, () => {
             if (this.state.method === "Split") {
+                let cashField = $('#cashAmount');
+                cashField.focus();
                 this.setState({
                     tendered: this.state.cash + this.state.card
                 });
@@ -236,7 +239,102 @@ class ReceiptsPaymentModal extends React.Component {
         this.setState({
             accounts: undefined,
             account: account
+        }, () => {
+            let cashBtn = $('#cashBtn');
+            cashBtn.focus();
         });
+    };
+
+    keyDown = e => {
+        let event = window.event ? window.event : e;
+
+        if (event.keyCode === 39) {
+            e.preventDefault();
+            let cashBtn = $('#cashBtn');
+            let cardBtn = $('#cardBtn');
+            let splitBtn = $('#splitBtn');
+
+            if (cashBtn.is(':focus')) {
+                cardBtn.focus();
+                return true;
+            }
+
+            if (cardBtn.is(':focus')) {
+                splitBtn.focus();
+                return true;
+            }
+
+            if (splitBtn.is(':focus')) {
+                cashBtn.focus();
+                return true;
+            }
+        } else if (event.keyCode === 37) {
+            e.preventDefault();
+            let cashBtn = $('#cashBtn');
+            let cardBtn = $('#cardBtn');
+            let splitBtn = $('#splitBtn');
+
+            if (cashBtn.is(':focus')) {
+                splitBtn.focus();
+                return true;
+            }
+
+            if (cardBtn.is(':focus')) {
+                cashBtn.focus();
+                return true;
+            }
+
+            if (splitBtn.is(':focus')) {
+                cardBtn.focus();
+                return true;
+            }
+        } else if (event.keyCode === 13) { //enter
+            e.preventDefault();
+            let tenderedField = $('#tendered');
+            let saleUpdate = $('#captureBtn');
+
+            if (tenderedField.is(':focus')) {
+                saleUpdate.focus();
+                return true;
+            }
+
+            let cashBtn = $('#cashBtn');
+            let cardBtn = $('#cardBtn');
+            let splitBtn = $('#splitBtn');
+            let cashField = $('#cashAmount');
+            let cardField = $('#cardAmount');
+
+            if (cashBtn.is(':focus')) {
+                cashBtn.click();
+                tenderedField.focus();
+                return true;
+            }
+
+            if (cardBtn.is(':focus')) {
+                cardBtn.click();
+                tenderedField.focus();
+                return true;
+            }
+
+            if (splitBtn.is(':focus')) {
+                splitBtn.click();
+                return true;
+            }
+
+            if (cashField.is(':focus')) {
+                cardField.focus();
+                return true;
+            }
+
+            if (cardField.is(':focus')) {
+                saleUpdate.focus();
+                return true;
+            }
+
+            return true;
+        }
+
+        return false;
     };
 
     render() {
@@ -290,7 +388,7 @@ class ReceiptsPaymentModal extends React.Component {
                         </table>
                         }
                         {this.state.account &&
-                        <div>
+                        <div onKeyDown={this.keyDown}>
                             <div className="form-group">
                                 <label>Amount Outstanding:</label>
                                 <input name="balance" type="text" className="form-control" disabled
@@ -302,17 +400,17 @@ class ReceiptsPaymentModal extends React.Component {
                                     <label>Payment Method:</label>
                                     <br/>
                                     <div className="payment" role="group" aria-label="...">
-                                        <button type="button" className="btn btn-success m-1"
+                                        <button type="button" className="btn btn-success m-1" id="cashBtn"
                                                 disabled={this.state.method === "Cash"}
                                                 onClick={() => this.changeMethod("Cash")}>
                                             <span><i className="fa fa-money"/></span> Cash
                                         </button>
-                                        <button type="button" className="btn btn-danger m-1"
+                                        <button type="button" className="btn btn-danger m-1" id="cardBtn"
                                                 disabled={this.state.method === "CC"}
                                                 onClick={() => this.changeMethod("CC")}>
                                             <span><i className="fa fa-credit-card"/></span> Card
                                         </button>
-                                        <button type="button" className="btn btn-info m-1"
+                                        <button type="button" className="btn btn-info m-1" id="splitBtn"
                                                 disabled={this.state.method === "Split"}
                                                 onClick={() => this.changeMethod("Split")}>
                                             <span><i className="fa fa-random"/></span> Split
@@ -322,11 +420,11 @@ class ReceiptsPaymentModal extends React.Component {
                                         this.state.method === "Split" &&
                                         <div className="form-group">
                                             <label>Cash Amount:</label>
-                                            <input type="text" className="form-control" name="cash"
+                                            <input type="text" className="form-control" name="cash" id="cashAmount"
                                                    value={this.state.cash}
                                                    onChange={this.handleChange}/>
                                             <label>Card Amount:</label>
-                                            <input type="text" className="form-control" name="card"
+                                            <input type="text" className="form-control" name="card" id="cardAmount"
                                                    value={this.state.card}
                                                    onChange={this.handleChange}/>
                                         </div>
@@ -336,7 +434,7 @@ class ReceiptsPaymentModal extends React.Component {
                                     <div className="form-group">
                                         <label>Amount Tendered:</label>
                                         <input type="text" className="form-control" value={this.state.tendered}
-                                               name="tendered"
+                                               name="tendered" id="tendered"
                                                disabled={this.state.method === "Split"} onChange={this.handleChange}/>
                                     </div>
                                     {this.state.tendered > this.state.account.balance &&
@@ -358,7 +456,7 @@ class ReceiptsPaymentModal extends React.Component {
                 </Modal.Body>
                 <Modal.Footer>
                     {this.state.account &&
-                    <Button variant="success" onClick={this.continue}>
+                    <Button variant="success" onClick={this.continue} id="captureBtn">
                         Capture
                     </Button>
                     }
