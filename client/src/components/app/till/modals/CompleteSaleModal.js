@@ -637,6 +637,7 @@ class CompleteSaleModal extends React.Component {
             }
         } else if (event.keyCode === 13) { //enter
             e.preventDefault();
+            let salesmen = $('#salesmen');
             let tenderedField = $('#saleTendered');
             let nameField = $('#saleName');
             let cellField = $('#saleCell');
@@ -710,6 +711,11 @@ class CompleteSaleModal extends React.Component {
             let cashField = $('#cashAmount');
             let cardField = $('#cardAmount');
 
+            if (salesmen.is(':focus')) {
+                cashBtn.focus();
+                return true;
+            }
+
             if (cashBtn.is(':focus')) {
                 cashBtn.click();
                 tenderedField.focus();
@@ -778,7 +784,8 @@ class CompleteSaleModal extends React.Component {
                             {this.props.till.salesmen &&
                             <div className="form-group">
                                 <label>Salesman:</label>
-                                <select onChange={this.changeSalesman} className="form-control" required>
+                                <select onChange={this.changeSalesman} className="form-control" id="salesmen"
+                                        required>
                                     <option disabled selected>Select a salesman</option>
                                     {this.props.till.salesmen.map((item, index) => {
                                         return (

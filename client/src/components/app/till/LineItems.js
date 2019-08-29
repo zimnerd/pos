@@ -102,15 +102,6 @@ class LineItems extends React.Component {
         await this.props.actions.till.setCode();
     };
 
-    holdAll = async () => {
-        this.setState({
-            allHeld: !this.state.allHeld
-        });
-        for (let x = 0; x < this.props.till.transactions.length; x++) {
-            await this.holdItem(x);
-        }
-    };
-
     holdItem = async (index) => {
         let transactions = this.props.till.transactions;
         let item = transactions[index];
@@ -209,14 +200,7 @@ class LineItems extends React.Component {
                         <th>Price</th>
                         <th>Disc. %</th>
                         <th>Total</th>
-                        <th colSpan="2">
-                        {!this.state.allHeld &&
-                            <Button variant="warning" onClick={this.holdAll}>Hold All</Button>
-                        }
-                        {this.state.allHeld &&
-                            <Button variant="dark" onClick={this.holdAll}>Unhold All</Button>
-                        }
-                        </th>
+                        <th colSpan="2"/>
                     </tr>
                     </thead>
                     <tbody>

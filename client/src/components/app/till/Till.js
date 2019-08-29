@@ -202,7 +202,7 @@ class Till extends React.Component {
                 }
 
                 this.props.actions.modal.openCompleteSale();
-                $('#cashBtn').focus();
+                $('#salesmen').focus();
                 break;
             case 115:
                 if (event.preventDefault) {

@@ -45,6 +45,14 @@ class SalesOptionsModal extends React.Component {
         $("#authUsername").focus();
     };
 
+    holdAll = async () => {
+        for (let item of this.props.till.transactions) {
+            item.hold = true;
+        }
+
+        this.holdSale();
+    };
+
     holdSale = () => {
         this.handleClose();
         let heldSales = this.props.till.transactions.filter(item => item.hold);
@@ -184,7 +192,17 @@ class SalesOptionsModal extends React.Component {
                     </div>
                     <hr/>
                     <div className="d-flex">
-                        <div className="col-6">
+                        <div className="col-4">
+                            <Card onClick={this.holdAll} className="text-center warning">
+                                <Card.Header>
+                                    <span><i className="fa fa-hand-o-left"/></span>
+                                </Card.Header>
+                                <Card.Body>
+                                    <Card.Title>Hold Complete Sale</Card.Title>
+                                </Card.Body>
+                            </Card>
+                        </div>
+                        <div className="col-4">
                             <Card onClick={this.holdSale} className="text-center warning">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-left"/></span>
@@ -194,7 +212,7 @@ class SalesOptionsModal extends React.Component {
                                 </Card.Body>
                             </Card>
                         </div>
-                        <div className="col-6">
+                        <div className="col-4">
                             <Card onClick={this.retrieveSale} className="text-center danger">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-right"/></span>
