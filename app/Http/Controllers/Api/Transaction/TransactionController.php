@@ -88,6 +88,11 @@ class TransactionController extends Controller
             $lineItems = $transaction["transactions"];
             $totals = $transaction["totals"];
 
+            $nextLb = false;
+            if (isset($shop['oneLaybyeNo']) && $shop['oneLaybyeNo'] === "Yes") {
+                $nextLb = true;
+            }
+
             /**
              * @var User $user
              */
@@ -112,7 +117,12 @@ class TransactionController extends Controller
                     }
                     break;
                 case "L/B":
-                    $docNo = $till['tillno'] . $till["LbNo"];
+                    if ($nextLb) {
+                        $docNo = $till['tillno'] . $shop["nextLaybyeNo"];
+                    } else {
+                        $docNo = $till['tillno'] . $till["LbNo"];
+                    }
+
                     $depNo = $till['tillno'] . $till["DepNo"];
                     $laybyeNo = $docNo;
                     break;
@@ -1545,6 +1555,7 @@ class TransactionController extends Controller
                         }
                         break;
                     case "L/B":
+                        $tradeSummary->TINVS += 1;
                         $tradeSummary->LBPAY += $amt;
                         break;
 

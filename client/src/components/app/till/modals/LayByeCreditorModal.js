@@ -173,6 +173,32 @@ class LayByeCreditorModal extends React.Component {
         this.props.actions.till.setCombos();
         this.props.actions.modal.closeLayByeCreditor();
         this.props.actions.auth.setAuth();
+
+
+        const headers = {
+            'Authorization': 'Bearer ' + this.props.auth.token
+        };
+        axios.get('/v1/debtors?stype=Credit,DCS', { headers })
+            .then(async response => {
+                console.log(response.data);
+
+                toastr.success("Debtors Retrieved!", "Retrieve Debtors");
+                await this.props.actions.till.retrieveDebtors(response.data.debtors);
+                await this.props.actions.till.nextDebtor(response.data.next);
+            })
+            .catch(error => {
+                console.log(error);
+
+                if (error.response.status === 401) {
+                    toastr.error("You are unauthorized to make this request.", "Unauthorized");
+                } else if (error.response.status === 404) {
+                    this.props.actions.till.retrieveDebtors();
+                    this.props.actions.till.nextDebtor(error.response.data.next);
+                    console.log("No debtors found.")
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
     };
 
     saveDebtor = async debtor => {

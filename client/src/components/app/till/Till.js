@@ -14,6 +14,7 @@ import * as authActions from "../../../redux/actions/auth.action";
 import './Till.scss';
 
 import ActionBar from "./ActionBar";
+import Alerts from "./Alerts";
 import ReturnsModal from "./modals/ReturnsModal";
 import OtherModal from "./modals/OtherModal";
 import SalesOptionsModal from "./modals/SalesOptionsModal";
@@ -174,7 +175,7 @@ class Till extends React.Component {
                 }
 
                 this.props.actions.modal.openCompleteSale();
-                $('#saleTendered').focus();
+                $('#cardBtn').focus();
                 break;
             case 115:
                 if (event.preventDefault) {
@@ -424,8 +425,12 @@ class Till extends React.Component {
                         <Totals openModal={this.openModal}/>
                     </div>
                 </main>
-                <footer className="footer">
+                <section className="d-flex">
+                    <Alerts/>
                     <ActionBar openModal={this.openModal}/>
+                </section>
+                <footer className="till-text w-100">
+                    <span>Till number {this.props.settings.number} logged in as {this.props.user.username}</span>
                 </footer>
 
                 <CashModal mapLineItem={this.mapHeldItems}/>

@@ -487,9 +487,14 @@ class CompleteSaleModal extends React.Component {
 
     saveSettings = (type) => {
         let till = this.props.settings.till;
+        let shop = this.props.settings.shop;
         if (type === "L/B") {
             till.DepNo = Number(till.DepNo) + 1;
-            till.LbNo = Number(till.LbNo) + 1;
+            if (shop.oneLaybyeNo === "Yes") {
+                shop.nextLaybyeNo = Number(shop.nextLaybyeNo) + 1;
+            } else {
+                till.LbNo = Number(till.LbNo) + 1;
+            }
         } else if (type === "CRN" || type === "LBC") {
             till.CrnNo = Number(till.CrnNo) + 1;
             till.PayNo = Number(till.PayNo) + 1;
@@ -560,7 +565,48 @@ class CompleteSaleModal extends React.Component {
 
     keyDown = e => {
         let event = window.event ? window.event : e;
-        if (event.keyCode === 13) { //enter
+
+        if (event.keyCode === 39) {
+            e.preventDefault();
+            let cashBtn = $('#cashBtn');
+            let cardBtn = $('#cardBtn');
+            let splitBtn = $('#splitBtn');
+
+            if (cashBtn.is(':focus')) {
+                cardBtn.focus();
+                return true;
+            }
+
+            if (cardBtn.is(':focus')) {
+                splitBtn.focus();
+                return true;
+            }
+
+            if (splitBtn.is(':focus')) {
+                cashBtn.focus();
+                return true;
+            }
+        } else if (event.keyCode === 37) {
+            e.preventDefault();
+            let cashBtn = $('#cashBtn');
+            let cardBtn = $('#cardBtn');
+            let splitBtn = $('#splitBtn');
+
+            if (cashBtn.is(':focus')) {
+                splitBtn.focus();
+                return true;
+            }
+
+            if (cardBtn.is(':focus')) {
+                cashBtn.focus();
+                return true;
+            }
+
+            if (splitBtn.is(':focus')) {
+                cardBtn.focus();
+                return true;
+            }
+        } else if (event.keyCode === 13) { //enter
             e.preventDefault();
             let tenderedField = $('#saleTendered');
             let nameField = $('#saleName');
@@ -629,6 +675,28 @@ class CompleteSaleModal extends React.Component {
                 }
             }
 
+            let cashBtn = $('#cashBtn');
+            let cardBtn = $('#cardBtn');
+            let splitBtn = $('#splitBtn');
+
+            if (cashBtn.is(':focus')) {
+                cashBtn.click();
+                tenderedField.focus();
+                return true;
+            }
+
+            if (cardBtn.is(':focus')) {
+                cardBtn.click();
+                tenderedField.focus();
+                return true;
+            }
+
+            if (splitBtn.is(':focus')) {
+                splitBtn.click();
+                tenderedField.focus();
+                return true;
+            }
+
             return true;
         }
 
@@ -686,17 +754,17 @@ class CompleteSaleModal extends React.Component {
                             <label>Payment Method:</label>
                             <br/>
                             <div className="payment" role="group" aria-label="...">
-                                <button type="button" className="btn btn-success m-1"
+                                <button type="button" className="btn btn-success m-1" id="cashBtn"
                                         disabled={this.state.method === "Cash"}
                                         onClick={() => this.changeMethod("Cash")}>
                                     <span><i className="fa fa-money"/></span> Cash
                                 </button>
-                                <button type="button" className="btn btn-danger m-1"
+                                <button type="button" className="btn btn-danger m-1" id="cardBtn"
                                         disabled={this.state.method === "CC"}
                                         onClick={() => this.changeMethod("CC")}>
                                     <span><i className="fa fa-credit-card"/></span> Card
                                 </button>
-                                <button type="button" className="btn btn-info m-1"
+                                <button type="button" className="btn btn-info m-1" id="splitBtn"
                                         disabled={this.state.method === "Split"}
                                         onClick={() => this.changeMethod("Split")}>
                                     <span><i className="fa fa-random"/></span> Split
@@ -706,11 +774,11 @@ class CompleteSaleModal extends React.Component {
                                 this.state.method === "Split" &&
                                 <div className="form-group">
                                     <label>Cash Amount:</label>
-                                    <input type="text" className="form-control" name="cash"
+                                    <input type="text" className="form-control" name="cash" id="cashAmount"
                                            value={this.state.cash}
                                            onChange={this.handleSplit}/>
                                     <label>Card Amount:</label>
-                                    <input type="text" className="form-control" name="card"
+                                    <input type="text" className="form-control" name="card" id="cardAmount"
                                            value={this.state.card}
                                            onChange={this.handleSplit}/>
                                 </div>

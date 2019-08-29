@@ -46,7 +46,7 @@ class Dashboard extends React.Component {
                     <h5 className="text-uppercase">{this.props.user.role && this.props.user.role.description}</h5>
                 </header>
                 <main className="container d-flex">
-                    <section className="col-6 card text-center widget widget-shadow">
+                    <section className="col-6 card text-center widget widget-shadow stock">
                         <header className="card-img-top">
                             <span><i className="fa fa-sitemap"/></span>
                         </header>
@@ -56,7 +56,7 @@ class Dashboard extends React.Component {
                             <Link to="/app/stock" className="btn btn-success">Go now!</Link>
                         </main>
                     </section>
-                    <section className="col-6 card text-center widget widget-shadow">
+                    <section className="col-6 card text-center widget widget-shadow transactions">
                         <header className="card-img-top">
                             <span><i className="fa fa-money"/></span>
                         </header>

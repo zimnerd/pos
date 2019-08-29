@@ -10,9 +10,9 @@ class ActionBar extends React.Component {
 
     render = () => {
         return (
-            <article>
+            <article className="col-8">
                 <main className="d-flex actions">
-                    <section className="col-4 d-flex">
+                    <section className="col-6 d-flex pl-0">
                         <section className="card card-body m-2 bg-success" onClick={() => this.props.openModal({ keyCode: 114 })}>
                             <span className="card-text text-center" onClick={() => this.props.openModal({ keyCode: 114 })}>Complete Sale (F3)</span>
                         </section>
@@ -20,8 +20,7 @@ class ActionBar extends React.Component {
                             <span className="card-text text-center" onClick={() => this.props.openModal({ keyCode: 115 })}>Credit Notes (F4)</span>
                         </section>
                     </section>
-                    <section className="col-2"/>
-                    <section className="col-6 d-flex">
+                    <section className="col-6 d-flex pr-0">
                         <section className="card card-body m-2 bg-secondary" onClick={() => this.props.openModal({ keyCode: 120 })}>
                             <span className="card-text text-center" onClick={() => this.props.openModal({ keyCode: 120 })}>Sales Options (F9)</span>
                         </section>
@@ -30,9 +29,6 @@ class ActionBar extends React.Component {
                         </section>
                     </section>
                 </main>
-                <footer className="till-text w-100">
-                    <span>Till number {this.props.settings.number} logged in as {this.props.user.username}</span>
-                </footer>
             </article>
         )
     };

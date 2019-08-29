@@ -120,7 +120,7 @@ class ReceiptsPaymentModal extends React.Component {
         this.setState({
             accNum: "",
             type: "Laybye",
-            method: "",
+            method: "Cash",
             card: "",
             cash: "",
             tendered: 0,
