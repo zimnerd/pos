@@ -19,7 +19,7 @@ class TransactionCompleteModal extends React.Component {
 
     printReceipt = () => {
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/transactions/${this.props.till.completedTransaction.number}/print`;
+        a.href = `http://localhost:8000/api/v1/transactions/${this.props.till.completedTransaction.number}/print`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();

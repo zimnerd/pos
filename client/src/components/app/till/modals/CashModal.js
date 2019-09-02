@@ -63,7 +63,7 @@ class CashModal extends React.Component {
 
     printReceipt = number => {
         let a = document.createElement('a');
-        a.href = `http://localhost:8000/api/transactions/${number}/print`;
+        a.href = `http://localhost:8000/api/v1/transactions/${number}/print`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();

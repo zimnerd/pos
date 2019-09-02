@@ -38,11 +38,11 @@ class AppServiceProvider extends ServiceProvider
         DB::purge('mysql');
 
         App::singleton('tillno', function () {
-            $name = env("TILL_NUM_TXT");
-            $fn = fopen($name, "r");
-            $result = fgets($fn, 20);
-            fclose($fn);
-            return $result;
+//            $name = env("TILL_NUM_TXT");
+//            $fn = fopen($name, "r");
+//            $result = fgets($fn, 20);
+//            fclose($fn);
+            return 91;
         });
     }
 }

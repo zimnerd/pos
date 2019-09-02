@@ -26,6 +26,7 @@ use App\Till;
 use App\TradeSummary;
 use App\Transaction;
 use App\User;
+use Barryvdh\Snappy\Facades\SnappyPdf;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\App;
@@ -870,8 +871,10 @@ class TransactionController extends Controller
         $date = \date('Y-m-d');
 
         /**
+         * @var SnappyPdf $snappy
          */
-        return view('debtor', [
+        $snappy = App::make('snappy.pdf');
+        $html = View::make('debtor', [
             "date" => $date,
             "accNo" => $accNo,
             "depNo" => $depNo,
@@ -880,6 +883,14 @@ class TransactionController extends Controller
             "amt" => $amt,
             "balance" => $balance
         ]);
+        return new Response(
+            $snappy->getOutputFromHtml($html),
+            200,
+            array(
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="receipt.pdf"'
+            )
+        );
 
     }
 
@@ -956,6 +967,9 @@ class TransactionController extends Controller
             ->where('ColName', 'LaybyeRemarks')
             ->first();
 
+        /**
+         * @var SnappyPdf $snappy
+         */
         return view('receipt', [
             "transaction_id" => $id,
             "date" => $date,
@@ -1297,12 +1311,10 @@ class TransactionController extends Controller
                 }
             } else {
                 if (isset($actual['splitCard']) && isset($actual['splitCash'])) {
-                 //    $tradeSummary->CASHS += floatval($amount);
-                 //   $tradeSummary->CCARDS += floatval($amount);
+                    $tradeSummary->CASHS += floatval($amount);
+                    $tradeSummary->CCARDS += floatval($amount);
                 } else {
-
-                }
-				switch ($cob) {
+                    switch ($cob) {
                         case "Cash":
                             $tradeSummary->CASHS += $amount;
                             break;
@@ -1315,8 +1327,10 @@ class TransactionController extends Controller
                         case "Cheque":
                             $tradeSummary->CHQS += $amount;
                             break;
+                    }
                 }
-				$tradeSummary->USLS += $qty * 1;
+
+                $tradeSummary->USLS += $qty * 1;
                 $tradeSummary->SLS += $amount;
                 $tradeSummary->TOTDISC += $disc;
                 $tradeSummary->TOTCP += $totalCp;

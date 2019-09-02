@@ -457,7 +457,7 @@ class CompleteSaleModal extends React.Component {
             }
 
             let a = document.createElement('a');
-            a.href = `http://${ip}/v1/airtime/${item.code}/print/${item.serialno}`;
+            a.href = `http://localhost:8000/api/v1/airtime/${item.code}/print/${item.serialno}`;
             a.target = '_blank';
             document.body.appendChild(a);
             a.click();
@@ -472,7 +472,7 @@ class CompleteSaleModal extends React.Component {
         }
 
         let a = document.createElement('a');
-        a.href = `http://${ip}/v1/transactions/${number}/print`;
+        a.href = `http://localhost:8000/api/v1/transactions/${number}/print`;
         a.target = '_blank';
         document.body.appendChild(a);
         a.click();

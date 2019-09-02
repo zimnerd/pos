@@ -198,12 +198,12 @@ class SalesOptionsModal extends React.Component {
                                     <span><i className="fa fa-hand-o-left"/></span>
                                 </Card.Header>
                                 <Card.Body>
-                                    <Card.Title>Hold Complete Sale</Card.Title>
+                                    <Card.Title>Hold Entire Sale</Card.Title>
                                 </Card.Body>
                             </Card>
                         </div>
                         <div className="col-4">
-                            <Card onClick={this.holdSale} className="text-center warning">
+                            <Card onClick={this.holdSale} className="text-center handwarning">
                                 <Card.Header>
                                     <span><i className="fa fa-hand-o-left"/></span>
                                 </Card.Header>
