@@ -1,7 +1,7 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { bindActionCreators } from "redux";
-import { connect } from "react-redux";
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {bindActionCreators} from "redux";
+import {connect} from "react-redux";
 import axios from "axios";
 import toastr from "toastr";
 
@@ -20,23 +20,92 @@ import './App.scss';
 class App extends React.Component {
 
     componentDidMount = async () => {
+        const getIP = (onNewIP) => { //  onNewIp - your listener function for new IPs
+            //compatibility for firefox and chrome
+            var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+            var pc = new myPeerConnection({
+                    iceServers: []
+                }),
+                noop = function () {
+                },
+                localIPs = {},
+                ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
+                key;
+
+            function iterateIP(ip) {
+                if (!localIPs[ip]) onNewIP(ip);
+                localIPs[ip] = true;
+            }
+
+            //create a bogus data channel
+            pc.createDataChannel("");
+
+            // create offer and set local description
+            pc.createOffer(function (sdp) {
+                sdp.sdp.split('\n').forEach(function (line) {
+                    if (line.indexOf('candidate') < 0) return;
+                    line.match(ipRegex).forEach(iterateIP);
+                });
+
+                pc.setLocalDescription(sdp, noop, noop);
+            }, noop);
+
+            //listen for candidate events
+            pc.onicecandidate = function (ice) {
+                if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
+                ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
+            };
+        };
+
         let ip = "localhost/api";
         if (process.env.REACT_APP_IP_HOST != null) {
             ip = process.env.REACT_APP_IP_HOST;
         }
         axios.defaults.baseURL = `http://${ip}`;
         console.log("IP Address", `${ip}`);
-        await axios.get('/v1/settings/till')
-            .then(async response => {
-                console.log(response.data);
+        let clientIP = '';
+        getIP(function (thisIP) {
+            console.log("THIS", thisIP);
+            let arr = thisIP.split('.');
+            clientIP = arr[arr.length - 1];
+            console.log(clientIP);
+            console.log(arr[arr.length - 1]);
+            console.log(arr.length - 1);
+            localStorage.setItem('tillNumber', clientIP);
 
-                toastr.success("Till Number Retrieved!", "Retrieve Till Number");
-                await this.props.actions.settings.retrieveTillNumber(response.data.number);
-            })
-            .catch(error => {
-                console.log(error);
-                toastr.error("Unknown error.");
-            });
+            axios.get(`/v1/settings/till/${clientIP}`)
+                .then(response => {
+                    console.log(response.data);
+
+                    toastr.success("Till Details Retrieved!", "Retrieve Till Details");
+                    this.props.actions.settings.retrieveTill(response.data.till);
+                })
+                .catch(error => {
+                    console.log(error);
+                    if (error.response.status === 404) {
+                        toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
+                    } else {
+                        toastr.error("Unknown error.");
+                    }
+                });
+
+            axios.get(`/v1/settings/till/${clientIP}/controls`)
+                .then(response => {
+                    console.log(response.data);
+
+                    toastr.success("Till Controls Retrieved!", "Retrieve Till Controls");
+                    this.props.actions.settings.retrieveTillControls(response.data.control);
+                })
+                .catch(error => {
+                    console.log(error);
+                    if (error.response.status === 404) {
+                        toastr.error("There are no controls on record for this till number!", "Retrieve Till Controls");
+                    } else {
+                        toastr.error("Unknown error.");
+                    }
+                });
+
+        });
 
         axios.get('/v1/settings/shop')
             .then(response => {
@@ -50,21 +119,6 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get(`/v1/settings/till/${this.props.settings.number}`)
-            .then(response => {
-                console.log(response.data);
-
-                toastr.success("Till Details Retrieved!", "Retrieve Till Details");
-                this.props.actions.settings.retrieveTill(response.data.till);
-            })
-            .catch(error => {
-                console.log(error);
-                if (error.response.status === 404) {
-                    toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
-                } else {
-                    toastr.error("Unknown error.");
-                }
-            });
 
         axios.get('/v1/auth/roles')
             .then(response => {
@@ -90,21 +144,6 @@ class App extends React.Component {
                 toastr.error("Unknown error.");
             });
 
-        axios.get(`/v1/settings/till/${this.props.settings.number}/controls`)
-            .then(response => {
-                console.log(response.data);
-
-                toastr.success("Till Controls Retrieved!", "Retrieve Till Controls");
-                this.props.actions.settings.retrieveTillControls(response.data.control);
-            })
-            .catch(error => {
-                console.log(error);
-                if (error.response.status === 404) {
-                    toastr.error("There are no controls on record for this till number!", "Retrieve Till Controls");
-                } else {
-                    toastr.error("Unknown error.");
-                }
-            });
 
         axios.get('/v1/settings/tax')
             .then(response => {
@@ -117,6 +156,8 @@ class App extends React.Component {
                 console.log(error);
                 toastr.error("Unknown error.");
             });
+
+
     };
 
     render() {
@@ -141,6 +182,7 @@ class App extends React.Component {
 
 }
 
+
 function mapStateToProps(state) {
     return {
         settings: state.settings
@@ -155,5 +197,6 @@ function mapDispatchToProps(dispatch) {
         }
     };
 }
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

@@ -273,9 +273,9 @@ class SettingsController extends Controller
     {
         $ip = $this->getIp();
         //print_r($ip);
-        $number = substr(strrchr($ip,'.'),1);
-        //$number = app("tillno");
-        return response()->json(["number" => $number], $this->successStatus);
+        //$number = array_pop(explode('.', $ip));
+        $number = app("tillno");
+        return response()->json(["number" => $ip], $this->successStatus);
     }
 
     /**
