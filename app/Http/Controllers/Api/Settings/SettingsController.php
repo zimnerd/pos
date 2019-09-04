@@ -271,7 +271,10 @@ class SettingsController extends Controller
      */
     public function retrieveTillNumber()
     {
-        $number = app("tillno");
+        $ip = $this->getIp();
+        //print_r($ip);
+        $number = substr(strrchr($ip,'.'),1);
+        //$number = app("tillno");
         return response()->json(["number" => $number], $this->successStatus);
     }
 
@@ -292,6 +295,20 @@ class SettingsController extends Controller
         }
 
         return response()->json(["control" => $tillControl], $this->successStatus);
+    }
+
+    public function getIp()
+    {
+        if(!empty($_SERVER['HTTP_CLIENT_IP'])){
+            //ip from share internet
+            $ip = $_SERVER['HTTP_CLIENT_IP'];
+        }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
+            //ip pass from proxy
+            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }else{
+            $ip = $_SERVER['REMOTE_ADDR'];
+        }
+        return $ip;
     }
 
     /**
