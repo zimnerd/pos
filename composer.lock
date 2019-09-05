@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b6e5fe7d74518738751fd6471a572164",
+    "content-hash": "db16751e96a4adb4314f2d9e78acfb17",
     "packages": [
         {
             "name": "barryvdh/laravel-snappy",
@@ -66,6 +66,52 @@
                 "wkhtmltopdf"
             ],
             "time": "2019-02-26T20:00:55+00:00"
+        },
+        {
+            "name": "davidepastore/ipinfo",
+            "version": "v0.1.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/DavidePastore/ipinfo.git",
+                "reference": "5f3cf0751bca1ffdd2323af5c3e53e763dbc36f3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/DavidePastore/ipinfo/zipball/5f3cf0751bca1ffdd2323af5c3e53e763dbc36f3",
+                "reference": "5f3cf0751bca1ffdd2323af5c3e53e763dbc36f3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-curl": "*",
+                "php": ">=5.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "3.7.*",
+                "scrutinizer/ocular": "~1.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "davidepastore",
+                    "email": "pasdavide@gmail.com"
+                }
+            ],
+            "description": "A wrapper around the ipinfo.io services",
+            "keywords": [
+                "IP",
+                "geolocation",
+                "ipinfo"
+            ],
+            "time": "2017-07-13T18:42:59+00:00"
         },
         {
             "name": "defuse/php-encryption",
@@ -1471,6 +1517,120 @@
                 "server"
             ],
             "time": "2019-05-05T09:22:01+00:00"
+        },
+        {
+            "name": "linfo/linfo",
+            "version": "v3.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jrgp/linfo.git",
+                "reference": "6a0c9ef7766985a82b1c85cb427319c1018bd416"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jrgp/linfo/zipball/6a0c9ef7766985a82b1c85cb427319c1018bd416",
+                "reference": "6a0c9ef7766985a82b1c85cb427319c1018bd416",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pcre": "*",
+                "php": ">=5.3.0"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "4.8.*"
+            },
+            "suggest": {
+                "ext-com": "On Windows"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Linfo\\": "src/Linfo"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Joe Gillotti",
+                    "role": "Author",
+                    "email": "joe@joegillotti.com",
+                    "homepage": "http://joegillotti.com"
+                }
+            ],
+            "description": "App and library for easily parsing and displaying system information of the host, like network/torrents/cpu/memory/usb/pci/sound cards/filesystems/raid array/ipmi/etc.",
+            "homepage": "http://github.com/jrgp/linfo",
+            "keywords": [
+                "CPU",
+                "health",
+                "linux",
+                "specs",
+                "system"
+            ],
+            "time": "2018-03-31T03:55:28+00:00"
+        },
+        {
+            "name": "matriphe/larinfo",
+            "version": "1.0.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/matriphe/larinfo.git",
+                "reference": "945e44bc13aac2acc1ad375da9200d02142a4793"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/matriphe/larinfo/zipball/945e44bc13aac2acc1ad375da9200d02142a4793",
+                "reference": "945e44bc13aac2acc1ad375da9200d02142a4793",
+                "shasum": ""
+            },
+            "require": {
+                "davidepastore/ipinfo": "^0.1.3",
+                "laravel/framework": "^5.0",
+                "linfo/linfo": "^3.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^0.9.9",
+                "phpunit/phpunit": ">=4.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Matriphe\\Larinfo\\LarinfoServiceProvider"
+                    ],
+                    "aliases": {
+                        "Larinfo": "Matriphe\\Larinfo\\LarinfoFacade"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Matriphe\\Larinfo\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Muhammad Zamroni",
+                    "role": "Developer",
+                    "email": "halo@matriphe.com",
+                    "homepage": "https://matriphe.com"
+                }
+            ],
+            "description": "Display system information (IP address, OS, versions) for Laravel.",
+            "keywords": [
+                "ipinfo",
+                "laravel",
+                "larinfo",
+                "linfo",
+                "sysinfo"
+            ],
+            "time": "2018-02-18T08:47:36+00:00"
         },
         {
             "name": "monolog/monolog",
