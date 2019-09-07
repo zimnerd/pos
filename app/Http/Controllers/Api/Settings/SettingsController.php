@@ -11,6 +11,7 @@ use App\Shop;
 use App\Tax;
 use App\Till;
 use App\TillControl;
+use App\TillRefs;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -88,9 +89,19 @@ class SettingsController extends Controller
     }
 
     /**
+     * Retrieve the tills
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function retrieveTills()
+    {
+        $tills = TillRefs::all();
+        return response()->json(['tills' => $tills], $this->successStatus);
+    }
+
+    /**
      * Retrieve the till settings
      *
-     * @param integer $id
      * @return \Illuminate\Http\Response
      */
     public function retrieveHaddith()

@@ -18,9 +18,34 @@ class Login extends React.Component {
         till: ''
     };
 
+    tills = JSON.parse(localStorage.getItem('tills'));
+    defaultTill: [];
+
+
     componentDidMount(): void {
         let usernameField = $('#username');
         usernameField.focus();
+        let userTills = [];
+        this.tills.forEach(function (item, key) {
+            if (item.default_tillno === 1) {
+                userTills[item.user] = item;
+            }
+
+        });
+        this.defaultTill = userTills;
+        console.log(this.state);
+
+
+    }
+
+    componentDidUpdate(): void {
+        let myUser = $('#username').val().trim();
+        if (myUser !== '') {
+            console.log(myUser);
+            console.log(this.defaultTill[myUser].tillno);
+            this.state.till = this.defaultTill[myUser].tillno;
+            document.getElementById("tills").value = this.state.till;
+        }
     }
 
     onSubmit = event => {
@@ -112,7 +137,6 @@ class Login extends React.Component {
     handleChange = event => {
         event.preventDefault();
         let formValues = this.state;
-
         let name = event.target.name;
         formValues[name] = event.target.value;
 
@@ -120,13 +144,15 @@ class Login extends React.Component {
     };
 
     keyDown = e => {
+
+        console.log(this.props);
         let event = window.event ? window.event : e;
         if (event.keyCode === 13) { //enter
             if (this.state.password !== "" && this.state.username !== "") {
                 return false;
             }
 
-            e.preventDefault();
+            //e.preventDefault();
             let usernameField = $('#username');
             let passwordField = $('#password');
 
@@ -142,6 +168,7 @@ class Login extends React.Component {
         return false;
     };
 
+
     render() {
         return (
             <section>
@@ -156,7 +183,7 @@ class Login extends React.Component {
                     <main>
                         <form id='login-form'>
                             <main onKeyDown={this.keyDown} className="p-3">
-                                <section className='form-group'>
+                                <section className='form-group col-md-12'>
                                     <label>Username:</label>
                                     <input id='username' name='username' className='form-control' type='text'
                                            value={this.state.username}
@@ -164,7 +191,7 @@ class Login extends React.Component {
                                     {this.props.auth.errors['username'] &&
                                     <p className="error">{this.props.auth.errors['username']}</p>}
                                 </section>
-                                <section className='form-group'>
+                                <section className='form-group col-md-12'>
                                     <label>Password:</label>
                                     <input id='password' name='password' className='form-control' type='password'
                                            value={this.state.password}
@@ -172,14 +199,25 @@ class Login extends React.Component {
                                     {this.props.auth.errors['password'] &&
                                     <p className="error">{this.props.auth.errors['password']}</p>}
                                 </section>
-                                <section className='form-group'>
-                                    <label>Till No:</label>
-                                    <input id='till' name='till' className='form-control' type='text'
-                                           value={this.state.till}
-                                           onChange={this.handleChange} placeholder='Till Number' required/>
+
+                                <section className='form-group col-md-6'>
+                                    <label>Till Number:</label>
+                                    <select className="form-control" name='tills' id='tills'
+                                            onChange={this.handleChange}
+                                            defaultValue={this.state.till}
+                                            required>
+                                        <option value=''>Select a till</option>
+                                        {this.tills.map((item, index) => {
+                                            return (
+                                                <option key={index}
+                                                        value={item.tillno}>{item.tillno}</option>
+                                            )
+                                        })}
+                                    </select>
                                     {this.props.auth.errors['till'] &&
                                     <p className="error">{this.props.auth.errors['till']}</p>}
                                 </section>
+
                             </main>
                             <footer className="pl-3 pr-3 pb-3 text-right">
                                 <button className='btn btn-primary w-25' onClick={this.onSubmit}>Login</button>

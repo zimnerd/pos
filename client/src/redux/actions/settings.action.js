@@ -7,7 +7,8 @@ import {
     RETRIEVE_TILL_DETAILS,
     RETRIEVE_TILL_NUMBER,
     SAVE_TILL_DETAILS,
-    SET_COMBOS
+    SET_COMBOS,
+    RETRIEVE_TILLS
 } from "../constants/settings.constants";
 
 export function retrieveShop(shop = {}) {
@@ -36,6 +37,9 @@ export function retrieveReasons(reasons = []) {
 
 export function retrieveTillNumber(number = []) {
     return { type: RETRIEVE_TILL_NUMBER, number };
+}
+export function retrieveTills(tills = {}) {
+    return { type: RETRIEVE_TILLS, tills };
 }
 
 export function retrieveTillControls(controls = {}) {

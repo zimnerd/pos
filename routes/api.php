@@ -66,6 +66,7 @@ Route::group(["prefix" => "v1/settings", 'middleware'=>'cors'], function () {
     Route::put('till/{id}/controls', 'Api\Settings\SettingsController@updateControls');
     Route::post('till/{id}', 'Api\Settings\SettingsController@saveTill');
     Route::get('till', 'Api\Settings\SettingsController@retrieveTillNumber');
+    Route::get('tills', 'Api\Settings\SettingsController@retrieveTills');
     Route::get('reasons', 'Api\Settings\SettingsController@refundReasons');
     Route::get('tax', 'Api\Settings\SettingsController@retrieveTax');
 

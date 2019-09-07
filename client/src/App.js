@@ -19,11 +19,25 @@ import Fingerprint2 from 'fingerprintjs2';
 
 class App extends React.Component {
     componentDidMount = async () => {
+
         let ip = "localhost/api";
         if (process.env.REACT_APP_IP_HOST != null) {
             ip = process.env.REACT_APP_IP_HOST;
         }
         axios.defaults.baseURL = `http://${ip}`;
+
+        axios.get('/v1/settings/tills')
+            .then( response => {
+                console.log("Get tills", response.data.tills);
+                toastr.success("Tills Retrieved!", "Retrieve Till Number");
+                localStorage.setItem('tills',JSON.stringify(response.data.tills));
+                this.props.actions.settings.retrieveTills(response.data.tills);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
+
 
         axios.get('/v1/settings/shop')
             .then(response => {
@@ -97,6 +111,8 @@ class App extends React.Component {
     }
 
 }
+
+
 
 
 function mapStateToProps(state) {
