@@ -14,159 +14,66 @@ import Dashboard from "./components/app/Dashboard";
 import Till from "./components/app/till/Till";
 import StockInformation from "./components/app/stock/StockInformation";
 import ProductDetail from "./components/app/stock/ProductDetail";
-
 import './App.scss';
+import Fingerprint2 from 'fingerprintjs2';
 
 class App extends React.Component {
     componentDidMount = async () => {
-        let clientIP = '';
-
-        function getUserIP(onNewIP) { //  onNewIp - your listener function for new IPs
-            //compatibility for firefox and chrome
-            var myPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-            var pc = new myPeerConnection({
-                    iceServers: []
-                }),
-                noop = function () {
-                },
-                localIPs = {},
-                ipRegex = /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/g,
-                key;
-
-            function iterateIP(ip) {
-                if (!localIPs[ip]) onNewIP(ip);
-                localIPs[ip] = true;
-            }
-
-            //create a bogus data channel
-            pc.createDataChannel("");
-
-            // create offer and set local description
-            pc.createOffer(function (sdp) {
-                sdp.sdp.split('\n').forEach(function (line) {
-                    if (line.indexOf('candidate') < 0) return;
-                    line.match(ipRegex).forEach(iterateIP);
-                });
-
-                pc.setLocalDescription(sdp, noop, noop);
-            }, noop);
-
-            //listen for candidate events
-            pc.onicecandidate = function (ice) {
-                if (!ice || !ice.candidate || !ice.candidate.candidate || !ice.candidate.candidate.match(ipRegex)) return;
-                ice.candidate.candidate.match(ipRegex).forEach(iterateIP);
-            };
+        let ip = "localhost/api";
+        if (process.env.REACT_APP_IP_HOST != null) {
+            ip = process.env.REACT_APP_IP_HOST;
         }
+        axios.defaults.baseURL = `http://${ip}`;
 
-        getUserIP(async (myip) => {
-            clientIP = myip[(myip.split('.').length) - 1];
-            let arr = myip.split('.');
-            clientIP = arr[arr.length - 1];
-            console.log("clientIP: ", clientIP);
-            let ip = "localhost/api";
-            if (process.env.REACT_APP_IP_HOST != null) {
-                ip = process.env.REACT_APP_IP_HOST;
-            }
-            axios.defaults.baseURL = `http://${ip}`;
-            console.log("IP Address", `${ip}`);
+        axios.get('/v1/settings/shop')
+            .then(response => {
+                console.log(response.data);
 
-            await axios.get('/v1/settings/till')
-                .then(async response => {
-                    response.data.number = clientIP;
-                    console.log(response.data);
-                    toastr.success("Till Number Retrieved!", "Retrieve Till Number");
-                    await this.props.actions.settings.retrieveTillNumber(response.data.number);
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error("Unknown error.");
-                });
+                toastr.success("Shop Details Retrieved!", "Retrieve Shop Details");
+                this.props.actions.settings.retrieveShop(response.data.shop);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
 
 
-            await axios.get(`/v1/settings/till/${clientIP}`)
-                .then(response => {
-                    console.log(response.data);
+        axios.get('/v1/auth/roles')
+            .then(response => {
+                console.log(response.data);
 
-                    toastr.success("Till Details Retrieved!", "Retrieve Till Details");
-                    this.props.actions.settings.retrieveTill(response.data.till);
-                })
-                .catch(error => {
-                    console.log(error);
-                    if (error) {
-                        toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
-                    } else {
-                        toastr.error("Unknown error.");
-                    }
-                });
+                toastr.success("Roles Retrieved!", "Retrieve Roles");
+                this.props.actions.auth.retrieveRoles(response.data.roles);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
 
-            axios.get(`/v1/settings/till/${clientIP}/controls`)
-                .then(response => {
-                    console.log(response.data);
+        axios.get('/v1/settings/reasons')
+            .then(response => {
+                console.log(response.data);
 
-                    toastr.success("Till Controls Retrieved!", "Retrieve Till Controls");
-                    this.props.actions.settings.retrieveTillControls(response.data.control);
-                })
-                .catch(error => {
-                    console.log(error);
-                    if (error) {
-                        toastr.error("There are no controls on record for this till number!", "Retrieve Till Controls");
-                    } else {
-                        toastr.error("Unknown error.");
-                    }
-                });
+                toastr.success("Reasons Retrieved!", "Retrieve Reasons");
+                this.props.actions.settings.retrieveReasons(response.data.reasons);
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
 
 
-            axios.get('/v1/settings/shop')
-                .then(response => {
-                    console.log(response.data);
+        axios.get('/v1/settings/tax')
+            .then(response => {
+                console.log(response.data);
 
-                    toastr.success("Shop Details Retrieved!", "Retrieve Shop Details");
-                    this.props.actions.settings.retrieveShop(response.data.shop);
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error("Unknown error.");
-                });
-
-
-            axios.get('/v1/auth/roles')
-                .then(response => {
-                    console.log(response.data);
-
-                    toastr.success("Roles Retrieved!", "Retrieve Roles");
-                    this.props.actions.auth.retrieveRoles(response.data.roles);
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error("Unknown error.");
-                });
-
-            axios.get('/v1/settings/reasons')
-                .then(response => {
-                    console.log(response.data);
-
-                    toastr.success("Reasons Retrieved!", "Retrieve Reasons");
-                    this.props.actions.settings.retrieveReasons(response.data.reasons);
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error("Unknown error.");
-                });
-
-
-            axios.get('/v1/settings/tax')
-                .then(response => {
-                    console.log(response.data);
-
-                    toastr.success("Tax Rate Retrieved!", "Retrieve Tax Rate");
-                    this.props.actions.settings.retrieveTax(Number(response.data.tax));
-                })
-                .catch(error => {
-                    console.log(error);
-                    toastr.error("Unknown error.");
-                });
-
-        })
+                toastr.success("Tax Rate Retrieved!", "Retrieve Tax Rate");
+                this.props.actions.settings.retrieveTax(Number(response.data.tax));
+            })
+            .catch(error => {
+                console.log(error);
+                toastr.error("Unknown error.");
+            });
     };
 
     render() {

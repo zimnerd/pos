@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import axios from 'axios';
 import toastr from 'toastr';
 import $ from "jquery";
@@ -14,7 +14,8 @@ class Login extends React.Component {
 
     state = {
         username: '',
-        password: ''
+        password: '',
+        till: ''
     };
 
     componentDidMount(): void {
@@ -26,11 +27,48 @@ class Login extends React.Component {
         event.preventDefault();
         this.props.actions.auth.errorReset();
 
-        if (this.props.settings.till == null) {
+        if (this.state.till == null) {
             toastr.error("There are no details on record for this till number!", "Retrieve Till Details");
             return;
         }
+        toastr.success("Till number retrieved " + this.state.till, "Retrieve Till Details");
 
+        this.props.actions.settings.retrieveTillNumber(this.state.till);
+
+        axios.get(`/v1/settings/till/${this.state.till}`)
+            .then(response => {
+                console.log(response.data);
+
+                toastr.success("Till  " + this.state.till + "  Details Retrieved!", "Retrieve Till Details");
+                this.props.actions.settings.retrieveTill(response.data.till);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error) {
+                    toastr.error("There are no details on record for this till number  " + this.state.till + " !", "Retrieve Till Details");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+
+
+        axios.get(`/v1/settings/till/${this.state.till}/controls`)
+            .then(response => {
+                console.log(response.data);
+                toastr.success("Till Controls Retrieved!", "Retrieve Till Controls");
+                this.props.actions.settings.retrieveTillControls(response.data.control);
+            })
+            .catch(error => {
+                console.log(error);
+                if (error) {
+                    toastr.error("There are no controls on record for this till number  " + this.state.till + " !", "Retrieve Till Controls");
+                } else {
+                    toastr.error("Unknown error.");
+                }
+            });
+
+
+        delete this.state.till;
         axios.post('/v1/user/login', this.state)
             .then(async response => {
                 console.log(response);
@@ -123,14 +161,24 @@ class Login extends React.Component {
                                     <input id='username' name='username' className='form-control' type='text'
                                            value={this.state.username}
                                            onChange={this.handleChange} placeholder='Username' required/>
-                                    {this.props.auth.errors['username'] && <p className="error">{this.props.auth.errors['username']}</p>}
+                                    {this.props.auth.errors['username'] &&
+                                    <p className="error">{this.props.auth.errors['username']}</p>}
                                 </section>
                                 <section className='form-group'>
                                     <label>Password:</label>
                                     <input id='password' name='password' className='form-control' type='password'
                                            value={this.state.password}
                                            onChange={this.handleChange} placeholder='Password' required/>
-                                    {this.props.auth.errors['password'] && <p className="error">{this.props.auth.errors['password']}</p>}
+                                    {this.props.auth.errors['password'] &&
+                                    <p className="error">{this.props.auth.errors['password']}</p>}
+                                </section>
+                                <section className='form-group'>
+                                    <label>Till No:</label>
+                                    <input id='till' name='till' className='form-control' type='text'
+                                           value={this.state.till}
+                                           onChange={this.handleChange} placeholder='Till Number' required/>
+                                    {this.props.auth.errors['till'] &&
+                                    <p className="error">{this.props.auth.errors['till']}</p>}
                                 </section>
                             </main>
                             <footer className="pl-3 pr-3 pb-3 text-right">

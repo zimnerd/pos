@@ -14,8 +14,6 @@ use App\TillControl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Larinfo;
-
 
 class SettingsController extends Controller
 {
@@ -271,15 +269,10 @@ class SettingsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function retrieveTillNumber(Request $request)
+    public function retrieveTillNumber()
     {
-        $ip = $this->getIp();
-        $clientIP = \Request::header();
-        $larinfo = Larinfo::getInfo();
-        //print_r($ip);
-        //$number = array_pop(explode('.', $ip));
         $number = app("tillno");
-        return response()->json(["number" => $ip,"ip"=>$clientIP], $this->successStatus);
+        return response()->json(["number" => $number], $this->successStatus);
     }
 
     /**
@@ -299,20 +292,6 @@ class SettingsController extends Controller
         }
 
         return response()->json(["control" => $tillControl], $this->successStatus);
-    }
-
-    public function getIp()
-    {
-        if(!empty($_SERVER['HTTP_CLIENT_IP'])){
-            //ip from share internet
-            $ip = $_SERVER['HTTP_CLIENT_IP'];
-        }elseif(!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){
-            //ip pass from proxy
-            $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
-        }else{
-            $ip = $_SERVER['REMOTE_ADDR'];
-        }
-        return $ip;
     }
 
     /**
